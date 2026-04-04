@@ -1,13 +1,19 @@
-#Build output
+# IDE
+.idea/
+.settings/
+.cproject
+.project
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# STM32 build artifacts
 Debug/
 Release/
-
-#Eclipse/STM32CubeIDE metadata
-.metadata/
-.settings
-*.launch
-
-#Complied/generated files
 *.o
 *.d
 *.elf
@@ -15,5 +21,7 @@ Release/
 *.hex
 *.map
 *.list
-*.su
 
+# OS files
+.DS_Store
+Thumbs.db
