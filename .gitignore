@@ -1,0 +1,19 @@
+#Build output
+Debug/
+Release/
+
+#Eclipse/STM32CubeIDE metadata
+.metadata/
+.settings
+*.launch
+
+#Complied/generated files
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+*.su
+
