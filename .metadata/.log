@@ -207,3 +207,34 @@ org.eclipse.swt.SWTException: Widget is disposed
 
 !ENTRY com.microsoft.copilot.eclipse 1 0 2026-04-03 19:47:33.583
 !MESSAGE [Info] Completion handler is refreshed for the document: file:///home/mongoose/STM32CubeIDE/workspace_1.19.0/RC_Car_Mark_I/rc_car_integrated_II/GIT_GUIDE.md
+
+!ENTRY org.eclipse.lsp4e 4 0 2026-04-03 19:55:44.328
+!MESSAGE [Error]	[chat] Error processing turn a9c2c8ae-7bb9-46a7-8c67-938fe5881496 Error: maxTokens must be larger than the ellipsis length
+    at t.elide (/snapshot/copilot-client/prompt/src/elidableText/elidableText.ts:118:19)
+    at /snapshot/copilot-client/lib/src/conversation/prompt/conversationPromptEngine.ts:112:72
+    at Array.map (<anonymous>)
+    at q0.elideChatMessages (/snapshot/copilot-client/lib/src/conversation/prompt/conversationPromptEngine.ts:105:14)
+    at q0.toPrompt (/snapshot/copilot-client/lib/src/conversation/prompt/conversationPromptEngine.ts:67:45)
+    at H5e.fetchPromptContext (/snapshot/copilot-client/lib/src/conversation/prompt/metaPrompt.ts:56:28)
+    at c4e.collectContext (/snapshot/copilot-client/lib/src/conversation/prompt/conversationContextCollector.ts:54:39)
+    at Bje.collectContext (/snapshot/copilot-client/lib/src/conversation/turnProcessor.ts:332:31)
+    at Bje.processWithModel (/snapshot/copilot-client/lib/src/conversation/turnProcessor.ts:163:9)
+    at Bje.process (/snapshot/copilot-client/lib/src/conversation/turnProcessor.ts:90:13)
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-04-03 19:58:05.368
+!MESSAGE [Info]	[fetchChat] Request 617d7250-bcba-4af4-acbf-39fde4f58d0e at <https://api.individual.githubcopilot.com/chat/completions> finished with 200 status after 1342.701647000038ms
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-04-03 19:58:05.369
+!MESSAGE [Info]	[streamMessages] message 0 returned. finish reason: [stop]
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-04-03 19:58:07.465
+!MESSAGE [Info]	[fetchChat] Request cb02497b-ed91-4b2f-95b6-3d7062fc9353 at <https://api.individual.githubcopilot.com/chat/completions> finished with 200 status after 1830.6012019999325ms
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-04-03 19:58:16.041
+!MESSAGE [Info]	[streamMessages] message 0 returned. finish reason: [stop]
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-04-03 19:58:16.990
+!MESSAGE [Info]	[fetchChat] Request 52706c59-60b1-42b1-9006-71b351c695e5 at <https://api.individual.githubcopilot.com/chat/completions> finished with 200 status after 959.3826140000019ms
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-04-03 19:58:17.121
+!MESSAGE [Info]	[streamMessages] message 0 returned. finish reason: [stop]
