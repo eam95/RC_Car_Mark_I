@@ -27,3 +27,9 @@ Release/
 Thumbs.db
 .metadata/
 *.launch
+
+# Allow rc_car_integrated_II build and project files
+!rc_car_integrated_II/.project
+!rc_car_integrated_II/.cproject
+!rc_car_integrated_II/Debug/
+!rc_car_integrated_II/Debug/**
