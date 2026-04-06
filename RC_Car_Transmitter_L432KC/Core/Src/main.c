@@ -56,6 +56,11 @@ struct RC_CarDataRx
 
 };
 
+// Set this up for monitoring data logging reliability
+struct CmRxBuffer {
+    uint8_t data[1000][32];
+};
+// State machine for the main loop to determine whether to transmit or receive, which will be triggered by UART reception interrupt for transmit, and timer interrupt for receive (timeout mechanism to switch back to receive mode if no data received after certain time).
 
 
 typedef enum
