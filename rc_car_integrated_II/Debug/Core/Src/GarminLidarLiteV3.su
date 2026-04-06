@@ -1,0 +1,6 @@
+../Core/Src/GarminLidarLiteV3.c:19:6:GarLiteV3_i2c_write	32	static
+../Core/Src/GarminLidarLiteV3.c:37:6:GarLiteV3_i2c_read	32	static
+../Core/Src/GarminLidarLiteV3.c:54:6:GarLiteV3_Init	16	static
+../Core/Src/GarminLidarLiteV3.c:71:6:simple_measurement	88	static
+../Core/Src/GarminLidarLiteV3.c:104:6:acq_count_measurements	88	static
+../Core/Src/GarminLidarLiteV3.c:147:6:burst_measurements	96	static

@@ -1,0 +1,2 @@
+../Core/Src/commandReader.c:16:6:parse_uart_command	2
+../Core/Src/commandReader.c:30:6:parse_uart_value	3

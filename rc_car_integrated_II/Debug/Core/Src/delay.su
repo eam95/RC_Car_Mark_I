@@ -1,0 +1,2 @@
+../Core/Src/delay.c:14:6:delay_us	16	static
+../Core/Src/delay.c:27:10:adjusteTimeForTicks	16	static
