@@ -34,6 +34,7 @@
 #include "NRF24_conf.h"
 #include "NRF24_reg_addresses.h"
 #include "NRF24.h"
+#include "ledAdapter.h"
 
 /* USER CODE END Includes */
 
