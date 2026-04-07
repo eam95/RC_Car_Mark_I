@@ -57,7 +57,8 @@ struct RC_CarDataRx
 };
 
 // Set this up for monitoring data logging reliability
-struct CmRxBuffer {
+struct CmRxBuffer
+{
     uint8_t data[1000][32];
 };
 // State machine for the main loop to determine whether to transmit or receive, which will be triggered by UART reception interrupt for transmit, and timer interrupt for receive (timeout mechanism to switch back to receive mode if no data received after certain time).
@@ -71,7 +72,8 @@ typedef enum
 	STATE_MICRO_DELAY_TEST,
 	STATE_RECEIVE,
 	STATE_SET_TRANSMIT_MODE,
-	STATE_SET_RECEIVE_MODE
+	STATE_SET_RECEIVE_MODE,
+	STATE_DATA_ACQUISITION
 } FSM_State;
 FSM_State current_state = STATE_WAIT; // Start in WAIT state, waiting for UART command to trigger transmit or timer interrupt to trigger receive
 /* USER CODE END PTD */
@@ -100,6 +102,7 @@ DMA_HandleTypeDef hdma_usart2_rx;
 //////  Commands Declarations  //////////////////////////////////////
 struct RC_CarDataRx RC_Data = {0};    // This initializes all members to 0
 struct UART_Comm Msg = {0}; // This initializes all members to 0
+struct CmRxBuffer CmRxBuffer = {0}; // This initializes all members to 0
 
 
 /* LED SPI Control */
@@ -142,6 +145,7 @@ void shift_register_send(uint8_t data);
 /* USER CODE BEGIN 0 */
 //  Set up NRF24L01
 
+int k =0; // This is increment for the storing the data in the CmRxBuffer for monitoring data logging reliability, which will store up to 1000 received data packets for later retrieval and analysis.
 /* USER CODE END 0 */
 
 /**
@@ -277,7 +281,9 @@ int main(void)
 			  // Send the Receive.cmd
 			  memcpy(Msg.TxData, RC_Data.cmd, PLD_S);
 			  HAL_UART_Transmit(&huart2, Msg.TxData, strlen((char *)Msg.TxData), HAL_MAX_DELAY);
-			  current_state = STATE_WAIT; // Go back to wait state after receiving data
+//			  current_state = STATE_WAIT; // Go back to wait state after receiving data
+			  current_state = STATE_DATA_ACQUISITION; // Switch to data acquisition state to store the received data in the buffer for monitoring data logging reliability
+
 		  }
 		  // Stay in receive mode while waiting for data
 
@@ -292,6 +298,24 @@ int main(void)
 		  }
 //		  current_state = STATE_WAIT;
 		  break;
+	  case STATE_DATA_ACQUISITION:
+		  // This state is for testing the data acquisition from the RC car.
+		  // Once the data is received, it will get stored in the CmRxBuffer so by the time it receives
+		  // 1000 data points it will stop and go back to the wait state and will also debug to check.
+		  // Store the receive data in the buffer.
+		  if (k < 1000)
+		  {
+			  memcpy(CmRxBuffer.data[k], RC_Data.cmd, PLD_S);
+			  k++;
+			  current_state = STATE_WAIT; // Stay in receive state to continue receiving data until we have 1000 data points tored in the buffer
+		  }
+		  else
+		  {
+		  	current_state = STATE_WAIT; // After storing 1000 data points, switch back to wait state
+		  }
+
+		  break;
+
 	  }
   }
   /* USER CODE END 3 */
