@@ -300,6 +300,171 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+      switch (currentState)
+      {
+          case WAIT_STATE:
+              // Idle — do nothing until timer ISR triggers a comm state change
+              break;
+
+          // ============ COMM STATE TRANSITIONS ============
+
+          case CHANGE_RX_STATE:
+              // LED indicators: YELLOW on = RX mode
+              HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
+              nrf24_listen();
+              currentCommState = TX_STATE;
+              currentState = RX_STATE;
+              break;
+
+          case RX_STATE:
+              // Stay here polling for data until the timer ISR sets CHANGE_TX_STATE
+              if (nrf24_data_available())
+              {
+                  stopState = 0; // Clear the stopState flag when new data is received
+            	  nrf24_receive(Receive.cmd, sizeof(Receive.cmd));
+                  nrf24_clear_rx_dr();
+                  strncpy(ReceiveCmd, (char *)Receive.cmd, PLD_S - 1);
+                  ReceiveCmd[PLD_S - 1] = '\0';
+
+                  char cmd_str[32] = {0};
+                  char pwm_str[8] = {0};
+                  uint8_t comma_index = 0;
+                  parse_uart_command(ReceiveCmd, cmd_str, &comma_index);
+
+                  if (strcmp(cmd_str, "F") == 0)
+                  {
+                      uint8_t index = comma_index;
+                      parse_uart_value(ReceiveCmd, pwm_str, &index);
+                      Receive.pwm_value = (uint16_t)atoi(pwm_str);
+                      nextState = FORWARD_STATE;
+                  }
+                  else if (strcmp(cmd_str, "R") == 0)
+                  {
+                      uint8_t index = comma_index;
+                      parse_uart_value(ReceiveCmd, pwm_str, &index);
+                      Receive.pwm_value = (uint16_t)atoi(pwm_str);
+                      nextState = BACKWARD_STATE;
+                  }
+                  else if (strcmp(cmd_str, "B") == 0)
+                  {
+                      Receive.pwm_value = 25000;
+                      nextState = BRAKE_STATE;
+                  }
+                  else if (strcmp(cmd_str, "C") == 0)
+                  {
+                      nextState = COAST_STATE;
+                  }
+                  else if (strcmp(cmd_str, "PID") == 0)
+                  {
+                      uint8_t index = comma_index;
+                      char P_str[8] = {0}, I_str[8] = {0}, D_str[8] = {0};
+                      parse_uart_value(ReceiveCmd, P_str, &index);
+                      Receive.Pset = (uint16_t)atoi(P_str);
+                      parse_uart_value(ReceiveCmd, I_str, &index);
+                      Receive.Iset = (uint16_t)atoi(I_str);
+                      parse_uart_value(ReceiveCmd, D_str, &index);
+                      Receive.Dset = (uint16_t)atoi(D_str);
+                      nextState = SET_PID_STATE;
+                  }
+                  // Data received — don't change currentState here;
+                  // let the timer ISR trigger CHANGE_TX_STATE when it's time
+              }
+
+              break;
+
+          case CHANGE_TX_STATE:
+              // LED indicators: GREEN on = TX mode
+//        	  will work on making the comm mode transisition. This is for a git example
+              HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, GPIO_PIN_RESET);
+              nrf24_stop_listen();
+              currentCommState = RX_STATE;
+              currentState = TX_STATE;
+              break;
+
+          case TX_STATE:
+              // Execute the pending action command (motor), then transmit sensor data
+              if (nextState != WAIT_STATE)
+              {
+                  currentState = GET_SENSOR_DATA_STATE;
+              }
+              else
+              {
+            	  stopState = 1;
+              }
+              break;
+
+          // ============ SENSOR DATA + TRANSMIT ============
+
+          case GET_SENSOR_DATA_STATE:
+        	  if (stopState == 0)
+        	  {
+        		  measure_XYZ_Acceleration(&Transmit.a_x, &Transmit.a_y, &Transmit.a_z);
+        		  simple_measurement(&Transmit.distance_cm, 0);
+        		  Tset.stamped_time += Tset.milliAdder;
+
+        		  uint32_t len = snprintf((char *)Transmit.cmd, sizeof(Transmit.cmd),
+        		                    "%lu,%u,%ld,%ld,%ld",
+        		                    Tset.stamped_time, Transmit.distance_cm,
+        		                    Transmit.a_x, Transmit.a_y, Transmit.a_z);
+        		  // Place \r\n at the last 2 bytes of the 32-byte array
+        		  Transmit.cmd[PLD_S - 2] = '\r';
+        		  Transmit.cmd[PLD_S - 1] = '\n';
+
+        	        // For UART: send only the data + \r\n (not the null padding)
+        	        if (len > 0)
+        	        {
+        	            // Temporarily append \r\n right after the data for UART
+        	            uint8_t uart_buf[PLD_S];
+        	            memcpy(uart_buf, Transmit.cmd, len);
+        	            uart_buf[len]     = '\r';
+        	            uart_buf[len + 1] = '\n';
+        	            HAL_UART_Transmit(&huart3, uart_buf, len + 2, HAL_MAX_DELAY);
+        	        }
+        		  nrf24_transmit(Transmit.cmd, PLD_S);
+
+        	  }
+
+
+              // Now execute the motor command
+              currentState = nextState;
+              break;
+
+          // ============ MOTOR ACTIONS ============
+
+          case FORWARD_STATE:
+              __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, Receive.pwm_value);
+              __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 0);
+              break;
+
+          case BACKWARD_STATE:
+              __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+              __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, Receive.pwm_value);
+              break;
+
+          case BRAKE_STATE:
+              __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, Receive.pwm_value);
+              __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, Receive.pwm_value);
+              break;
+
+          case COAST_STATE:
+              __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+              __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 0);
+              stopState = 1; // Set the stopState flag to indicate that the car should stop after coasting
+              currentState = WAIT_STATE;
+              break;
+
+          case SET_PID_STATE:
+              // PID setup — placeholder
+              currentState = CHANGE_RX_STATE;
+              break;
+
+          default:
+              Error_Handler();
+              break;
+      }
   }
   /* USER CODE END 3 */
 }
@@ -657,7 +822,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 250-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = Tset.set_timer_period;
+  htim3.Init.Period = 65535;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)

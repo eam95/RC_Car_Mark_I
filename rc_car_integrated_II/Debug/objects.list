@@ -5,6 +5,7 @@
 "./Core/Src/NRF24.o"
 "./Core/Src/commandReader.o"
 "./Core/Src/delay.o"
+"./Core/Src/ledAdapter.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32h7xx_hal_msp.o"
 "./Core/Src/stm32h7xx_it.o"
