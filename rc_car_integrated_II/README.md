@@ -25,6 +25,10 @@ The RC car is toggling the NRF24L01 from listen/talking mode (Rx/Tx mode) every 
         - Baud rate for board is 115200 bits/s
         - If running on Debian OS and wish to use UART to debug picocom can be run on the terminal.
             -  picocom -b 115200 /dev/ttyACM0
+    - Have checked the waveform and it looks like the NRF24L01 is transmitting data by checking whether the Red on board LED is pulsing every 20ms when it goes to transmit mode.
+    - Monitor UART comm to check if it is printing the sampled data every 20ms.
+    - Later need to make a flag that the data is transmitted in order to store the 1000 sample points. This help verify if the 1st 1000 points is actually transmitt data every 20ms reliably. 
+        - If the NRF24L01 on the RC car is able to successfully transmit data continously then this narrow down to troubleshootong the transmitter reliability on collecting the sampled data.
 
 ### STM32CubeIDE
 Built with STM32CubeIDE on Debian. Open the workspace and import both projects.
