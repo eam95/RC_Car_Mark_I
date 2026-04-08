@@ -84,6 +84,7 @@ typedef enum
 	GET_SENSOR_DATA_STATE,
 	SET_PID_STATE,
 	STATE_MICRO_DELAY_TEST,
+	STATE_DATA_ACQUISITION,
 	CHANGE_RX_STATE,
 	CHANGE_TX_STATE,
 	RX_STATE,
@@ -133,6 +134,11 @@ struct TimeTracking
 	uint32_t timeAccumulator; // This variable will accumulate the elapsed time in milliseconds.
 };
 
+struct DataTxBuffer
+{
+    uint8_t data[1000][32];
+};
+
 ///////////////////// Variable Declarations  ////////////////////////////////////////////////////////
 
 ////// UART Declarations  //////////////////////////////////////
@@ -167,6 +173,7 @@ volatile uint8_t acq_cmd_param = TAKE_DISTANCE_MEASUREMENT_WITH_BIAS_CORRECTION;
 //////  Commands Declarations  //////////////////////////////////////
 struct DataToTransmit Transmit = {0};  // This initializes all members to 0
 struct DataToReceive Receive = {0};    // This initializes all members to 0
+struct DataTxBuffer TxData = {0}; // This initializes all members to 0
 
 
 //////  NRF24L01 Declarations  //////////////////////////////////////
@@ -264,7 +271,8 @@ int main(void)
   uint32_t pulse_ch4 = 25000U; // channel 2
   char ReceiveCmd[PLD_S];
   uint8_t stopState = 0; // This variable is used to determine whether the car should stop after executing a command, which will be set based on the received command and will influence the behavior of the main loop in terms of whether to return to WAIT_STATE or stay in the current state after executing a motor action.
-//  char msg[50];
+  int k = 0; // increment counter for data acquisition
+  int dataAcqFlag  = 0;
 
   // Set up time Adder for timestamping and timing control
   Tset.milliAdder = Tset.set_timer_period / 1000;
@@ -425,12 +433,31 @@ int main(void)
         	        }
         		  nrf24_transmit(Transmit.cmd, PLD_S);
 
+
         	  }
 
 
               // Now execute the motor command
               currentState = nextState;
               break;
+
+    	  case STATE_DATA_ACQUISITION:
+    		  // This state is for testing the data acquisition from the RC car.
+    		  // Once the data is received, it will get stored in the CmRxBuffer so by the time it receives
+    		  // 1000 data points it will stop and go back to the wait state and will also debug to check.
+    		  // Store the receive data in the buffer.
+    		  if (k < 1000)
+    		  {
+    			  memcpy(TxData.data[k], Transmit.cmd, PLD_S);
+    			  k++;
+    			  currentState = nextState; // Stay in receive state to continue receiving data until we have 1000 data points tored in the buffer
+    		  }
+    		  else
+    		  {
+    		  	currentState = nextState; // After storing 1000 data points, switch back to wait state
+    		  }
+
+    		  break;
 
           // ============ MOTOR ACTIONS ============
 
