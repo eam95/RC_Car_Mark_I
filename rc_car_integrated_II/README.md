@@ -23,6 +23,8 @@ The RC car is toggling the NRF24L01 from listen/talking mode (Rx/Tx mode) every 
     - Once it Receives a command to stop the car it will quit measuring.
     - To verify the RC car sensors are actually measuring the UART compability is added so it be easier to debug.
         - Baud rate for board is 115200 bits/s
+        - If running on Debian OS and wish to use UART to debug picocom can be run on the terminal.
+            -  picocom -b 115200 /dev/ttyACM0
 
 ### STM32CubeIDE
 Built with STM32CubeIDE on Debian. Open the workspace and import both projects.

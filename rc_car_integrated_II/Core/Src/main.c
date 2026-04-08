@@ -148,7 +148,7 @@ uint8_t UART3_rxBuffer[UART_DMA_RX_SIZE]; // DMA buffer
 struct TimeTracking Tset =
 {
     .seconds_counter = 0,
-    .set_timer_period = 10000,
+    .set_timer_period = 20000,
 	.stamped_time = 0,
 	.milliAdder = 0,
 	.timeAccumulator = 0
@@ -822,7 +822,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 250-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 65535;
+  htim3.Init.Period = Tset.set_timer_period-1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
