@@ -154,7 +154,7 @@ uint8_t UART3_rxBuffer[UART_DMA_RX_SIZE]; // DMA buffer
 struct TimeTracking Tset =
 {
     .seconds_counter = 0,
-    .set_timer_period = 20000,
+    .set_timer_period = 10000,
 	.stamped_time = 0,
 	.milliAdder = 0,
 	.timeAccumulator = 0
@@ -275,7 +275,7 @@ int main(void)
   int dataAcqFlag  = 0;
 
   // Set up time Adder for timestamping and timing control
-  Tset.milliAdder = Tset.set_timer_period / 1000;
+  Tset.milliAdder = 2 * Tset.set_timer_period / 1000;
 
 
   /* Sanity checks: ensure values do not exceed ARR (which is htim1.Init.Period) */
