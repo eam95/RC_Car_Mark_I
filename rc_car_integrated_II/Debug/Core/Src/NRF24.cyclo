@@ -40,10 +40,10 @@
 ../Core/Src/NRF24.c:484:6:nrf24_type_to_uint8_t	2
 ../Core/Src/NRF24.c:492:8:nrf24_uint8_t_to_type	2
 ../Core/Src/NRF24.c:505:9:nrf24_transmit	2
-../Core/Src/NRF24.c:536:6:nrf24_transmit_no_ack	1
-../Core/Src/NRF24.c:553:6:nrf24_transmit_rx_ack_pld	2
-../Core/Src/NRF24.c:570:9:nrf24_carrier_detect	1
-../Core/Src/NRF24.c:575:9:nrf24_data_available	2
-../Core/Src/NRF24.c:588:6:nrf24_receive	1
-../Core/Src/NRF24.c:600:6:nrf24_defaults	2
-../Core/Src/NRF24.c:634:6:nrf24_init	1
+../Core/Src/NRF24.c:539:6:nrf24_transmit_no_ack	1
+../Core/Src/NRF24.c:556:6:nrf24_transmit_rx_ack_pld	2
+../Core/Src/NRF24.c:573:9:nrf24_carrier_detect	1
+../Core/Src/NRF24.c:578:9:nrf24_data_available	2
+../Core/Src/NRF24.c:591:6:nrf24_receive	1
+../Core/Src/NRF24.c:603:6:nrf24_defaults	2
+../Core/Src/NRF24.c:637:6:nrf24_init	1

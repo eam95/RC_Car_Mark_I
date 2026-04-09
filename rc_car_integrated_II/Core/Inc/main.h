@@ -83,6 +83,21 @@ void Error_Handler(void);
 #define LED_YELLOW_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
+#define UART_DMA_RX_SIZE 32
+#define PLD_S 32
+typedef struct
+{
+	// Disregarding the cmd, all the variables byte size should add up to 18-20bytes
+		uint8_t cmd[PLD_S]; // Will grab all the structure variables compress to string and transmit through NRF24L01
+		int32_t a_x; // Store the acceleration in x-axis
+	    int32_t a_y; // Store the acceleration in y-axis
+	    int32_t a_z; // Store the acceleration in z-axis
+	    uint16_t distance_cm; // Store the distance measurement in centimeters
+	    char stationaryFlag;  // This is Flag to indicate back to the transmitter whether there is a stationary object when the car is accelerating.
+	    uint32_t timestamp; // in milliseconds
+	    uint8_t transmitFlag; // This flag is used to indicate whether the data is ready to be transmitted, which will be set after getting the sensor data and will trigger the transmission in the main loop when in TX_STATE.
+} DataToTransmit;
+extern DataToTransmit Transmit; // Added the transmit structure so I can access it in the other files.
 
 /* USER CODE END Private defines */
 

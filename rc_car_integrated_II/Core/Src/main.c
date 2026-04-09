@@ -109,6 +109,7 @@ struct DataToTransmit
     uint16_t distance_cm; // Store the distance measurement in centimeters
     char stationaryFlag;  // This is Flag to indicate back to the transmitter whether there is a stationary object when the car is accelerating.
     uint32_t timestamp; // in milliseconds
+    uint8_t transmitFlag; // This flag is used to indicate whether the data is ready to be transmitted, which will be set after getting the sensor data and will trigger the transmission in the main loop when in TX_STATE.
 
 };
 
@@ -171,7 +172,8 @@ volatile uint8_t acq_cmd_param = TAKE_DISTANCE_MEASUREMENT_WITH_BIAS_CORRECTION;
 
 
 //////  Commands Declarations  //////////////////////////////////////
-struct DataToTransmit Transmit = {0};  // This initializes all members to 0
+// In the main.h file I made the Transmit structure extern so I can access it in the other files, and here in the main.c file I define it.
+DataToTransmit Transmit = {0}; // Not struct DataToTransmit  // This initializes all members to 0.
 struct DataToReceive Receive = {0};    // This initializes all members to 0
 struct DataTxBuffer TxData = {0}; // This initializes all members to 0
 
@@ -272,7 +274,6 @@ int main(void)
   char ReceiveCmd[PLD_S];
   uint8_t stopState = 0; // This variable is used to determine whether the car should stop after executing a command, which will be set based on the received command and will influence the behavior of the main loop in terms of whether to return to WAIT_STATE or stay in the current state after executing a motor action.
   int k = 0; // increment counter for data acquisition
-  int dataAcqFlag  = 0;
 
   // Set up time Adder for timestamping and timing control
   Tset.milliAdder = Tset.set_timer_period / 1000;
@@ -331,7 +332,7 @@ int main(void)
               if (nrf24_data_available())
               {
                   stopState = 0; // Clear the stopState flag when new data is received
-            	  nrf24_receive(Receive.cmd, sizeof(Receive.cmd));
+            	     nrf24_receive(Receive.cmd, sizeof(Receive.cmd));
                   nrf24_clear_rx_dr();
                   strncpy(ReceiveCmd, (char *)Receive.cmd, PLD_S - 1);
                   ReceiveCmd[PLD_S - 1] = '\0';
@@ -432,6 +433,8 @@ int main(void)
         	            HAL_UART_Transmit(&huart3, uart_buf, len + 2, HAL_MAX_DELAY);
         	        }
         		  nrf24_transmit(Transmit.cmd, PLD_S);
+        		  currentState = STATE_DATA_ACQUISITION;
+        		  break;
 
 
         	  }
@@ -439,6 +442,7 @@ int main(void)
 
               // Now execute the motor command
               currentState = nextState;
+
               break;
 
     	  case STATE_DATA_ACQUISITION:
@@ -446,8 +450,9 @@ int main(void)
     		  // Once the data is received, it will get stored in the CmRxBuffer so by the time it receives
     		  // 1000 data points it will stop and go back to the wait state and will also debug to check.
     		  // Store the receive data in the buffer.
-    		  if (k < 1000)
+    		  if (k < 1000 && Transmit.transmitFlag == 1) // Only store data if we haven't reached 1000 data points and the stopState flag is not set
     		  {
+    			  Transmit.transmitFlag = 0; // Reset the flag to indicate that data is getting stored in the buffer.
     			  memcpy(TxData.data[k], Transmit.cmd, PLD_S);
     			  k++;
     			  currentState = nextState; // Stay in receive state to continue receiving data until we have 1000 data points tored in the buffer
