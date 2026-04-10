@@ -73,7 +73,8 @@ typedef enum
 	STATE_RECEIVE,
 	STATE_SET_TRANSMIT_MODE,
 	STATE_SET_RECEIVE_MODE,
-	STATE_DATA_ACQUISITION
+	STATE_DATA_ACQUISITION,
+	STATE_FORCE_RC_STOP
 } FSM_State;
 FSM_State current_state = STATE_WAIT; // Start in WAIT state, waiting for UART command to trigger transmit or timer interrupt to trigger receive
 /* USER CODE END PTD */
@@ -200,6 +201,10 @@ int main(void)
   HAL_Delay(500);
 //  uint16_t t = 500-1; // 50 microseconds delay for testing
   uint16_t t = adjusteTimeForTicks(500); // Adjust 50 microseconds to timer ticks
+  uint8_t forceStop[PLD_S] = "C,0";
+  memset(forceStop + strlen((char *)forceStop), '\0', PLD_S - strlen((char *)forceStop) - 1);
+  forceStop[PLD_S - 1] = '\n';
+  uint8_t forceStopFlag = 0; // This flag is used to indicate whether the force stop command has been sent, which will trigger the transmission of the force stop command to the RC car through NRF24L01 in the transmit state of the main loop when it reaches 1000 data points stored in the buffer, ensuring that we only send the force stop command once after reaching 1000 data points to prevent continuous transmission of the force stop command.
 
 
   /* USER CODE END 2 */
@@ -296,8 +301,17 @@ int main(void)
 			  nrf24_transmit(Msg.RxCmd, sizeof(Msg.RxCmd));
 			  cmdFlag = 0; // Reset the command flag after transmitting, so it will wait for the next valid command to trigger the next transmission.
 		  }
+		  else if (forceStopFlag == 1)
+		  {
+			  shift_register_send(YELLOW_LED_EXT | GREEN_LED_EXT); // Only LED A ON
+			  nrf24_transmit(forceStop, sizeof(forceStop));
+			  current_state = STATE_SET_RECEIVE_MODE; // After sending the force stop command, switch back to receive mode to wait for any further data from the RC car, which will allow us to monitor whether the RC car has stopped successfully after receiving the force stop command, and also prevent continuous transmission of the force stop command in the transmit state.
+//			  forceStopFlag = 0; // Reset the force stop flag after transmitting, so it will wait for the next valid command to trigger the next transmission.
+		  }
 //		  current_state = STATE_WAIT;
 		  break;
+
+
 	  case STATE_DATA_ACQUISITION:
 		  // This state is for testing the data acquisition from the RC car.
 		  // Once the data is received, it will get stored in the CmRxBuffer so by the time it receives
@@ -309,10 +323,21 @@ int main(void)
 			  k++;
 			  current_state = STATE_WAIT; // Stay in receive state to continue receiving data until we have 1000 data points tored in the buffer
 		  }
+		  else if (k == 1000)
+		  {
+			  current_state = STATE_FORCE_RC_STOP; // After storing 1000 data points, switch to force stop state to send the stop command to the RC car, which will trigger the RC car to stop and prevent any further data transmission from the RC car, ensuring that we only have 1000 data points stored in the buffer for analysis.
+		  }
 		  else
 		  {
 		  	current_state = STATE_WAIT; // After storing 1000 data points, switch back to wait state
 		  }
+
+		  break;
+
+
+	  case STATE_FORCE_RC_STOP:
+		  // This state forces the RC car to stop soon as it reaches 1000 points.
+		  forceStopFlag = 1; // Set the force stop flag to indicate that the force stop command should be sent in the transmit state of the main loop, which will trigger the transmission of the force stop command to the RC car through NRF24L01 in the transmit state of the main loop when it reaches 1000 data points stored in the buffer, ensuring that we only send the force stop command once after reaching 1000 data points to prevent continuous transmission of the force stop command.
 
 		  break;
 
