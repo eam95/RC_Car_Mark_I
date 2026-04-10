@@ -88,7 +88,8 @@ typedef enum
 	CHANGE_RX_STATE,
 	CHANGE_TX_STATE,
 	RX_STATE,
-	TX_STATE
+	TX_STATE,
+	STATE_FORCE_STOP
 
 } StateType;
 StateType currentState = WAIT_STATE;
@@ -457,6 +458,10 @@ int main(void)
     			  k++;
     			  currentState = nextState; // Stay in receive state to continue receiving data until we have 1000 data points tored in the buffer
     		  }
+    		  else if (k == 1000)
+			  {
+				  currentState = STATE_FORCE_STOP; // After storing 1000 data points, switch to force stop state to send the stop command to the RC car, which will trigger the RC car to stop and prevent any further data transmission from the RC car, ensuring that we only have 1000 data points stored in the buffer for analysis.
+			  }
     		  else
     		  {
     		  	currentState = nextState; // After storing 1000 data points, switch back to wait state
@@ -487,6 +492,13 @@ int main(void)
               stopState = 1; // Set the stopState flag to indicate that the car should stop after coasting
               currentState = WAIT_STATE;
               break;
+
+          case STATE_FORCE_STOP:
+			  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+			  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 0);
+			  stopState = 1; // Set the stopState flag to indicate that the car should stop after executing the force stop command
+			  currentState = WAIT_STATE;
+			  break;
 
           case SET_PID_STATE:
               // PID setup — placeholder
