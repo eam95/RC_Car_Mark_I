@@ -8,6 +8,9 @@ This is my master's project for an attempt to make an adaptive cruise controller
 - RC car has accelerometer to measure its velocity, and LIDAR to measure the relative distance for any leading cars.
 - Data acquisition measured for both LIDAR and Accelerometer based on the sample time.
 
+![RC Car](docs/images/RC_Project_Display.jpg)
+
+
 ## Hardware
 
 ### RC Car
