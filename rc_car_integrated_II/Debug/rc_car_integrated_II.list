@@ -33,15 +33,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_macro  00036b40  00000000  00000000  0003d3f9  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_line   000236c0  00000000  00000000  00073f39  2**0
+ 15 .debug_line   000236c2  00000000  00000000  00073f39  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_str    0015714b  00000000  00000000  000975f9  2**0
+ 16 .debug_str    0015714b  00000000  00000000  000975fb  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .comment      00000043  00000000  00000000  001ee744  2**0
+ 17 .comment      00000043  00000000  00000000  001ee746  2**0
                   CONTENTS, READONLY
- 18 .debug_frame  00007ca8  00000000  00000000  001ee788  2**2
+ 18 .debug_frame  00007ca8  00000000  00000000  001ee78c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_line_str 00000065  00000000  00000000  001f6430  2**0
+ 19 .debug_line_str 00000065  00000000  00000000  001f6434  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -5837,30 +5837,29 @@ uint8_t nrf24_transmit(uint8_t *data, uint8_t size)
  8002df2:	4603      	mov	r3, r0
  8002df4:	f003 0310 	and.w	r3, r3, #16
  8002df8:	2b00      	cmp	r3, #0
- 8002dfa:	d00e      	beq.n	8002e1a <nrf24_transmit+0x76>
+ 8002dfa:	d005      	beq.n	8002e08 <nrf24_transmit+0x64>
 	{
+		// Transmission failed, max retries reached
 		nrf24_clear_max_rt();
  8002dfc:	f7ff fe9e 	bl	8002b3c <nrf24_clear_max_rt>
 		nrf24_flush_tx();
  8002e00:	f7ff fe39 	bl	8002a76 <nrf24_flush_tx>
-		// Added a toggle LED and flag to indicate that transmission occured
-		// Help ttrack on logic analyzer and also will stash the data into 1000 point buffer to compare the data transmitted and received from transmitter.
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
- 8002e04:	f44f 4180 	mov.w	r1, #16384	@ 0x4000
- 8002e08:	4807      	ldr	r0, [pc, #28]	@ (8002e28 <nrf24_transmit+0x84>)
- 8002e0a:	f004 ff0a 	bl	8007c22 <HAL_GPIO_TogglePin>
-		Transmit.transmitFlag = 1;
- 8002e0e:	4b07      	ldr	r3, [pc, #28]	@ (8002e2c <nrf24_transmit+0x88>)
- 8002e10:	2201      	movs	r2, #1
- 8002e12:	f883 2034 	strb.w	r2, [r3, #52]	@ 0x34
 		return 1;
- 8002e16:	2301      	movs	r3, #1
- 8002e18:	e000      	b.n	8002e1c <nrf24_transmit+0x78>
+ 8002e04:	2301      	movs	r3, #1
+ 8002e06:	e009      	b.n	8002e1c <nrf24_transmit+0x78>
 	}
 	else
 	{
-//	HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
-//	HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
+		// Added a toggle LED and flag to indicate that transmission occured
+		// Help track on logic analyzer and also will stash the data into 1000 point buffer to compare the data transmitted and received from transmitter.
+		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+ 8002e08:	f44f 4180 	mov.w	r1, #16384	@ 0x4000
+ 8002e0c:	4806      	ldr	r0, [pc, #24]	@ (8002e28 <nrf24_transmit+0x84>)
+ 8002e0e:	f004 ff08 	bl	8007c22 <HAL_GPIO_TogglePin>
+		Transmit.transmitFlag = 1;
+ 8002e12:	4b06      	ldr	r3, [pc, #24]	@ (8002e2c <nrf24_transmit+0x88>)
+ 8002e14:	2201      	movs	r2, #1
+ 8002e16:	f883 2034 	strb.w	r2, [r3, #52]	@ 0x34
 	return 0;
  8002e1a:	2300      	movs	r3, #0
 	}

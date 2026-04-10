@@ -8177,34 +8177,34 @@ LOAD /opt/st/stm32cubeide_1.19.0/plugins/com.st.stm32cube.ide.mcu.externaltools.
  .debug_macro   0x00036585      0x2ed ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.o
  .debug_macro   0x00036872      0x2ce ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.o
 
-.debug_line     0x00000000    0x236c0
+.debug_line     0x00000000    0x236c2
  .debug_line    0x00000000      0xa3e ./Core/Src/GarminLidarLiteV3.o
  .debug_line    0x00000a3e     0x132b ./Core/Src/GarminLidarV3_Config.o
  .debug_line    0x00001d69      0xe12 ./Core/Src/LIS3DH.o
  .debug_line    0x00002b7b     0x186a ./Core/Src/LIS3DH_Config.o
- .debug_line    0x000043e5      0xfd1 ./Core/Src/NRF24.o
- .debug_line    0x000053b6      0x911 ./Core/Src/commandReader.o
- .debug_line    0x00005cc7      0x8d5 ./Core/Src/delay.o
- .debug_line    0x0000659c     0x10fc ./Core/Src/main.o
- .debug_line    0x00007698      0xaeb ./Core/Src/stm32h7xx_hal_msp.o
- .debug_line    0x00008183      0x94f ./Core/Src/stm32h7xx_it.o
- .debug_line    0x00008ad2      0x4bd ./Core/Src/sysmem.o
- .debug_line    0x00008f8f      0xa34 ./Core/Src/system_stm32h7xx.o
- .debug_line    0x000099c3       0x7b ./Core/Startup/startup_stm32h723zgtx.o
- .debug_line    0x00009a3e      0xea9 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.o
- .debug_line    0x0000a8e7      0xe02 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.o
- .debug_line    0x0000b6e9     0x279c ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma.o
- .debug_line    0x0000de85      0xc8d ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.o
- .debug_line    0x0000eb12     0x3b8f ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c.o
- .debug_line    0x000126a1      0x9a6 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c_ex.o
- .debug_line    0x00013047      0xee7 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr_ex.o
- .debug_line    0x00013f2e     0x1426 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.o
- .debug_line    0x00015354     0x1cda ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc_ex.o
- .debug_line    0x0001702e     0x21aa ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.o
- .debug_line    0x000191d8     0x3ff8 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.o
- .debug_line    0x0001d1d0     0x1e36 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.o
- .debug_line    0x0001f006     0x390c ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.o
- .debug_line    0x00022912      0xdae ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.o
+ .debug_line    0x000043e5      0xfd3 ./Core/Src/NRF24.o
+ .debug_line    0x000053b8      0x911 ./Core/Src/commandReader.o
+ .debug_line    0x00005cc9      0x8d5 ./Core/Src/delay.o
+ .debug_line    0x0000659e     0x10fc ./Core/Src/main.o
+ .debug_line    0x0000769a      0xaeb ./Core/Src/stm32h7xx_hal_msp.o
+ .debug_line    0x00008185      0x94f ./Core/Src/stm32h7xx_it.o
+ .debug_line    0x00008ad4      0x4bd ./Core/Src/sysmem.o
+ .debug_line    0x00008f91      0xa34 ./Core/Src/system_stm32h7xx.o
+ .debug_line    0x000099c5       0x7b ./Core/Startup/startup_stm32h723zgtx.o
+ .debug_line    0x00009a40      0xea9 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.o
+ .debug_line    0x0000a8e9      0xe02 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.o
+ .debug_line    0x0000b6eb     0x279c ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma.o
+ .debug_line    0x0000de87      0xc8d ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.o
+ .debug_line    0x0000eb14     0x3b8f ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c.o
+ .debug_line    0x000126a3      0x9a6 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c_ex.o
+ .debug_line    0x00013049      0xee7 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr_ex.o
+ .debug_line    0x00013f30     0x1426 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.o
+ .debug_line    0x00015356     0x1cda ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc_ex.o
+ .debug_line    0x00017030     0x21aa ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.o
+ .debug_line    0x000191da     0x3ff8 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.o
+ .debug_line    0x0001d1d2     0x1e36 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.o
+ .debug_line    0x0001f008     0x390c ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.o
+ .debug_line    0x00022914      0xdae ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.o
 
 .debug_str      0x00000000   0x15714b
  .debug_str     0x00000000   0x15714b ./Core/Src/GarminLidarLiteV3.o

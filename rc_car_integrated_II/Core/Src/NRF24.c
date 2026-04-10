@@ -520,18 +520,17 @@ uint8_t nrf24_transmit(uint8_t *data, uint8_t size)
 
 	if(nrf24_r_status() & (1 << MAX_RT))
 	{
+		// Transmission failed, max retries reached
 		nrf24_clear_max_rt();
 		nrf24_flush_tx();
-		// Added a toggle LED and flag to indicate that transmission occured
-		// Help ttrack on logic analyzer and also will stash the data into 1000 point buffer to compare the data transmitted and received from transmitter.
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-		Transmit.transmitFlag = 1;
 		return 1;
 	}
 	else
 	{
-//	HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
-//	HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
+		// Added a toggle LED and flag to indicate that transmission occured
+		// Help track on logic analyzer and also will stash the data into 1000 point buffer to compare the data transmitted and received from transmitter.
+		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		Transmit.transmitFlag = 1;
 	return 0;
 	}
 }
