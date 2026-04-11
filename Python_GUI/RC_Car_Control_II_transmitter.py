@@ -32,7 +32,8 @@ import serial.tools.list_ports
 
 from PyQt5.QtCore import Qt
 import threading
-
+import pandas
+import matplotlib.pyplot as plt
 import time
 import os
 
@@ -53,11 +54,14 @@ def formatTwoWordData(data):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
+        # The message box to show what was transmited.
         self.text_box = QTextEdit(self)
-        self.text_box.setGeometry(20, 600, 900, 200)
+        self.text_box.setGeometry(20, 400, 400, 200)
         self.text_box.setReadOnly(True)
-
+       # The message to display the data receive from the transmitter MCU.
+        self.RxText_box = QTextEdit(self)
+        self.RxText_box.setGeometry(500, 400, 400, 200)
+        self.RxText_box.setReadOnly(True)
 
         self.setWindowTitle("RC Car Controller")
         self.setGeometry(100, 100, 1000, 900)
