@@ -1,7 +1,4 @@
 # from GarminDialogs import acquireCommandChangeWindow, SensitivityWindow, AcqMeasureSettingsDialog, SemiBurstMeasureSettingsDialog
-import sys
-from csv import excel
-
 # Ensure Qt environment variables are set before importing PyQt5/initializing Qt.
 # On Wayland some Qt calls trigger the warning:
 #   "qt.qpa.wayland: Wayland does not support QWindow::requestActivate()"
@@ -22,22 +19,13 @@ if os.environ.get('XDG_SESSION_TYPE', '').lower() == 'wayland' or 'WAYLAND_DISPL
         os.environ.setdefault('QT_QPA_PLATFORM', 'xcb')
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel,
-                             QComboBox, QPushButton, QTextEdit, QFileDialog,
-                             QSlider, QRadioButton, QButtonGroup,
-                             QDialog, QVBoxLayout, QHBoxLayout, QLineEdit,
-                             QWidget, QMessageBox, QSpinBox)
+                             QComboBox, QPushButton, QTextEdit,
+                             QSlider, QRadioButton, QButtonGroup)
+from PyQt5.QtCore import QTimer, Qt
 
 import serial
 import serial.tools.list_ports
-
-from PyQt5.QtCore import Qt
-import threading
-import pandas
-import matplotlib.pyplot as plt
 import time
-import os
-
-from PyQt5.QtCore import pyqtSignal, QObject, QTimer
 
 
 
@@ -54,6 +42,8 @@ def formatTwoWordData(data):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.serial_port = None
+
         # The message box to show what was transmited.
         self.text_box = QTextEdit(self)
         self.text_box.setGeometry(20, 400, 400, 200)
@@ -97,7 +87,8 @@ class MainWindow(QMainWindow):
         self.pwm_label = QLabel("PWM value: 0", self)
         self.pwm_label.setGeometry(20, 190, 120, 30)
 
-        self.pwm_slider = QSlider(Qt.Horizontal, self)
+        # Corrected the QSlider orientation by explicitly using Qt.Orientation.Horizontal
+        self.pwm_slider = QSlider(Qt.Orientation.Horizontal, self)
         self.pwm_slider.setGeometry(150, 190, 400, 30)
         self.pwm_slider.setRange(0, 65535)  # use 0-100 if your MCU expects ticks (0-65535)
         self.pwm_slider.setTickInterval(25)
@@ -142,13 +133,36 @@ class MainWindow(QMainWindow):
         if self.serial_port and self.serial_port.is_open:
             try:
                 self.serial_port.write(data)
-                print(f"Sent '{data}' to {self.serial_port.port} at {self.serial_port.baudrate} baud.")
+                # print(f"Sent '{data}' to {self.serial_port.port} at {self.serial_port.baudrate} baud.")
                 data = data.decode(errors='ignore').replace('\0', '').replace('\n', '').strip()
                 self.text_box.append(f"Sent: {data}")
             except Exception as e:
                 print(f"Error sending data: {e}")
         else:
             print("Serial port is not open.")
+
+    # Updated the read_serial_data function to handle UART data more efficiently and added debugging statements.
+    def read_serial_data(self):
+        buffer = []  # To store received data
+        while self.serial_port and self.serial_port.is_open:
+            try:
+                if self.serial_port.in_waiting > 0:
+                    data = self.serial_port.readline().decode(errors='ignore').strip()
+                    if data:
+                        buffer.append(data)  # Append received data to the buffer
+                        self.RxText_box.append(f"Received: {data}")
+                        print(f"Debug: Received data - {data}")  # Debugging statement
+                else:
+                    # If no data is waiting, assume transmission is complete
+                    if buffer:
+                        print("\nComplete Data Transmission:")
+                        print("\n".join(buffer))  # Print all received data
+                        buffer.clear()  # Clear the buffer for the next transmission
+            except Exception as e:
+                print(f"Error reading data: {e}")
+                break
+            # Add a small delay to avoid busy waiting
+            time.sleep(0.02)  # 20ms delay
 
 
     def refresh_com_ports(self):
@@ -161,6 +175,7 @@ class MainWindow(QMainWindow):
         baud = int(self.baud_combo.currentText())
         com = self.com_combo.currentText()
         try:
+            # self.serial_port.reset_input_buffer()  # Clear old data
             self.serial_port = serial.Serial(com, baud, timeout=0.1)
             self.dir_disabled_rb.setEnabled(True)
             self.dir_forward_rb.setEnabled(True)
@@ -174,6 +189,8 @@ class MainWindow(QMainWindow):
         if self.serial_port and self.serial_port.is_open:
             self.serial_port.close()
             self.text_box.append(f"Disconnected from {self.serial_port.port}.")
+            self.serial_port = None
+
             self.pwm_slider.setEnabled(False)  # enabled when connected
             self.dir_disabled_rb.setEnabled(False)
             self.dir_forward_rb.setEnabled(False)
@@ -233,6 +250,7 @@ class MainWindow(QMainWindow):
             self.send_serial_data(cmd)
 
 if __name__ == "__main__":
+    import sys
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
