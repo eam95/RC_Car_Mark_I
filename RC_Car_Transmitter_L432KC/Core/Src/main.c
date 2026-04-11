@@ -321,6 +321,8 @@ int main(void)
 		  {
 			  memcpy(CmRxBuffer.data[k], RC_Data.cmd, PLD_S);
 			  k++;
+			  // Send the data to UART TX for monitoring the received data in real-time, which will allow us to verify the data reception and also monitor the data logging reliability by checking the received data on the GUI in real-time as it is being stored in the buffer, ensuring that we can identify any potential issues with data reception or logging as they occur.
+			  HAL_UART_Transmit(&huart2, RC_Data.cmd, strlen((char *)RC_Data.cmd), HAL_MAX_DELAY);
 			  current_state = STATE_WAIT; // Stay in receive state to continue receiving data until we have 1000 data points tored in the buffer
 		  }
 		  else if (k == 1000)
