@@ -285,7 +285,6 @@ int main(void)
 //			  uint16_t len = snprintf((char *)Msg.TxData, sizeof(Msg.TxData), "Timestamp: %lu ms, Distance: %u cm, Acceleration: (%ld, %ld, %ld) mg\r\n", Receive.timestamp, Receive.distance_cm, Receive.a_x, Receive.a_y, Receive.a_z);
 			  // Send the Receive.cmd
 			  memcpy(Msg.TxData, RC_Data.cmd, PLD_S);
-			  HAL_UART_Transmit(&huart2, Msg.TxData, strlen((char *)Msg.TxData), HAL_MAX_DELAY);
 //			  current_state = STATE_WAIT; // Go back to wait state after receiving data
 			  current_state = STATE_DATA_ACQUISITION; // Switch to data acquisition state to store the received data in the buffer for monitoring data logging reliability
 
@@ -319,10 +318,14 @@ int main(void)
 		  // Store the receive data in the buffer.
 		  if (k < 1000)
 		  {
+
 			  memcpy(CmRxBuffer.data[k], RC_Data.cmd, PLD_S);
 			  k++;
 			  // Send the data to UART TX for monitoring the received data in real-time, which will allow us to verify the data reception and also monitor the data logging reliability by checking the received data on the GUI in real-time as it is being stored in the buffer, ensuring that we can identify any potential issues with data reception or logging as they occur.
-			  HAL_UART_Transmit(&huart2, RC_Data.cmd, strlen((char *)RC_Data.cmd), HAL_MAX_DELAY);
+			  HAL_UART_Transmit(&huart2, RC_Data.cmd, PLD_S, HAL_MAX_DELAY);
+
+
+
 			  current_state = STATE_WAIT; // Stay in receive state to continue receiving data until we have 1000 data points tored in the buffer
 		  }
 		  else if (k == 1000)
