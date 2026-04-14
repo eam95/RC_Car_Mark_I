@@ -26,6 +26,7 @@ from PyQt5.QtCore import QTimer, Qt
 import serial
 import serial.tools.list_ports
 import time
+import threading
 
 
 
@@ -143,26 +144,18 @@ class MainWindow(QMainWindow):
 
     # Updated the read_serial_data function to handle UART data more efficiently and added debugging statements.
     def read_serial_data(self):
-        buffer = []  # To store received data
+        # The self.serial_port will check if there is serial communication
+        # The self.serial_port.is_open will check if there is connection or it got disconnected.
         while self.serial_port and self.serial_port.is_open:
             try:
                 if self.serial_port.in_waiting > 0:
                     data = self.serial_port.readline().decode(errors='ignore').strip()
                     if data:
-                        buffer.append(data)  # Append received data to the buffer
-                        self.RxText_box.append(f"Received: {data}")
-                        print(f"Debug: Received data - {data}")  # Debugging statement
-                else:
-                    # If no data is waiting, assume transmission is complete
-                    if buffer:
-                        print("\nComplete Data Transmission:")
-                        print("\n".join(buffer))  # Print all received data
-                        buffer.clear()  # Clear the buffer for the next transmission
+                        print(f"Received: {str(data)}")  # console verify
             except Exception as e:
                 print(f"Error reading data: {e}")
                 break
-            # Add a small delay to avoid busy waiting
-            time.sleep(0.02)  # 20ms delay
+
 
 
     def refresh_com_ports(self):
@@ -181,6 +174,9 @@ class MainWindow(QMainWindow):
             self.dir_forward_rb.setEnabled(True)
             self.dir_backward_rb.setEnabled(True)
             self.text_box.append(f"Connected to {com} at {baud} baud.")
+            # Add threading in order to keep the GUI responsive while it is printing the data on the python console for now.
+            rx_thread = threading.Thread(target=self.read_serial_data, daemon=True)
+            rx_thread.start()
 
         except Exception as e:
             self.text_box.append(f'Error connecting: {e}')
