@@ -15,5 +15,6 @@ The packages used for the GUI will primarily be PyQt5, and to communicate to the
 - A Rx texbox was added based on success on the previous day.
 - Threading had to be add as a test run on print the data it received on the pycharm console.
 - After getting the python GUI program to print the data on the console, the Rx textbox was able to display the data it received.
-- ...
+- Here is the current GUI below.
+![RC Car](docs/images/pythonGUI/RxTextBoxOperational.png)
 
