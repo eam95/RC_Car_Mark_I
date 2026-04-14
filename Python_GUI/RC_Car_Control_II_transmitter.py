@@ -21,7 +21,8 @@ if os.environ.get('XDG_SESSION_TYPE', '').lower() == 'wayland' or 'WAYLAND_DISPL
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel,
                              QComboBox, QPushButton, QTextEdit,
                              QSlider, QRadioButton, QButtonGroup)
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer
+from PyQt5.QtGui import QFont
 
 import serial
 import serial.tools.list_ports
@@ -41,6 +42,9 @@ def formatTwoWordData(data):
     return twoWordFormat
 
 class MainWindow(QMainWindow):
+
+    rx_data_signal = pyqtSignal(str) # Help signal the Rx textbox to update
+
     def __init__(self):
         super().__init__()
         self.serial_port = None
@@ -49,10 +53,23 @@ class MainWindow(QMainWindow):
         self.text_box = QTextEdit(self)
         self.text_box.setGeometry(20, 400, 400, 200)
         self.text_box.setReadOnly(True)
+        # Label for the TX text box
+        self.tx_label = QLabel("Transmitted Data:", self)
+        self.tx_label.setGeometry(20, 375, 400, 25)
+
        # The message to display the data receive from the transmitter MCU.
         self.RxText_box = QTextEdit(self)
         self.RxText_box.setGeometry(500, 400, 400, 200)
         self.RxText_box.setReadOnly(True)
+        self.rx_data_signal.connect(self.append_rx_text)
+        # Label for the RX text box
+        self.rx_label = QLabel("Received Data:", self)
+        self.rx_label.setGeometry(500, 375, 400, 25)
+
+        bold_font = QFont()
+        bold_font.setBold(True)
+        self.tx_label.setFont(bold_font)
+        self.rx_label.setFont(bold_font)
 
         self.setWindowTitle("RC Car Controller")
         self.setGeometry(100, 100, 1000, 900)
@@ -128,7 +145,10 @@ class MainWindow(QMainWindow):
         self.pwm_debounce_timer.timeout.connect(self.send_debounced_pwm)
         self.pwm_slider.sliderReleased.connect(self.on_slider_released)
 
-
+    def append_rx_text(self, text):
+        self.RxText_box.append(text)
+        self.RxText_box.verticalScrollBar().setValue(
+            self.RxText_box.verticalScrollBar().maximum())
 
     def send_serial_data(self, data):
         if self.serial_port and self.serial_port.is_open:
@@ -156,7 +176,10 @@ class MainWindow(QMainWindow):
                         ax = float(data_partitions[2])
                         ay = float(data_partitions[3])
                         az = float(data_partitions[4])
-                        print(f"Time: {t} ms, Distance: {x} m, Accel X: {ax} g, Accel Y: {ay} g, Accel Z: {az} g")
+                        # print(f"Time: {t} ms, Distance: {x} cm, Accel X: {ax} g, Accel Y: {ay} g, Accel Z: {az} g")
+                        # self.RxText_box.append(f"t= {t} ms, x= {x}cm, ax= {ax} g, ay= {ay} g, az {az} g")
+                        # instead of self.RxText_box.append(...)
+                        self.rx_data_signal.emit(f"t= {t} ms, x= {x} cm, ax= {ax} g, ay= {ay} g, az= {az} g")
             except Exception as e:
                 print(f"Skipping bad line: {e}")  # log but don't break
 
