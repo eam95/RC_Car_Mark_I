@@ -144,17 +144,21 @@ class MainWindow(QMainWindow):
 
     # Updated the read_serial_data function to handle UART data more efficiently and added debugging statements.
     def read_serial_data(self):
-        # The self.serial_port will check if there is serial communication
-        # The self.serial_port.is_open will check if there is connection or it got disconnected.
         while self.serial_port and self.serial_port.is_open:
             try:
                 if self.serial_port.in_waiting > 0:
                     data = self.serial_port.readline().decode(errors='ignore').strip()
+                    data = data.replace('\x00', '').strip()  # strip null bytes
                     if data:
-                        print(f"Received: {str(data)}")  # console verify
+                        data_partitions = data.split(',')
+                        t = float(data_partitions[0])
+                        x = float(data_partitions[1])
+                        ax = float(data_partitions[2])
+                        ay = float(data_partitions[3])
+                        az = float(data_partitions[4])
+                        print(f"Time: {t} ms, Distance: {x} m, Accel X: {ax} g, Accel Y: {ay} g, Accel Z: {az} g")
             except Exception as e:
-                print(f"Error reading data: {e}")
-                break
+                print(f"Skipping bad line: {e}")  # log but don't break
 
 
 
