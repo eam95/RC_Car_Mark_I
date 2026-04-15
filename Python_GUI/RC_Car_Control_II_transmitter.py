@@ -28,6 +28,7 @@ import serial
 import serial.tools.list_ports
 import time
 import threading
+from RC_Car_SerialThread import SerialReaderThread
 
 
 
@@ -49,22 +50,26 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.serial_port = None
 
+        # setGeometry(x, y, width, height)
+        # x: distance from the left edge of the window (in pixels)
+        # y: distance from the top edge of the window (in pixels)
+        # width: width of the text box (in pixels)
+        # height: height of the text box (in pixels)
+
         # The message box to show what was transmited.
-        self.text_box = QTextEdit(self)
-        self.text_box.setGeometry(20, 400, 400, 200)
-        self.text_box.setReadOnly(True)
-        # Label for the TX text box
         self.tx_label = QLabel("Transmitted Data:", self)
-        self.tx_label.setGeometry(20, 375, 400, 25)
+        self.tx_label.setGeometry(20, 225, 400, 25)
+        self.text_box = QTextEdit(self)
+        self.text_box.setGeometry(20, 250, 400, 200)
+        self.text_box.setReadOnly(True)
 
        # The message to display the data receive from the transmitter MCU.
+        self.rx_label = QLabel("Received Data:", self)
+        self.rx_label.setGeometry(500, 225, 400, 25)
         self.RxText_box = QTextEdit(self)
-        self.RxText_box.setGeometry(500, 400, 400, 200)
+        self.RxText_box.setGeometry(450, 250, 450, 200)
         self.RxText_box.setReadOnly(True)
         self.rx_data_signal.connect(self.append_rx_text)
-        # Label for the RX text box
-        self.rx_label = QLabel("Received Data:", self)
-        self.rx_label.setGeometry(500, 375, 400, 25)
 
         bold_font = QFont()
         bold_font.setBold(True)
@@ -162,26 +167,14 @@ class MainWindow(QMainWindow):
         else:
             print("Serial port is not open.")
 
-    # Updated the read_serial_data function to handle UART data more efficiently and added debugging statements.
-    def read_serial_data(self):
-        while self.serial_port and self.serial_port.is_open:
-            try:
-                if self.serial_port.in_waiting > 0:
-                    data = self.serial_port.readline().decode(errors='ignore').strip()
-                    data = data.replace('\x00', '').strip()  # strip null bytes
-                    if data:
-                        data_partitions = data.split(',')
-                        t = float(data_partitions[0])
-                        x = float(data_partitions[1])
-                        ax = float(data_partitions[2])
-                        ay = float(data_partitions[3])
-                        az = float(data_partitions[4])
-                        # print(f"Time: {t} ms, Distance: {x} cm, Accel X: {ax} g, Accel Y: {ay} g, Accel Z: {az} g")
-                        # self.RxText_box.append(f"t= {t} ms, x= {x}cm, ax= {ax} g, ay= {ay} g, az {az} g")
-                        # instead of self.RxText_box.append(...)
-                        self.rx_data_signal.emit(f"t= {t} ms, x= {x} cm, ax= {ax} g, ay= {ay} g, az= {az} g")
-            except Exception as e:
-                print(f"Skipping bad line: {e}")  # log but don't break
+    # The QtThread called from the RC_Car_SerialThead where if it gets a signal a data is received it will print the data
+    def on_data_received(self, t, x, ax, ay, az):
+        msg = f"t= {t: .2f} s, x= {x: .1f} cm, ax= {ax: .0f} g, ay= {ay: .0f} g, az= {az: .0f} g"
+        print(msg)  # console
+        self.RxText_box.append(msg)
+        self.RxText_box.verticalScrollBar().setValue(
+            self.RxText_box.verticalScrollBar().maximum()
+        )
 
 
 
@@ -201,15 +194,21 @@ class MainWindow(QMainWindow):
             self.dir_forward_rb.setEnabled(True)
             self.dir_backward_rb.setEnabled(True)
             self.text_box.append(f"Connected to {com} at {baud} baud.")
-            # Add threading in order to keep the GUI responsive while it is printing the data on the python console for now.
-            rx_thread = threading.Thread(target=self.read_serial_data, daemon=True)
-            rx_thread.start()
+
+            # start QThread reader
+            self.reader_thread = SerialReaderThread(self.serial_port)
+            self.reader_thread.data_received.connect(self.on_data_received)
+            self.reader_thread.start()
 
         except Exception as e:
             self.text_box.append(f'Error connecting: {e}')
 
     def disconnect_com_port(self):
         if self.serial_port and self.serial_port.is_open:
+            # stop thread before closing port
+            if hasattr(self, 'reader_thread') and self.reader_thread.isRunning():
+                self.reader_thread.stop()
+
             self.serial_port.close()
             self.text_box.append(f"Disconnected from {self.serial_port.port}.")
             self.serial_port = None
