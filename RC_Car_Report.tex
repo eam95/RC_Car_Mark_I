@@ -1,0 +1,112 @@
+\documentclass[conference]{IEEEtran}
+
+% --- Packages ----------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% --- Code listing style ------------------------------------------------------
+\definecolor{lightgray}{rgb}{0.95,0.95,0.95}
+\definecolor{darkgreen}{rgb}{0.0,0.5,0.0}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{lightgray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{darkgreen},
+}
+
+% --- Title and Authors -------------------------------------------------------
+\title{Adaptive Cruise Controller for RC Car Using STM32}
+
+\author{
+  \IEEEauthorblockN{Erickson A.\ Mijangos}
+  \IEEEauthorblockA{Department of Electrical Engineering\\
+  University Name, City, State\\
+  email@university.edu}
+  \and
+  \IEEEauthorblockN{Dr.\ Mike Turi}
+  \IEEEauthorblockA{Department of Electrical Engineering\\
+  University Name, City, State\\
+  email@university.edu}
+}
+
+% =============================================================================
+\begin{document}
+
+\maketitle
+
+% --- Abstract ----------------------------------------------------------------
+\begin{abstract}
+Write your abstract here. Summarize the system, methods, and key results
+in 150--250 words.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Adaptive Cruise Control, STM32, PID Controller, LIDAR, NRF24L01, PyQt5, UART.
+\end{IEEEkeywords}
+
+% --- I. Introduction ---------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+
+Your introduction goes here.
+
+% --- II. Hardware Architecture -----------------------------------------------
+\section{Hardware Architecture}
+\label{sec:hardware}
+
+Your hardware section goes here.
+
+\subsection{RC Car Node}
+
+Subsection content.
+
+\subsection{Transmitter Node}
+
+Subsection content.
+
+% --- III. Firmware Design ----------------------------------------------------
+\section{Firmware Design}
+\label{sec:firmware}
+
+Your firmware section goes here.
+
+% --- IV. Python GUI ----------------------------------------------------------
+\section{Python Graphical User Interface}
+\label{sec:software}
+
+Your GUI section goes here.
+
+% --- V. Results --------------------------------------------------------------
+\section{Experimental Results}
+\label{sec:results}
+
+Your results go here.
+
+% --- VI. Conclusion ----------------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+
+Your conclusion goes here.
+
+% --- References --------------------------------------------------------------
+\begin{thebibliography}{9}
+
+\bibitem{stm32h723}
+STMicroelectronics, \textit{STM32H723ZG Datasheet}, Rev.~4, 2022.
+
+\bibitem{lidar}
+Garmin Ltd., \textit{LIDAR-Lite v3 Operation Manual}, 2017.
+
+\end{thebibliography}
+
+\end{document}
