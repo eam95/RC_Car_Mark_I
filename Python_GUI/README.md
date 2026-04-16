@@ -18,3 +18,9 @@ The packages used for the GUI will primarily be PyQt5, and to communicate to the
 - Here is the current GUI below.
 ![RC Car](../docs/images/pythonGUI/RxTextBoxOperational.png)
 
+### As of 4/16/26
+- Signal the GUI Requires more Threading controls a package the would support pyqt5 GUI threading feature is used as QtThreading.
+- Same functionality as previous GUI using threading package.
+- Added a custom import file known as RC_Car_SerialThread.py.
+- Here is the state diagram on how it works.
+![RC Car](../docs/images/pythonGUI/DisplayDataTextBoxThreadStateDiagram.png)
