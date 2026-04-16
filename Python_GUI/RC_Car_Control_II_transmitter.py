@@ -26,12 +26,12 @@ from PyQt5.QtGui import QFont
 
 import serial
 import serial.tools.list_ports
+import pyqtgraph as pg
+from collections import deque
 import time
-import threading
+
 from RC_Car_SerialThread import SerialReaderThread
-
-
-
+from RC_CarMainWindowWidgets import MainWindowWidgetSetup
 
 def formatTwoWordData(data):
     # normalize to bytes
@@ -50,105 +50,14 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.serial_port = None
 
-        # setGeometry(x, y, width, height)
-        # x: distance from the left edge of the window (in pixels)
-        # y: distance from the top edge of the window (in pixels)
-        # width: width of the text box (in pixels)
-        # height: height of the text box (in pixels)
-
-        # The message box to show what was transmited.
-        self.tx_label = QLabel("Transmitted Data:", self)
-        self.tx_label.setGeometry(20, 225, 400, 25)
-        self.text_box = QTextEdit(self)
-        self.text_box.setGeometry(20, 250, 400, 200)
-        self.text_box.setReadOnly(True)
-
-       # The message to display the data receive from the transmitter MCU.
-        self.rx_label = QLabel("Received Data:", self)
-        self.rx_label.setGeometry(500, 225, 400, 25)
-        self.RxText_box = QTextEdit(self)
-        self.RxText_box.setGeometry(450, 250, 450, 200)
-        self.RxText_box.setReadOnly(True)
-        self.rx_data_signal.connect(self.append_rx_text)
-
-        bold_font = QFont()
-        bold_font.setBold(True)
-        self.tx_label.setFont(bold_font)
-        self.rx_label.setFont(bold_font)
-
         self.setWindowTitle("RC Car Controller")
         self.setGeometry(100, 100, 1000, 900)
-
-        self.baud_label = QLabel("Select Baud Rate:", self)
-        self.baud_label.setGeometry(20, 20, 120, 30)
-
-        self.baud_combo = QComboBox(self)
-        self.baud_combo.setGeometry(150, 20, 150, 30)
-        self.baud_combo.addItems([
-            "9600", "19200", "38400", "57600", "115200"])
-
-        self.com_label = QLabel("Select COM Port:", self)
-        self.com_label.setGeometry(20, 70, 120, 30)
-
-        self.com_combo = QComboBox(self)
-        self.com_combo.setGeometry(150, 70, 150, 30)
-        self.refresh_com_ports()
-
-        self.refresh_btn = QPushButton("Refresh", self)
-        self.refresh_btn.setGeometry(320, 70, 120, 30)
-        self.refresh_btn.clicked.connect(self.refresh_com_ports)
-
-        self.connect_btn = QPushButton("Connect", self)
-        self.connect_btn.setGeometry(100, 130, 120, 40)
-        self.connect_btn.clicked.connect(self.connect_to_microcontroller)
-
-        self.disconnect_btn = QPushButton("Disconnect", self)
-        self.disconnect_btn.setGeometry(300, 130, 120, 40)
-        self.disconnect_btn.clicked.connect(self.disconnect_com_port)
-
-        # Add slider for motor speed control
-        self.pwm_label = QLabel("PWM value: 0", self)
-        self.pwm_label.setGeometry(20, 190, 120, 30)
-
-        # Corrected the QSlider orientation by explicitly using Qt.Orientation.Horizontal
-        self.pwm_slider = QSlider(Qt.Orientation.Horizontal, self)
-        self.pwm_slider.setGeometry(150, 190, 400, 30)
-        self.pwm_slider.setRange(0, 65535)  # use 0-100 if your MCU expects ticks (0-65535)
-        self.pwm_slider.setTickInterval(25)
-        self.pwm_slider.setEnabled(False)  # enabled when connected
-        self.pwm_slider.valueChanged.connect(self.on_pwm_change)
-
-        # Direction radio buttons: Disabled / Forward / Backward
-        self.dir_disabled_rb = QRadioButton("Disabled", self)
-        self.dir_disabled_rb.setGeometry(570, 180, 100, 30)
-        self.dir_forward_rb = QRadioButton("Forward", self)
-        self.dir_forward_rb.setGeometry(570, 205, 100, 30)
-        self.dir_backward_rb = QRadioButton("Backward", self)
-        self.dir_backward_rb.setGeometry(680, 205, 100, 30)
-
-        self.dir_group = QButtonGroup(self)
-        self.dir_group.addButton(self.dir_disabled_rb)
-        self.dir_group.addButton(self.dir_forward_rb)
-        self.dir_group.addButton(self.dir_backward_rb)
-
-        # Start with Disabled selected and everything disabled until connected
-        self.dir_disabled_rb.setChecked(True)
-        self.dir_disabled_rb.setEnabled(False)
-        self.dir_forward_rb.setEnabled(False)
-        self.dir_backward_rb.setEnabled(False)
-        self.current_direction = None  # 'F' or 'B' or None
-
-        # Connect radio button changes
-        self.dir_group.buttonClicked.connect(self.on_direction_change)
-
-        # Since there was an issue with UART Receive from responding too quickly to slider changes,
-        # debouncing mechanism is added to limit the rate of sending commands.
-        self._last_pwm_value = 0
-        self.pwm_debounce_timer = QTimer(self)
-        self.pwm_debounce_timer.setSingleShot(True)
-        self.pwm_debounce_timer.setInterval(10)  # ms; adjust to taste
-        self.pwm_debounce_timer.timeout.connect(self.send_debounced_pwm)
-        self.pwm_slider.sliderReleased.connect(self.on_slider_released)
+        # Setup a modular function to setup textbox messages
+        MainWindowWidgetSetup.setup_textbox_messages(self)
+        # Setup a modular function to setup the UART widgets (baud, com, connect, refresh)
+        MainWindowWidgetSetup.setup_uart_widgets(self)
+        # Setup a modular function for the pwm setup widgets
+        MainWindowWidgetSetup.setup_pwm_widgets(self)
 
     def append_rx_text(self, text):
         self.RxText_box.append(text)
