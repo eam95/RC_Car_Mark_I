@@ -58,6 +58,8 @@ class MainWindow(QMainWindow):
         MainWindowWidgetSetup.setup_uart_widgets(self)
         # Setup a modular function for the pwm setup widgets
         MainWindowWidgetSetup.setup_pwm_widgets(self)
+        # Setup modularized plot setup
+        MainWindowWidgetSetup.setup_plot_widgets(self)
 
     def append_rx_text(self, text):
         self.RxText_box.append(text)
@@ -81,9 +83,18 @@ class MainWindow(QMainWindow):
         msg = f"t= {t: .2f} s, x= {x: .1f} cm, ax= {ax: .0f} g, ay= {ay: .0f} g, az= {az: .0f} g"
         print(msg)  # console
         self.RxText_box.append(msg)
-        self.RxText_box.verticalScrollBar().setValue(
-            self.RxText_box.verticalScrollBar().maximum()
-        )
+        self.RxText_box.verticalScrollBar().setValue(self.RxText_box.verticalScrollBar().maximum())
+        # Push into rolling buffers
+        self.buf_x.append(x)
+        self.buf_ax.append(ax)
+        self.buf_ay.append(ay)
+        self.buf_az.append(az)
+
+        # Refresh curves
+        self.curve_x.setData(list(self.buf_x))
+        self.curve_ax.setData(list(self.buf_ax))
+        self.curve_ay.setData(list(self.buf_ay))
+        self.curve_az.setData(list(self.buf_az))
 
 
 

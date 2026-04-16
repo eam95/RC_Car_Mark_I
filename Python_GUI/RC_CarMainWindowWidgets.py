@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel,
                              QSlider, QRadioButton, QButtonGroup)
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer
+from collections import deque
+import pyqtgraph as pg
 
 class MainWindowWidgetSetup:
     @staticmethod
@@ -107,3 +109,50 @@ class MainWindowWidgetSetup:
         main_window.pwm_debounce_timer.setInterval(10)  # ms; adjust to taste
         main_window.pwm_debounce_timer.timeout.connect(main_window.send_debounced_pwm)
         main_window.pwm_slider.sliderReleased.connect(main_window.on_slider_released)
+
+    @staticmethod
+    def setup_plot_widgets(main_window):
+        WINDOW = 1000  # number of points visible at once
+
+        # Rolling buffers
+        main_window.buf_x = deque([0.0] * WINDOW, maxlen=WINDOW)
+        main_window.buf_ax = deque([0.0] * WINDOW, maxlen=WINDOW)
+        main_window.buf_ay = deque([0.0] * WINDOW, maxlen=WINDOW)
+        main_window.buf_az = deque([0.0] * WINDOW, maxlen=WINDOW)
+
+        # PyQtGraph container
+        main_window.plot_widget = pg.GraphicsLayoutWidget(main_window)
+        main_window.plot_widget.setGeometry(20, 470, 950, 400)
+
+        # Top plot: Distance
+        main_window.plot_x = main_window.plot_widget.addPlot(row=0, col=0)
+        main_window.plot_x.setLabel('left', 'Distance', units='cm')
+        main_window.plot_x.setLabel('bottom', 'Samples')
+        main_window.plot_x.showGrid(x=True, y=True, alpha=0.3)
+        main_window.plot_x.addLegend()
+        main_window.curve_x = main_window.plot_x.plot(
+            list(main_window.buf_x),
+            pen=pg.mkPen('#5DCAA5', width=2), name='Distance')
+
+        # Bottom plot: Accelerometer
+        main_window.plot_acc = main_window.plot_widget.addPlot(row=1, col=0)
+        main_window.plot_acc.setLabel('left', 'Acceleration', units='g')
+        main_window.plot_acc.setLabel('bottom', 'Samples')
+        main_window.plot_acc.showGrid(x=True, y=True, alpha=0.3)
+        main_window.plot_acc.addLegend()
+        main_window.plot_acc.setYRange(-1000, 1000, padding=0)
+        main_window.plot_acc.setMouseEnabled(x=True, y=False)  # lock y-axis zoom
+        main_window.plot_acc.enableAutoRange(axis='y', enable=False)  # disable y auto-scale
+        main_window.curve_ax = main_window.plot_acc.plot(
+            list(main_window.buf_ax),
+            pen=pg.mkPen('#7F77DD', width=2), name='ax')
+        main_window.curve_ay = main_window.plot_acc.plot(
+            list(main_window.buf_ay),
+            pen=pg.mkPen('#EF9F27', width=2), name='ay')
+        main_window.curve_az = main_window.plot_acc.plot(
+            list(main_window.buf_az),
+            pen=pg.mkPen('#D85A30', width=2), name='az')
+
+        # Link x-axes so both plots scroll in sync
+        main_window.plot_acc.setXLink(main_window.plot_x)
+
