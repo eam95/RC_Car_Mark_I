@@ -333,7 +333,7 @@ int main(void)
               if (nrf24_data_available())
               {
                   stopState = 0; // Clear the stopState flag when new data is received
-            	     nrf24_receive(Receive.cmd, sizeof(Receive.cmd));
+            	  nrf24_receive(Receive.cmd, sizeof(Receive.cmd));
                   nrf24_clear_rx_dr();
                   strncpy(ReceiveCmd, (char *)Receive.cmd, PLD_S - 1);
                   ReceiveCmd[PLD_S - 1] = '\0';
@@ -411,6 +411,7 @@ int main(void)
           case GET_SENSOR_DATA_STATE:
         	  if (stopState == 0)
         	  {
+        		  memset(Transmit.cmd, 0, PLD_S); // Clear the buffer
         		  measure_XYZ_Acceleration(&Transmit.a_x, &Transmit.a_y, &Transmit.a_z);
         		  simple_measurement(&Transmit.distance_cm, 0);
         		  Tset.stamped_time += Tset.milliAdder;
