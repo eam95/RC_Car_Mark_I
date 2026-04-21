@@ -111,14 +111,22 @@ class MainWindowWidgetSetup:
         main_window.pwm_slider.sliderReleased.connect(main_window.on_slider_released)
 
     @staticmethod
+    def setup_clear_buffer_button(main_window):
+        main_window.clear_buffer_btn = QPushButton("Clear Buffers", main_window)
+        main_window.clear_buffer_btn.setGeometry(450, 130, 120, 40)
+        main_window.clear_buffer_btn.clicked.connect(main_window.send_clear_buffer)
+
+
+    @staticmethod
     def setup_plot_widgets(main_window):
         WINDOW = 1000  # number of points visible at once
 
         # Rolling buffers
-        main_window.buf_x = deque([0.0] * WINDOW, maxlen=WINDOW)
-        main_window.buf_ax = deque([0.0] * WINDOW, maxlen=WINDOW)
-        main_window.buf_ay = deque([0.0] * WINDOW, maxlen=WINDOW)
-        main_window.buf_az = deque([0.0] * WINDOW, maxlen=WINDOW)
+        main_window.buf_t = deque(maxlen=WINDOW)  # no pre-fill
+        main_window.buf_x = deque(maxlen=WINDOW)
+        main_window.buf_ax = deque(maxlen=WINDOW)
+        main_window.buf_ay = deque(maxlen=WINDOW)
+        main_window.buf_az = deque(maxlen=WINDOW)
 
         # PyQtGraph container
         main_window.plot_widget = pg.GraphicsLayoutWidget(main_window)
@@ -127,7 +135,8 @@ class MainWindowWidgetSetup:
         # Top plot: Distance
         main_window.plot_x = main_window.plot_widget.addPlot(row=0, col=0)
         main_window.plot_x.setLabel('left', 'Distance', units='cm')
-        main_window.plot_x.setLabel('bottom', 'Samples')
+        main_window.plot_x.setLabel('bottom', 'Time', units='s')
+        main_window.plot_x.showGrid(x=True, y=True, alpha=0.3)
         main_window.plot_x.showGrid(x=True, y=True, alpha=0.3)
         main_window.plot_x.addLegend()
         main_window.curve_x = main_window.plot_x.plot(
@@ -137,10 +146,10 @@ class MainWindowWidgetSetup:
         # Bottom plot: Accelerometer
         main_window.plot_acc = main_window.plot_widget.addPlot(row=1, col=0)
         main_window.plot_acc.setLabel('left', 'Acceleration', units='g')
-        main_window.plot_acc.setLabel('bottom', 'Samples')
+        main_window.plot_acc.setLabel('bottom', 'Time', units='s')
         main_window.plot_acc.showGrid(x=True, y=True, alpha=0.3)
         main_window.plot_acc.addLegend()
-        main_window.plot_acc.setYRange(-1000, 1000, padding=0)
+        main_window.plot_acc.setYRange(-2000, 2000, padding=0)
         main_window.plot_acc.setMouseEnabled(x=True, y=False)  # lock y-axis zoom
         main_window.plot_acc.enableAutoRange(axis='y', enable=False)  # disable y auto-scale
         main_window.curve_ax = main_window.plot_acc.plot(

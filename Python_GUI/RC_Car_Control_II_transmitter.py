@@ -56,6 +56,8 @@ class MainWindow(QMainWindow):
         MainWindowWidgetSetup.setup_textbox_messages(self)
         # Setup a modular function to setup the UART widgets (baud, com, connect, refresh)
         MainWindowWidgetSetup.setup_uart_widgets(self)
+        # Setup clear buffer button to clear plot
+        MainWindowWidgetSetup.setup_clear_buffer_button(self)
         # Setup a modular function for the pwm setup widgets
         MainWindowWidgetSetup.setup_pwm_widgets(self)
         # Setup modularized plot setup
@@ -85,17 +87,39 @@ class MainWindow(QMainWindow):
         self.RxText_box.append(msg)
         self.RxText_box.verticalScrollBar().setValue(self.RxText_box.verticalScrollBar().maximum())
         # Push into rolling buffers
+        self.buf_t.append(t)
         self.buf_x.append(x)
         self.buf_ax.append(ax)
         self.buf_ay.append(ay)
         self.buf_az.append(az)
 
-        # Refresh curves
-        self.curve_x.setData(list(self.buf_x))
-        self.curve_ax.setData(list(self.buf_ax))
-        self.curve_ay.setData(list(self.buf_ay))
-        self.curve_az.setData(list(self.buf_az))
+        # Only plot once we have data
+        if len(self.buf_t) < 2:
+            return
 
+        # Refresh curves
+        t_list = list(self.buf_t)
+        self.curve_x.setData(t_list, list(self.buf_x))
+        self.curve_ax.setData(t_list, list(self.buf_ax))
+        self.curve_ay.setData(t_list, list(self.buf_ay))
+        self.curve_az.setData(t_list, list(self.buf_az))
+
+    def send_clear_buffer(self):
+        # Clear the data in the list (buffer so that the plot does grab previous data
+        self.buf_t.clear()
+        self.buf_x.clear()
+        self.buf_ax.clear()
+        self.buf_ay.clear()
+        self.buf_az.clear()
+
+        # Clear the plot with the empty buffer
+        self.curve_x.setData([])
+        self.curve_ax.setData([])
+        self.curve_ay.setData([])
+        self.curve_az.setData([])
+
+        # clear output data from the RxText_box
+        self.RxText_box.clear()
 
 
     def refresh_com_ports(self):
@@ -137,6 +161,10 @@ class MainWindow(QMainWindow):
             self.dir_disabled_rb.setEnabled(False)
             self.dir_forward_rb.setEnabled(False)
             self.dir_backward_rb.setEnabled(False)
+
+            # clear buffer data and plot.
+            self.send_clear_buffer()
+
         else:
             self.text_box.append("No COM port is currently connected.")
 
