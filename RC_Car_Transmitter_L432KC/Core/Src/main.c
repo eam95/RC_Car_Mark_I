@@ -260,6 +260,7 @@ int main(void)
 		  {
 			  shift_register_send(BLUE_LED_EXT | RED_LED_EXT); // Turn on LED when receiving
 			  char RxData[PLD_S] = {0};
+			  memset(RC_Data.cmd, 0, PLD_S); // Clear the buffer
 			  nrf24_receive(RC_Data.cmd, sizeof(RC_Data.cmd));
 			  nrf24_clear_rx_dr(); // Clear the RX_DR flag after receiving data
 			  memcpy(RxData, RC_Data.cmd, PLD_S);
@@ -282,7 +283,9 @@ int main(void)
 			  RC_Data.a_y = (int32_t)atoi(a_y_str);
 			  RC_Data.a_z = (int32_t)atoi(a_z_str);
 			  // Transmit the data to UART TX, so gui can read the data through serial communication and display it on the GUI.
-//			  uint16_t len = snprintf((char *)Msg.TxData, sizeof(Msg.TxData), "Timestamp: %lu ms, Distance: %u cm, Acceleration: (%ld, %ld, %ld) mg\r\n", Receive.timestamp, Receive.distance_cm, Receive.a_x, Receive.a_y, Receive.a_z);
+//			  uint16_t len = snprintf((char *)Msg.TxData, sizeof(Msg.TxData), "Timestamp: %lu ms, Distance: %u cm,"
+//					  " Acceleration: (%ld, %ld, %ld) mg\r\n", Receive.timestamp, Receive.distance_cm,
+//					  Receive.a_x, Receive.a_y, Receive.a_z);
 			  // Send the Receive.cmd
 			  memcpy(Msg.TxData, RC_Data.cmd, PLD_S);
 //			  current_state = STATE_WAIT; // Go back to wait state after receiving data
