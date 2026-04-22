@@ -127,6 +127,7 @@ class MainWindowWidgetSetup:
         main_window.buf_ax = deque(maxlen=WINDOW)
         main_window.buf_ay = deque(maxlen=WINDOW)
         main_window.buf_az = deque(maxlen=WINDOW)
+        main_window.buf_vx = deque(maxlen=WINDOW)
 
         # PyQtGraph container
         main_window.plot_widget = pg.GraphicsLayoutWidget(main_window)
@@ -143,7 +144,7 @@ class MainWindowWidgetSetup:
             list(main_window.buf_x),
             pen=pg.mkPen('#5DCAA5', width=2), name='Distance')
 
-        # Bottom plot: Accelerometer
+        # Middle plot: Accelerometer
         main_window.plot_acc = main_window.plot_widget.addPlot(row=1, col=0)
         main_window.plot_acc.setLabel('left', 'Acceleration', units='g')
         main_window.plot_acc.setLabel('bottom', 'Time', units='s')
@@ -162,6 +163,40 @@ class MainWindowWidgetSetup:
             list(main_window.buf_az),
             pen=pg.mkPen('#D85A30', width=2), name='az')
 
-        # Link x-axes so both plots scroll in sync
+
+        # Bottom plot: Velocity (integrated from ay)
+        main_window.plot_vx = main_window.plot_widget.addPlot(row=2, col=0)
+        main_window.plot_vx.setLabel('left', 'Velocity x', units='m/s')
+        main_window.plot_vx.setLabel('bottom', 'Time', units='s')
+        main_window.plot_vx.showGrid(x=True, y=True, alpha=0.3)
+        main_window.plot_vx.addLegend()
+        main_window.curve_vx = main_window.plot_vx.plot(
+            pen=pg.mkPen('#5DCAA5', width=2), name='vx')
+
+        # Link all x-axes together
         main_window.plot_acc.setXLink(main_window.plot_x)
+        main_window.plot_vx.setXLink(main_window.plot_x)
+
+        # Velocity integration state
+        main_window.prev_t  = None
+        main_window.curr_vx = 0.0
+
+    @staticmethod
+    def setup_directory_textbox(main_window, directory_path):
+        main_window.dir_label = QLabel("Current Directory:", main_window)
+        main_window.dir_label.setGeometry(20, 0, 150, 25)
+        main_window.dir_label.setFont(QFont("Arial", 10, QFont.Bold))
+        main_window.directory_textbox = QTextEdit(main_window)
+        main_window.directory_textbox.setGeometry(170, 0, 650, 25)
+        main_window.directory_textbox.setReadOnly(False)
+        main_window.directory_textbox.setText(directory_path)
+        # Add select folder button
+        main_window.select_folder_btn = QPushButton("Select Folder", main_window)
+        main_window.select_folder_btn.setGeometry(830, 0, 120, 25)
+        main_window.select_folder_btn.clicked.connect(main_window.select_output_directory)
+
+        # Add export CSV button
+        main_window.export_csv_btn = QPushButton("Export CSV", main_window)
+        main_window.export_csv_btn.setGeometry(960, 0, 120, 25)
+        main_window.export_csv_btn.clicked.connect(main_window.export_csv)
 

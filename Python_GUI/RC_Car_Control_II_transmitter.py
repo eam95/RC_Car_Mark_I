@@ -20,7 +20,7 @@ if os.environ.get('XDG_SESSION_TYPE', '').lower() == 'wayland' or 'WAYLAND_DISPL
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel,
                              QComboBox, QPushButton, QTextEdit,
-                             QSlider, QRadioButton, QButtonGroup)
+                             QSlider, QRadioButton, QButtonGroup, QFileDialog, QMessageBox)
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer
 from PyQt5.QtGui import QFont
 
@@ -29,6 +29,8 @@ import serial.tools.list_ports
 import pyqtgraph as pg
 from collections import deque
 import time
+import pandas as pd
+import os
 
 from RC_Car_SerialThread import SerialReaderThread
 from RC_CarMainWindowWidgets import MainWindowWidgetSetup
@@ -50,6 +52,10 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.serial_port = None
 
+        # Show the directory textbox at the top
+        self.output_directory = os.path.dirname(os.path.abspath(__file__))
+        MainWindowWidgetSetup.setup_directory_textbox(self, self.output_directory)
+
         self.setWindowTitle("RC Car Controller")
         self.setGeometry(100, 100, 1000, 900)
         # Setup a modular function to setup textbox messages
@@ -62,6 +68,13 @@ class MainWindow(QMainWindow):
         MainWindowWidgetSetup.setup_pwm_widgets(self)
         # Setup modularized plot setup
         MainWindowWidgetSetup.setup_plot_widgets(self)
+
+    def select_output_directory(self):
+        from PyQt5.QtWidgets import QFileDialog
+        dir_path = QFileDialog.getExistingDirectory(self, "Select Output Directory", self.output_directory)
+        if dir_path:
+            self.output_directory = dir_path
+            self.directory_textbox.setText(dir_path)
 
     def append_rx_text(self, text):
         self.RxText_box.append(text)
@@ -86,12 +99,21 @@ class MainWindow(QMainWindow):
         print(msg)  # console
         self.RxText_box.append(msg)
         self.RxText_box.verticalScrollBar().setValue(self.RxText_box.verticalScrollBar().maximum())
+
+        # Integrate ay → velocity (ax in mg → m/s²: * 0.001 * 9.81)
+        if self.prev_t is not None:
+            dt = t - self.prev_t
+            if dt > 0:
+                self.curr_vx += (ax * 0.001 * 9.81) * dt
+        self.prev_t = t
+
         # Push into rolling buffers
         self.buf_t.append(t)
         self.buf_x.append(x)
         self.buf_ax.append(ax)
         self.buf_ay.append(ay)
         self.buf_az.append(az)
+        self.buf_vx.append(self.curr_vx)
 
         # Only plot once we have data
         if len(self.buf_t) < 2:
@@ -103,6 +125,7 @@ class MainWindow(QMainWindow):
         self.curve_ax.setData(t_list, list(self.buf_ax))
         self.curve_ay.setData(t_list, list(self.buf_ay))
         self.curve_az.setData(t_list, list(self.buf_az))
+        self.curve_vx.setData(t_list, list(self.buf_vx))
 
     def send_clear_buffer(self):
         # Clear the data in the list (buffer so that the plot does grab previous data
@@ -111,12 +134,18 @@ class MainWindow(QMainWindow):
         self.buf_ax.clear()
         self.buf_ay.clear()
         self.buf_az.clear()
+        self.buf_vx.clear()
+
+        # Reset velocity integration initial conditions
+        self.prev_t  = None
+        self.curr_vx = 0.0
 
         # Clear the plot with the empty buffer
         self.curve_x.setData([])
         self.curve_ax.setData([])
         self.curve_ay.setData([])
         self.curve_az.setData([])
+        self.curve_vx.setData([])
 
         # clear output data from the RxText_box
         self.RxText_box.clear()
@@ -218,6 +247,26 @@ class MainWindow(QMainWindow):
             cmd = f"{self.current_direction},{value}"
             cmd = formatTwoWordData(cmd)
             self.send_serial_data(cmd)
+
+    def export_csv(self):
+        # Suggest a default filename
+        default_path = os.path.join(self.output_directory, "rc_car_data.csv")
+        file_path, _ = QFileDialog.getSaveFileName(self, "Export Data to CSV", default_path, "CSV Files (*.csv)")
+        if not file_path:
+            return
+        try:
+            df = pd.DataFrame({
+                "Time (s)": list(self.buf_t),
+                "Distance (cm)": list(self.buf_x),
+                "ax (g)": list(self.buf_ax),
+                "ay (g)": list(self.buf_ay),
+                "az (g)": list(self.buf_az),
+                "vx (m/s)": list(self.buf_vx),
+            })
+            df.to_csv(file_path, index=False)
+            QMessageBox.information(self, "Export Successful", f"Data exported to {file_path}")
+        except Exception as e:
+            QMessageBox.critical(self, "Export Failed", f"Failed to export data: {e}")
 
 if __name__ == "__main__":
     import sys
