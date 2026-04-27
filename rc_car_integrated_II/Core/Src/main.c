@@ -435,7 +435,9 @@ int main(void)
         	            HAL_UART_Transmit(&huart3, uart_buf, len + 2, HAL_MAX_DELAY);
         	        }
         		  nrf24_transmit(Transmit.cmd, PLD_S);
-        		  currentState = STATE_DATA_ACQUISITION;
+        		  // The data acquisition state to confirm which was attempted to be transmited
+//        		  currentState = STATE_DATA_ACQUISITION;
+        		  currentState = nextState; // After getting the sensor data and transmitting, switch to the next state which is the motor action state to execute the received command, and then will switch back to wait state after executing the motor command based on the stopState flag.
         		  break;
 
 

@@ -100,19 +100,23 @@ class MainWindow(QMainWindow):
         self.RxText_box.append(msg)
         self.RxText_box.verticalScrollBar().setValue(self.RxText_box.verticalScrollBar().maximum())
 
-        # Integrate ay → velocity (ax in mg → m/s²: * 0.001 * 9.81)
-        if self.prev_t is not None:
-            dt = t - self.prev_t
-            if dt > 0:
-                self.curr_vx += (ax * 0.001 * 9.81) * dt
-        self.prev_t = t
-
         # Push into rolling buffers
         self.buf_t.append(t)
         self.buf_x.append(x)
         self.buf_ax.append(ax)
         self.buf_ay.append(ay)
         self.buf_az.append(az)
+
+        # Integrate ay → velocity (ax in mg → m/s²: * 0.001 * 9.81)
+        if self.prev_t is not None:
+            dt = t - self.prev_t
+            if dt > 0:
+                self.curr_vx += (ax * 0.001 * 9.81) * dt
+            elif getattr(self, "_last_pwm_value", 0) == 0:
+                self.curr_vx = 0
+                self.curr_vx += (ax * 0.001 * 9.81) * dt
+        self.prev_t = t
+
         self.buf_vx.append(self.curr_vx)
 
         # Only plot once we have data
@@ -258,9 +262,9 @@ class MainWindow(QMainWindow):
             df = pd.DataFrame({
                 "Time (s)": list(self.buf_t),
                 "Distance (cm)": list(self.buf_x),
-                "ax (g)": list(self.buf_ax),
-                "ay (g)": list(self.buf_ay),
-                "az (g)": list(self.buf_az),
+                "ax (mg)": list(self.buf_ax),
+                "ay (mg)": list(self.buf_ay),
+                "az (mg)": list(self.buf_az),
                 "vx (m/s)": list(self.buf_vx),
             })
             df.to_csv(file_path, index=False)
