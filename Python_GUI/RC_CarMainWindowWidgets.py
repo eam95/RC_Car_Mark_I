@@ -119,7 +119,7 @@ class MainWindowWidgetSetup:
 
     @staticmethod
     def setup_plot_widgets(main_window):
-        WINDOW = 1000  # number of points visible at once
+        WINDOW = 10000  # number of points visible at once
 
         # Rolling buffers
         main_window.buf_t = deque(maxlen=WINDOW)  # no pre-fill

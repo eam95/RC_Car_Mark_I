@@ -398,6 +398,7 @@ int main(void)
               // Execute the pending action command (motor), then transmit sensor data
               if (nextState != WAIT_STATE)
               {
+            	  // Collect data and transmit in get sensor state
                   currentState = GET_SENSOR_DATA_STATE;
               }
               else

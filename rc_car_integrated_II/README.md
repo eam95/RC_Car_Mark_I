@@ -26,6 +26,14 @@ The RC car is toggling the NRF24L01 from listen/talking mode (Rx/Tx mode) every 
         - If running on Debian OS and wish to use UART to debug picocom can be run on the terminal.
             -  picocom -b 115200 /dev/ttyACM0
 
+- As of 4/28/26
+    - The transmission of data is successful for a few weeks back.
+    - Tested by storing 1000 data points in the MCU's RAM so it can be debuged.
+    - Upgraded the DC/DC converter module to Hiletgo 5A 75W DC-DC Step Down Power Module, which can monitor the voltage supply of the MCU which powers all the sensors.
+    - Changed the body of the RC car that includes a servo motor to potentially control steering since the RC car curves while driving.
+    - After successful data acquisition from the transmitter and plotted in real time in the Python GUI the 1000 point debug feature is removed. 
+    
+
 ### STM32CubeIDE
 Built with STM32CubeIDE on Debian. Open the workspace and import both projects.
 - Note: change the gbd on the Debug launch file if Debian is used. The project won't debug if it can't find the correct gbd. Look a at line 65 and change the gbd from arm-none-eabi-gdb to gdb-multiarch. Make sure to install multiarch gdb.

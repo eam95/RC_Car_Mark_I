@@ -29,3 +29,9 @@ The packages used for the GUI will primarily be PyQt5, and to communicate to the
 - Clean up the code by modularizing it.
 - Add the real time time data aquisition plot.
 ![RC Car](../docs/images/pythonGUI/RealTimePlot.png)
+
+### As of 4/28/26
+- The velocity integration calculation, and real time plot is added.
+- The velocity appears to be unreliable since more sensors are need to obtain more initial conditions when calculated numerically. Even when the car did not move the velocity drifted over the last 20s as if it were to move.
+- The RC car is upgraded and looks tilted which makes the drifting worst.
+- The window size to see more point is on the real time plot is set to 10000 points before it rolls over data for the next 100s. The sample rate is 20ms.
