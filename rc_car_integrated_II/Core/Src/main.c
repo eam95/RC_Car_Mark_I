@@ -66,6 +66,7 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim7;
+TIM_HandleTypeDef htim13;
 TIM_HandleTypeDef htim16;
 TIM_HandleTypeDef htim24;
 
@@ -81,6 +82,7 @@ typedef enum
 	BACKWARD_STATE,
 	BRAKE_STATE,
 	COAST_STATE,
+	STEER_STATE,
 	GET_SENSOR_DATA_STATE,
 	SET_PID_STATE,
 	STATE_MICRO_DELAY_TEST,
@@ -92,7 +94,7 @@ typedef enum
 	STATE_FORCE_STOP
 
 } StateType;
-StateType currentState = WAIT_STATE;
+StateType currentState = STEER_STATE;
 StateType nextState = WAIT_STATE;
 StateType currentCommState = RX_STATE; // This state machine is to determine whether the system is in receiving mode or transmitting mode, which will determine the behavior of the main loop and the actions to perform when receiving commands or getting sensor data.
 
@@ -125,6 +127,7 @@ struct DataToReceive
 	int16_t Iset; // PID integral gain
 	int16_t Dset; // PID derivative gain
 	int32_t sampleTime; // Sampling time for the PID controller, which will determine how often the control loop runs and updates the motor commands based on the sensor feedback.
+	int32_t pwm_steer;
 };
 
 struct TimeTracking
@@ -202,6 +205,7 @@ static void MX_I2C2_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM7_Init(void);
 static void MX_TIM16_Init(void);
+static void MX_TIM13_Init(void);
 /* USER CODE BEGIN PFP */
 void nrf24_setup(void);
 
@@ -255,12 +259,13 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM7_Init();
   MX_TIM16_Init();
+  MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
   lis3dh_init();
   GarLiteV3_Init();
   HAL_UART_Receive_DMA(&huart3, UART3_rxBuffer, UART_DMA_RX_SIZE);
   // Start TIM3 with interrupt
-  HAL_TIM_Base_Start_IT(&htim3);
+//  HAL_TIM_Base_Start_IT(&htim3); // The timer to toggle the NRF24L01 every 10ms.
   // Start TIM2 with interrupt
 //  HAL_TIM_Base_Start_IT(&htim2);
   // Initialized NRF24L01
@@ -271,7 +276,10 @@ int main(void)
   // Use absolute compare (tick) values directly instead of percentage
   // These are timer ticks (must be <= htim1.Init.Period)
   uint32_t pulse_ch3 = 25000U; // channel 1
-  uint32_t pulse_ch4 = 25000U; // channel 2
+  uint32_t pulse_ch4 = 25000U; // channel
+  uint32_t pulseServoMotor = 312U; // This is for the servo motor control, which will be used to control the steering of the RC car. The value can be adjusted based on the desired steering angle and the characteristics of the servo motor being used. For example, a value of 12500 ticks might correspond to a 90-degree turn, while values lower or higher than that would correspond to turns in the opposite direction or sharper turns, respectively. The exact mapping between pulse width and steering angle would need to be determined experimentally based on the specific servo motor and its response characteristics.
+  Receive.pwm_steer = pulseServoMotor; // Initialize the pwm_steer variable in the Receive structure with 50% duty cycle.
+
   char ReceiveCmd[PLD_S];
   uint8_t stopState = 0; // This variable is used to determine whether the car should stop after executing a command, which will be set based on the received command and will influence the behavior of the main loop in terms of whether to return to WAIT_STATE or stay in the current state after executing a motor action.
   int k = 0; // increment counter for data acquisition
@@ -289,6 +297,10 @@ int main(void)
   {
     Error_Handler();
   }
+  if (pulseServoMotor > (uint32_t)htim13.Init.Period)
+  {
+    Error_Handler();
+  }
 
   /* Start PWM channels */
   if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3) != HAL_OK)
@@ -296,6 +308,10 @@ int main(void)
     Error_Handler();
   }
   if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -366,6 +382,12 @@ int main(void)
                   {
                       nextState = COAST_STATE;
                   }
+                  else if (strcmp(cmd_str, "S") == 0)
+				  {
+                	  // This is to steer the servo motor. I tested the servo motor that was prebuilt on the RC car.
+                	  // The frequency for PWM control is 400Hz and the steering wheel is at the center when duty cycle is 50%.
+
+				  }
                   else if (strcmp(cmd_str, "PID") == 0)
                   {
                       uint8_t index = comma_index;
@@ -502,6 +524,12 @@ int main(void)
 			  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 0);
 			  stopState = 1; // Set the stopState flag to indicate that the car should stop after executing the force stop command
 			  currentState = WAIT_STATE;
+			  break;
+
+          case STEER_STATE:
+			  // This is for steering control using the servo motor.
+        	  __HAL_TIM_SET_COMPARE(&htim13, TIM_CHANNEL_1, Receive.pwm_steer);
+
 			  break;
 
           case SET_PID_STATE:
@@ -870,7 +898,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 250-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = Tset.set_timer_period-1;
+  htim3.Init.Period = 65535;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -929,6 +957,52 @@ static void MX_TIM7_Init(void)
   /* USER CODE BEGIN TIM7_Init 2 */
 
   /* USER CODE END TIM7_Init 2 */
+
+}
+
+/**
+  * @brief TIM13 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM13_Init(void)
+{
+
+  /* USER CODE BEGIN TIM13_Init 0 */
+
+  /* USER CODE END TIM13_Init 0 */
+
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM13_Init 1 */
+
+  /* USER CODE END TIM13_Init 1 */
+  htim13.Instance = TIM13;
+  htim13.Init.Prescaler = 999-1;
+  htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim13.Init.Period = 624-1;
+  htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim13.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim13) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_Init(&htim13) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim13, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM13_Init 2 */
+
+  /* USER CODE END TIM13_Init 2 */
+  HAL_TIM_MspPostInit(&htim13);
 
 }
 
