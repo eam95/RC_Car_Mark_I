@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel,
                              QComboBox, QPushButton, QTextEdit,
-                             QSlider, QRadioButton, QButtonGroup)
+                             QSlider, QRadioButton, QButtonGroup, QDial)
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer
 from collections import deque
@@ -34,6 +34,27 @@ class MainWindowWidgetSetup:
         bold_font.setBold(True)
         main_window.tx_label.setFont(bold_font)
         main_window.rx_label.setFont(bold_font)
+
+        # set up the Q-dial for the user to steer the RC Car.
+        main_window.steering_label = QLabel("Steering: 50", main_window)
+        main_window.steering_label.setGeometry(700, 180, 120, 30)
+
+        main_window.steering_dial = QDial(main_window)
+        main_window.steering_dial.setGeometry(720, 30, 100, 100)
+        # To turn left the tick value should be 50, 75 for the center, and 100 to turn right.
+        main_window.steering_dial.setRange(50, 100)
+        main_window.steering_dial.setValue(75)  # Center position
+        main_window.steering_dial.setNotchesVisible(True)
+        main_window.steering_dial.setWrapping(False)
+        main_window.steering_dial.valueChanged.connect(main_window.on_steering_change)
+
+        # Steering debounce timer — same pattern as PWM slider
+        main_window._last_steering_value = 50
+        main_window.steering_debounce_timer = QTimer(main_window)
+        main_window.steering_debounce_timer.setSingleShot(True)
+        main_window.steering_debounce_timer.setInterval(10)  # ms
+        main_window.steering_debounce_timer.timeout.connect(main_window.send_debounced_steering)
+        main_window.steering_dial.sliderReleased.connect(main_window.on_steering_released)
 
     @staticmethod
     def setup_uart_widgets(main_window):
@@ -180,6 +201,7 @@ class MainWindowWidgetSetup:
         # Velocity integration state
         main_window.prev_t  = None
         main_window.curr_vx = 0.0
+
 
     @staticmethod
     def setup_directory_textbox(main_window, directory_path):

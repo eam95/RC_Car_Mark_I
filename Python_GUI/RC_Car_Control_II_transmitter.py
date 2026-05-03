@@ -20,7 +20,7 @@ if os.environ.get('XDG_SESSION_TYPE', '').lower() == 'wayland' or 'WAYLAND_DISPL
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel,
                              QComboBox, QPushButton, QTextEdit,
-                             QSlider, QRadioButton, QButtonGroup, QFileDialog, QMessageBox)
+                             QSlider, QRadioButton, QButtonGroup, QFileDialog, QMessageBox, QDial)
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer
 from PyQt5.QtGui import QFont
 
@@ -68,6 +68,9 @@ class MainWindow(QMainWindow):
         MainWindowWidgetSetup.setup_pwm_widgets(self)
         # Setup modularized plot setup
         MainWindowWidgetSetup.setup_plot_widgets(self)
+
+
+
 
     def select_output_directory(self):
         from PyQt5.QtWidgets import QFileDialog
@@ -237,6 +240,23 @@ class MainWindow(QMainWindow):
         self.text_box.append(f"Setting pwm to {value}")
         # restart debounce timer so send happens after user stops moving slider
         self.pwm_debounce_timer.start()
+
+    def on_steering_change(self, value):
+        self._last_steering_value = value
+        self.steering_label.setText(f"Steering: {value}")
+        self.steering_debounce_timer.start()
+
+    def on_steering_released(self):
+        if self.steering_debounce_timer.isActive():
+            self.steering_debounce_timer.stop()
+        self.send_debounced_steering()
+
+    def send_debounced_steering(self):
+        value = getattr(self, "_last_steering_value", self.steering_dial.value())
+        if hasattr(self, "serial_port") and self.serial_port and self.serial_port.is_open:
+            cmd = f"S,{value}"
+            cmd = formatTwoWordData(cmd)
+            self.send_serial_data(cmd)
 
     # Add these helper methods to MainWindow
     def on_slider_released(self):

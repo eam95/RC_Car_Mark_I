@@ -63,11 +63,8 @@ I2C_HandleTypeDef hi2c2;
 SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim1;
-TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
-TIM_HandleTypeDef htim7;
 TIM_HandleTypeDef htim13;
-TIM_HandleTypeDef htim16;
 TIM_HandleTypeDef htim24;
 
 UART_HandleTypeDef huart3;
@@ -94,7 +91,7 @@ typedef enum
 	STATE_FORCE_STOP
 
 } StateType;
-StateType currentState = STEER_STATE;
+StateType currentState = WAIT_STATE;
 StateType nextState = WAIT_STATE;
 StateType currentCommState = RX_STATE; // This state machine is to determine whether the system is in receiving mode or transmitting mode, which will determine the behavior of the main loop and the actions to perform when receiving commands or getting sensor data.
 
@@ -197,14 +194,11 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM1_Init(void);
-static void MX_TIM2_Init(void);
 static void MX_TIM24_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_TIM3_Init(void);
-static void MX_TIM7_Init(void);
-static void MX_TIM16_Init(void);
 static void MX_TIM13_Init(void);
 /* USER CODE BEGIN PFP */
 void nrf24_setup(void);
@@ -251,23 +245,19 @@ int main(void)
   MX_DMA_Init();
   MX_SPI1_Init();
   MX_TIM1_Init();
-  MX_TIM2_Init();
   MX_TIM24_Init();
   MX_USART3_UART_Init();
   MX_I2C1_Init();
   MX_I2C2_Init();
   MX_TIM3_Init();
-  MX_TIM7_Init();
-  MX_TIM16_Init();
   MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
   lis3dh_init();
   GarLiteV3_Init();
   HAL_UART_Receive_DMA(&huart3, UART3_rxBuffer, UART_DMA_RX_SIZE);
-  // Start TIM3 with interrupt
-//  HAL_TIM_Base_Start_IT(&htim3); // The timer to toggle the NRF24L01 every 10ms.
-  // Start TIM2 with interrupt
-//  HAL_TIM_Base_Start_IT(&htim2);
+  // Start TIM3 with interrupt to toggle TX/RX mode of the NRF24L01 every 10ms
+  HAL_TIM_Base_Start_IT(&htim3);
+
   // Initialized NRF24L01
   nrf24_setup();
   nrf24_listen();
@@ -277,7 +267,10 @@ int main(void)
   // These are timer ticks (must be <= htim1.Init.Period)
   uint32_t pulse_ch3 = 25000U; // channel 1
   uint32_t pulse_ch4 = 25000U; // channel
-  uint32_t pulseServoMotor = 312U; // This is for the servo motor control, which will be used to control the steering of the RC car. The value can be adjusted based on the desired steering angle and the characteristics of the servo motor being used. For example, a value of 12500 ticks might correspond to a 90-degree turn, while values lower or higher than that would correspond to turns in the opposite direction or sharper turns, respectively. The exact mapping between pulse width and steering angle would need to be determined experimentally based on the specific servo motor and its response characteristics.
+
+  // The tick set up to turn the servo motor.
+  // 1ms= 1000us = 1000 ticks, 1.5ms = 75 ticks, 2ms = 2000 ticks.
+  uint32_t pulseServoMotor = 100U; // This is for the servo motor control, which will be used to control the steering of the RC car. The value can be adjusted based on the desired steering angle and the characteristics of the servo motor being used. For example, a value of 12500 ticks might correspond to a 90-degree turn, while values lower or higher than that would correspond to turns in the opposite direction or sharper turns, respectively. The exact mapping between pulse width and steering angle would need to be determined experimentally based on the specific servo motor and its response characteristics.
   Receive.pwm_steer = pulseServoMotor; // Initialize the pwm_steer variable in the Receive structure with 50% duty cycle.
 
   char ReceiveCmd[PLD_S];
@@ -315,6 +308,11 @@ int main(void)
   {
     Error_Handler();
   }
+
+  // Initially set the PWM for the steering to the center by place 50 in it
+  // This is for steering control using the servo motor.
+
+  __HAL_TIM_SET_COMPARE(&htim13, TIM_CHANNEL_1, Receive.pwm_steer);
 
 
   /* USER CODE END 2 */
@@ -356,6 +354,7 @@ int main(void)
 
                   char cmd_str[32] = {0};
                   char pwm_str[8] = {0};
+                  char steer_pwm_str[8] = {0};
                   uint8_t comma_index = 0;
                   parse_uart_command(ReceiveCmd, cmd_str, &comma_index);
 
@@ -385,7 +384,11 @@ int main(void)
                   else if (strcmp(cmd_str, "S") == 0)
 				  {
                 	  // This is to steer the servo motor. I tested the servo motor that was prebuilt on the RC car.
-                	  // The frequency for PWM control is 400Hz and the steering wheel is at the center when duty cycle is 50%.
+                	  // The frequency for PWM control is 50Hz and the steering wheel is at the center when duty cycle is 50%.
+                      uint8_t index = comma_index;
+                      parse_uart_value(ReceiveCmd, steer_pwm_str, &index);
+                      Receive.pwm_steer = (uint16_t)atoi(steer_pwm_str);
+                      nextState = STEER_STATE;
 
 				  }
                   else if (strcmp(cmd_str, "PID") == 0)
@@ -529,6 +532,7 @@ int main(void)
           case STEER_STATE:
 			  // This is for steering control using the servo motor.
         	  __HAL_TIM_SET_COMPARE(&htim13, TIM_CHANNEL_1, Receive.pwm_steer);
+        	  currentState = WAIT_STATE; // After executing the steering command, switch back to wait state to wait for the next command, which allows for more responsive steering control as the system will be ready to receive new commands immediately after adjusting the steering angle.
 
 			  break;
 
@@ -833,51 +837,6 @@ static void MX_TIM1_Init(void)
 }
 
 /**
-  * @brief TIM2 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM2_Init(void)
-{
-
-  /* USER CODE BEGIN TIM2_Init 0 */
-
-  /* USER CODE END TIM2_Init 0 */
-
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-
-  /* USER CODE BEGIN TIM2_Init 1 */
-
-  /* USER CODE END TIM2_Init 1 */
-  htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 250-1;
-  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 10000;
-  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM2_Init 2 */
-
-  /* USER CODE END TIM2_Init 2 */
-
-}
-
-/**
   * @brief TIM3 Initialization Function
   * @param None
   * @retval None
@@ -898,7 +857,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 250-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 65535;
+  htim3.Init.Period = 10000-1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -923,44 +882,6 @@ static void MX_TIM3_Init(void)
 }
 
 /**
-  * @brief TIM7 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM7_Init(void)
-{
-
-  /* USER CODE BEGIN TIM7_Init 0 */
-
-  /* USER CODE END TIM7_Init 0 */
-
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-
-  /* USER CODE BEGIN TIM7_Init 1 */
-
-  /* USER CODE END TIM7_Init 1 */
-  htim7.Instance = TIM7;
-  htim7.Init.Prescaler = 0;
-  htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 65535;
-  htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM7_Init 2 */
-
-  /* USER CODE END TIM7_Init 2 */
-
-}
-
-/**
   * @brief TIM13 Initialization Function
   * @param None
   * @retval None
@@ -978,9 +899,9 @@ static void MX_TIM13_Init(void)
 
   /* USER CODE END TIM13_Init 1 */
   htim13.Instance = TIM13;
-  htim13.Init.Prescaler = 999-1;
+  htim13.Init.Prescaler = 5000-1;
   htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim13.Init.Period = 624-1;
+  htim13.Init.Period = 1000-1;
   htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim13.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim13) != HAL_OK)
@@ -1003,38 +924,6 @@ static void MX_TIM13_Init(void)
 
   /* USER CODE END TIM13_Init 2 */
   HAL_TIM_MspPostInit(&htim13);
-
-}
-
-/**
-  * @brief TIM16 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM16_Init(void)
-{
-
-  /* USER CODE BEGIN TIM16_Init 0 */
-
-  /* USER CODE END TIM16_Init 0 */
-
-  /* USER CODE BEGIN TIM16_Init 1 */
-
-  /* USER CODE END TIM16_Init 1 */
-  htim16.Instance = TIM16;
-  htim16.Init.Prescaler = 25-1;
-  htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = 65535;
-  htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim16.Init.RepetitionCounter = 0;
-  htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim16) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM16_Init 2 */
-
-  /* USER CODE END TIM16_Init 2 */
 
 }
 
@@ -1288,6 +1177,9 @@ void nrf24_setup(void)
 	  ce_high();
 
 }
+
+
+
 
 /* USER CODE END 4 */
 
