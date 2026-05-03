@@ -21,6 +21,12 @@ Release/
 *.hex
 *.map
 *.list
+*.cyclo
+*.su
+*.aux
+*.log
+*.synctex.gz
+rc_car_data.csv
 
 # OS files
 .DS_Store
