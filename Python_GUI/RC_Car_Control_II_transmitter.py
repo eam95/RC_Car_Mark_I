@@ -69,6 +69,9 @@ class MainWindow(QMainWindow):
         # Setup modularized plot setup
         MainWindowWidgetSetup.setup_plot_widgets(self)
 
+        # Setup the accelerometer calibration to offset the accelerometer readings
+        MainWindowWidgetSetup.setup_calibration_button(self)
+
 
 
 

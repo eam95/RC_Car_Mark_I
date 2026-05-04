@@ -222,3 +222,17 @@ class MainWindowWidgetSetup:
         main_window.export_csv_btn.setGeometry(960, 0, 120, 25)
         main_window.export_csv_btn.clicked.connect(main_window.export_csv)
 
+    @staticmethod
+    def setup_calibration_button(main_window):
+        from RC_Car_CalibrationWindow import CalibrationWindow
+    
+        main_window.calibration_btn = QPushButton("Calibration", main_window)
+        # Place it next to the clear buffer button — adjust x/y to your layout
+        main_window.calibration_btn.setGeometry(600, 130, 120, 40)
+
+        def open_calibration_window():
+            # Keep a reference so it doesn't get garbage collected
+            main_window._cal_window = CalibrationWindow(parent=main_window)
+            main_window._cal_window.show()  # Non-modal: user can still use main window
+
+        main_window.calibration_btn.clicked.connect(open_calibration_window)
