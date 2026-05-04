@@ -189,7 +189,7 @@ volatile int pwm_value = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MPU_Config(void);
+//static void MPU_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
@@ -222,7 +222,7 @@ int main(void)
   /* USER CODE END 1 */
 
   /* MPU Configuration--------------------------------------------------------*/
-  MPU_Config();
+//  MPU_Config();
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -255,14 +255,15 @@ int main(void)
   lis3dh_init();
   GarLiteV3_Init();
   HAL_UART_Receive_DMA(&huart3, UART3_rxBuffer, UART_DMA_RX_SIZE);
-  // Start TIM3 with interrupt to toggle TX/RX mode of the NRF24L01 every 10ms
-  HAL_TIM_Base_Start_IT(&htim3);
+  HAL_TIM_Base_Start(&htim24);  // ← START TIM24 for delay_us()
+
 
   // Initialized NRF24L01
   nrf24_setup();
   nrf24_listen();
 
-
+  // Start TIM3 with interrupt to toggle TX/RX mode of the NRF24L01 every 10ms
+  HAL_TIM_Base_Start_IT(&htim3);
   // Use absolute compare (tick) values directly instead of percentage
   // These are timer ticks (must be <= htim1.Init.Period)
   uint32_t pulse_ch3 = 25000U; // channel 1
