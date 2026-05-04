@@ -88,7 +88,8 @@ typedef enum
 	CHANGE_TX_STATE,
 	RX_STATE,
 	TX_STATE,
-	STATE_FORCE_STOP
+	STATE_FORCE_STOP,
+	STATE_ACCEL_CALIBRATION
 
 } StateType;
 StateType currentState = WAIT_STATE;
@@ -125,6 +126,9 @@ struct DataToReceive
 	int16_t Dset; // PID derivative gain
 	int32_t sampleTime; // Sampling time for the PID controller, which will determine how often the control loop runs and updates the motor commands based on the sensor feedback.
 	int32_t pwm_steer;
+	int32_t ax_avg; // The average ax to offset the acceleration to get much accurate velocity measurement.
+	int32_t ay_avg; // The average ay to offset the acceleration to get much accurate velocity measurement.
+	int32_t az_avg; // The average az to offset the acceleration to get much accurate velocity measurement.
 };
 
 struct TimeTracking
@@ -189,7 +193,7 @@ volatile int pwm_value = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-//static void MPU_Config(void);
+static void MPU_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
@@ -222,7 +226,7 @@ int main(void)
   /* USER CODE END 1 */
 
   /* MPU Configuration--------------------------------------------------------*/
-//  MPU_Config();
+  MPU_Config();
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -279,7 +283,7 @@ int main(void)
   int k = 0; // increment counter for data acquisition
 
   // Set up time Adder for timestamping and timing control
-  Tset.milliAdder = Tset.set_timer_period / 1000;
+  Tset.milliAdder = Tset.set_timer_period * 2 / 1000;
 
 
   /* Sanity checks: ensure values do not exceed ARR (which is htim1.Init.Period) */
@@ -404,10 +408,17 @@ int main(void)
                       Receive.Dset = (uint16_t)atoi(D_str);
                       nextState = SET_PID_STATE;
                   }
-                  // Data received — don't change currentState here;
-                  // let the timer ISR trigger CHANGE_TX_STATE when it's time
+                  else if (strcmp(cmd_str, "CAL") == 0)
+				  {
+                	  // Only Python GUI a calibration window is added so that 2s of calibration is collected and averaged out to calculate the velocity accurately.
+                	  nextState = STATE_ACCEL_CALIBRATION;
+				  }
+                  else if (strcmp(cmd_str, "STOP_CAL") == 0)
+				  {
+                	  // Stop Calibration
+                	  stopState = 1;
+				  }
               }
-
               break;
 
           case CHANGE_TX_STATE:
@@ -440,7 +451,8 @@ int main(void)
         	  {
         		  memset(Transmit.cmd, 0, PLD_S); // Clear the buffer
         		  measure_XYZ_Acceleration(&Transmit.a_x, &Transmit.a_y, &Transmit.a_z);
-        		  simple_measurement(&Transmit.distance_cm, 0);
+//        		  simple_measurement(&Transmit.distance_cm, 0);
+        		  simple_measurement_NB(&Transmit.distance_cm);
         		  Tset.stamped_time += Tset.milliAdder;
 
         		  uint32_t len = snprintf((char *)Transmit.cmd, sizeof(Transmit.cmd),
@@ -498,6 +510,46 @@ int main(void)
     		  }
 
     		  break;
+
+    	  case STATE_ACCEL_CALIBRATION:
+    	      // Check if we should stop calibration
+    	      if (stopState == 1)
+    	      {
+    	          // Exit calibration mode
+    	          currentState = COAST_STATE;
+    	          nextState = WAIT_STATE;
+    	          break;
+    	      }
+
+    	      memset(Transmit.cmd, 0, PLD_S); // Clear the buffer
+    	      measure_XYZ_Acceleration(&Transmit.a_x, &Transmit.a_y, &Transmit.a_z);
+    	      Tset.stamped_time += Tset.milliAdder;
+
+    	      uint32_t len = snprintf((char *)Transmit.cmd, sizeof(Transmit.cmd),
+    	                        "%lu,%ld,%ld,%ld",
+    	                        Tset.stamped_time,
+    	                        Transmit.a_x, Transmit.a_y, Transmit.a_z);
+
+    	      // Place \r\n at the last 2 bytes of the 32-byte array
+    	      Transmit.cmd[PLD_S - 2] = '\r';
+    	      Transmit.cmd[PLD_S - 1] = '\n';
+
+    	      // Send via NRF24L01
+    	      nrf24_transmit(Transmit.cmd, PLD_S);
+
+    	      // Also send via UART for debugging
+    	      if (len > 0)
+    	      {
+    	          uint8_t uart_buf[PLD_S];
+    	          memcpy(uart_buf, Transmit.cmd, len);
+    	          uart_buf[len]     = '\r';
+    	          uart_buf[len + 1] = '\n';
+    	          HAL_UART_Transmit(&huart3, uart_buf, len + 2, HAL_MAX_DELAY);
+    	      }
+
+    	      // Stay in calibration state (will exit when stopState == 1)
+    	      currentState = WAIT_STATE;  // Return to wait state after sending data
+    	      break;
 
           // ============ MOTOR ACTIONS ============
 
@@ -858,7 +910,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 250-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 10000-1;
+  htim3.Init.Period = Tset.set_timer_period-1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)

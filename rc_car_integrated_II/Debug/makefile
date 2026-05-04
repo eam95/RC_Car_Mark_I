@@ -60,8 +60,8 @@ all: main-build
 main-build: rc_car_integrated_II.elf secondary-outputs
 
 # Tool invocations
-rc_car_integrated_II.elf rc_car_integrated_II.map: $(OBJS) $(USER_OBJS) /home/mongoose/Desktop/gitRepo/RC_Car_Mark_I/rc_car_integrated_II/STM32H723ZGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "rc_car_integrated_II.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/home/mongoose/Desktop/gitRepo/RC_Car_Mark_I/rc_car_integrated_II/STM32H723ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="rc_car_integrated_II.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+rc_car_integrated_II.elf rc_car_integrated_II.map: $(OBJS) $(USER_OBJS) /home/mongoose/Desktop/gitRepoSet/rc_car_integrated_II/STM32H723ZGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "rc_car_integrated_II.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/home/mongoose/Desktop/gitRepoSet/rc_car_integrated_II/STM32H723ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="rc_car_integrated_II.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
