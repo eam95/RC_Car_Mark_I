@@ -225,14 +225,18 @@ class MainWindowWidgetSetup:
     @staticmethod
     def setup_calibration_button(main_window):
         from RC_Car_CalibrationWindow import CalibrationWindow
-    
+
         main_window.calibration_btn = QPushButton("Calibration", main_window)
-        # Place it next to the clear buffer button — adjust x/y to your layout
         main_window.calibration_btn.setGeometry(600, 130, 120, 40)
 
+        # Add a status indicator label
+        main_window.cal_status_label = QLabel("", main_window)
+        main_window.cal_status_label.setGeometry(730, 130, 250, 40)
+        main_window.cal_status_label.setStyleSheet("color: orange; font-weight: bold; font-size: 12px;")
+        main_window.cal_status_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
         def open_calibration_window():
-            # Keep a reference so it doesn't get garbage collected
             main_window._cal_window = CalibrationWindow(parent=main_window)
-            main_window._cal_window.show()  # Non-modal: user can still use main window
+            main_window._cal_window.show()
 
         main_window.calibration_btn.clicked.connect(open_calibration_window)

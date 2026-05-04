@@ -51,6 +51,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.serial_port = None
+        self.is_calibration_active = False # Flag when it is in calibration
 
         # Show the directory textbox at the top
         self.output_directory = os.path.dirname(os.path.abspath(__file__))
@@ -101,7 +102,14 @@ class MainWindow(QMainWindow):
 
     # The QtThread called from the RC_Car_SerialThead where if it gets a signal a data is received it will print the data
     def on_data_received(self, t, x, ax, ay, az):
-        msg = f"t= {t: .2f} s, x= {x: .1f} cm, ax= {ax: .0f} g, ay= {ay: .0f} g, az= {az: .0f} g"
+        """Handle normal 5-value data - but skip if in calibration mode."""
+
+        # Skip processing if we're in calibration mode
+        if self.is_calibration_active:
+            print(f"[DEBUG] Ignoring normal data during calibration: t={t:.2f}s")
+            return  # Exit early - don't plot or display
+
+        msg = f"t= {t: .2f} s, x= {x: .1f} cm, ax= {ax / 1000: .3f} g, ay= {ay / 1000: .3f} g, az= {az / 1000: .3f} g"
         print(msg)  # console
         self.RxText_box.append(msg)
         self.RxText_box.verticalScrollBar().setValue(self.RxText_box.verticalScrollBar().maximum())
@@ -117,10 +125,10 @@ class MainWindow(QMainWindow):
         if self.prev_t is not None:
             dt = t - self.prev_t
             if dt > 0:
-                self.curr_vx += (ax * 0.001 * 9.81) * dt
+                self.curr_vx += (0.001 * ax * 9.81) * dt
             elif getattr(self, "_last_pwm_value", 0) == 0:
                 self.curr_vx = 0
-                self.curr_vx += (ax * 0.001 * 9.81) * dt
+                self.curr_vx += (ax * 9.81) * dt
         self.prev_t = t
 
         self.buf_vx.append(self.curr_vx)
@@ -136,6 +144,25 @@ class MainWindow(QMainWindow):
         self.curve_ay.setData(t_list, list(self.buf_ay))
         self.curve_az.setData(t_list, list(self.buf_az))
         self.curve_vx.setData(t_list, list(self.buf_vx))
+
+    def on_calibration_data_received(self, t, ax, ay, az):
+        """Handle calibration data separately - send to cal window, not plots."""
+        msg = f"t= {t: .2f} s, ax= {ax: .0f} mg, ay= {ay: .0f} mg, az= {az: .0f} mg"
+
+        # Only process if we're actually in calibration mode
+        if self.is_calibration_active:
+            print(f"[CAL] {msg}")
+
+            # If calibration window is open, send data there
+            if hasattr(self, '_cal_window') and self._cal_window is not None:
+                self._cal_window.cal_log.append(msg)
+                # Auto-scroll
+                self._cal_window.cal_log.verticalScrollBar().setValue(
+                    self._cal_window.cal_log.verticalScrollBar().maximum())
+        else:
+            # Log unexpected calibration data when not in calibration mode
+            print(f"[WARNING] Received calibration data while not in calibration mode: {msg}")
+            self.text_box.append(f"Unexpected cal data: {msg}")
 
     def send_clear_buffer(self):
         # Clear the data in the list (buffer so that the plot does grab previous data
@@ -181,6 +208,8 @@ class MainWindow(QMainWindow):
             # start QThread reader
             self.reader_thread = SerialReaderThread(self.serial_port)
             self.reader_thread.data_received.connect(self.on_data_received)
+            # Connect calibration data signal (will be routed when cal window is open)
+            self.reader_thread.calibration_data_received.connect(self.on_calibration_data_received)
             self.reader_thread.start()
 
         except Exception as e:
