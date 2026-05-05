@@ -52,6 +52,11 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.serial_port = None
         self.is_calibration_active = False # Flag when it is in calibration
+        self.buf_t_cal = []
+        self.buf_ax_cal = []
+        self.buf_ay_cal = []
+        self.buf_az_cal = []
+        self.calibration_offsets = None
 
         # Show the directory textbox at the top
         self.output_directory = os.path.dirname(os.path.abspath(__file__))
@@ -104,12 +109,15 @@ class MainWindow(QMainWindow):
     def on_data_received(self, t, x, ax, ay, az):
         """Handle normal 5-value data - but skip if in calibration mode."""
 
-        # Skip processing if we're in calibration mode
         if self.is_calibration_active:
-            print(f"[DEBUG] Ignoring normal data during calibration: t={t:.2f}s")
-            return  # Exit early - don't plot or display
+            return
+        # ── Apply calibration offsets if available ──
+        if self.calibration_offsets is not None:
+            ax += self.calibration_offsets["ax_offset_mg"]
+            ay += self.calibration_offsets["ay_offset_mg"]
+            az += self.calibration_offsets["az_offset_mg"]
 
-        msg = f"t= {t: .2f} s, x= {x: .1f} cm, ax= {ax / 1000: .3f} g, ay= {ay / 1000: .3f} g, az= {az / 1000: .3f} g"
+        msg = f"t= {t: .3f} s, x= {x: .1f} cm, ax= {ax / 1000: .3f} g, ay= {ay / 1000: .3f} g, az= {az / 1000: .3f} g, pwm= {self._last_pwm_value}"
         print(msg)  # console
         self.RxText_box.append(msg)
         self.RxText_box.verticalScrollBar().setValue(self.RxText_box.verticalScrollBar().maximum())
@@ -120,18 +128,21 @@ class MainWindow(QMainWindow):
         self.buf_ax.append(ax)
         self.buf_ay.append(ay)
         self.buf_az.append(az)
+        self.buf_pwm.append(self._last_pwm_value)  # snapshot PWM at this sample
 
-        # Integrate ay → velocity (ax in mg → m/s²: * 0.001 * 9.81)
+        # Integrate acceleration (mg → m/s²: × 0.001 × 9.81) → velocity
         if self.prev_t is not None:
             dt = t - self.prev_t
             if dt > 0:
-                self.curr_vx += (0.001 * ax * 9.81) * dt
-            elif getattr(self, "_last_pwm_value", 0) == 0:
-                self.curr_vx = 0
-                self.curr_vx += (ax * 9.81) * dt
+                scale = 0.001 * 9.81  # mg → m/s²
+                self.curr_vx += ax * scale * dt
+                self.curr_vy += ay * scale * dt
+                self.curr_vz += az * scale * dt
         self.prev_t = t
 
         self.buf_vx.append(self.curr_vx)
+        self.buf_vy.append(self.curr_vy)
+        self.buf_vz.append(self.curr_vz)
 
         # Only plot once we have data
         if len(self.buf_t) < 2:
@@ -143,19 +154,28 @@ class MainWindow(QMainWindow):
         self.curve_ax.setData(t_list, list(self.buf_ax))
         self.curve_ay.setData(t_list, list(self.buf_ay))
         self.curve_az.setData(t_list, list(self.buf_az))
+
         self.curve_vx.setData(t_list, list(self.buf_vx))
+        self.curve_vy.setData(t_list, list(self.buf_vy))
+        self.curve_vz.setData(t_list, list(self.buf_vz))
 
     def on_calibration_data_received(self, t, ax, ay, az):
         """Handle calibration data separately - send to cal window, not plots."""
-        msg = f"t= {t: .2f} s, ax= {ax: .0f} mg, ay= {ay: .0f} mg, az= {az: .0f} mg"
+        msg = f"t= {t: .3f} s, ax= {ax: .0f} mg, ay= {ay: .0f} mg, az= {az: .0f} mg"
 
         # Only process if we're actually in calibration mode
         if self.is_calibration_active:
             print(f"[CAL] {msg}")
 
+
             # If calibration window is open, send data there
             if hasattr(self, '_cal_window') and self._cal_window is not None:
                 self._cal_window.cal_log.append(msg)
+                # Push csampled calibration data into buffers so the average is calculated
+                self.buf_t_cal.append(t)
+                self.buf_ax_cal.append(ax)
+                self.buf_ay_cal.append(ay)
+                self.buf_az_cal.append(az)
                 # Auto-scroll
                 self._cal_window.cal_log.verticalScrollBar().setValue(
                     self._cal_window.cal_log.verticalScrollBar().maximum())
@@ -163,6 +183,46 @@ class MainWindow(QMainWindow):
             # Log unexpected calibration data when not in calibration mode
             print(f"[WARNING] Received calibration data while not in calibration mode: {msg}")
             self.text_box.append(f"Unexpected cal data: {msg}")
+
+    def reset_calibration_buffers(self):
+        self.buf_t_cal.clear()
+        self.buf_ax_cal.clear()
+        self.buf_ay_cal.clear()
+        self.buf_az_cal.clear()
+
+    def compute_calibration_average(self, min_samples=20):
+        n = len(self.buf_ax_cal)
+        if n < min_samples:
+            return None
+
+        ax_avg = sum(self.buf_ax_cal) / n
+        ay_avg = sum(self.buf_ay_cal) / n
+        az_avg = sum(self.buf_az_cal) / n
+
+        ax_std = (sum((v - ax_avg) ** 2 for v in self.buf_ax_cal) / n) ** 0.5
+        ay_std = (sum((v - ay_avg) ** 2 for v in self.buf_ay_cal) / n) ** 0.5
+        az_std = (sum((v - az_avg) ** 2 for v in self.buf_az_cal) / n) ** 0.5
+
+        # % error = (std / |avg|) * 100  — guard against zero-mean axes
+        ax_pct = (ax_std / abs(ax_avg) * 100) if ax_avg != 0 else float('inf')
+        ay_pct = (ay_std / abs(ay_avg) * 100) if ay_avg != 0 else float('inf')
+        az_pct = (az_std / abs(az_avg) * 100) if az_avg != 0 else float('inf')
+
+        # Typical stationary target in mg
+        offsets = {
+            "ax_offset_mg": -ax_avg,
+            "ay_offset_mg": -ay_avg,
+            "az_offset_mg":  -az_avg
+        }
+
+        self.calibration_offsets = offsets
+        return {
+            "n": n,
+            "ax_avg": ax_avg, "ay_avg": ay_avg, "az_avg": az_avg,
+            "ax_std": ax_std, "ay_std": ay_std, "az_std": az_std,
+            "ax_pct": ax_pct, "ay_pct": ay_pct, "az_pct": az_pct,
+            **offsets,
+        }
 
     def send_clear_buffer(self):
         # Clear the data in the list (buffer so that the plot does grab previous data
@@ -172,10 +232,15 @@ class MainWindow(QMainWindow):
         self.buf_ay.clear()
         self.buf_az.clear()
         self.buf_vx.clear()
+        self.buf_vy.clear()
+        self.buf_vz.clear()
+        self.buf_pwm.clear()
 
         # Reset velocity integration initial conditions
         self.prev_t  = None
         self.curr_vx = 0.0
+        self.curr_vy = 0.0
+        self.curr_vz = 0.0
 
         # Clear the plot with the empty buffer
         self.curve_x.setData([])
@@ -183,6 +248,8 @@ class MainWindow(QMainWindow):
         self.curve_ay.setData([])
         self.curve_az.setData([])
         self.curve_vx.setData([])
+        self.curve_vy.setData([])
+        self.curve_vz.setData([])
 
         # clear output data from the RxText_box
         self.RxText_box.clear()
@@ -231,7 +298,7 @@ class MainWindow(QMainWindow):
             self.dir_backward_rb.setEnabled(False)
 
             # clear buffer data and plot.
-            self.send_clear_buffer()
+            # self.send_clear_buffer()
 
         else:
             self.text_box.append("No COM port is currently connected.")
@@ -286,7 +353,8 @@ class MainWindow(QMainWindow):
     def send_debounced_steering(self):
         value = getattr(self, "_last_steering_value", self.steering_dial.value())
         if hasattr(self, "serial_port") and self.serial_port and self.serial_port.is_open:
-            cmd = f"S,{value}"
+            inverted_value = 150 - value  # flip: 50↔100, center 75 stays 75
+            cmd = f"S,{inverted_value}"
             cmd = formatTwoWordData(cmd)
             self.send_serial_data(cmd)
 
@@ -318,6 +386,9 @@ class MainWindow(QMainWindow):
                 "ay (mg)": list(self.buf_ay),
                 "az (mg)": list(self.buf_az),
                 "vx (m/s)": list(self.buf_vx),
+                "vy (m/s)": list(self.buf_vy),
+                "vz (m/s)": list(self.buf_vz),
+                "PWM": list(self.buf_pwm),
             })
             df.to_csv(file_path, index=False)
             QMessageBox.information(self, "Export Successful", f"Data exported to {file_path}")

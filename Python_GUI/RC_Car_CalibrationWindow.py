@@ -5,8 +5,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 
-# Import the helper that lives in the transmitter file
-from RC_Car_Control_II_transmitter import formatTwoWordData
+
 
 class CalibrationWindow(QDialog):
     """A separate dialog window for accelerometer calibration."""
@@ -40,6 +39,10 @@ class CalibrationWindow(QDialog):
         self.stop_cal_btn.clicked.connect(self.stop_calibration)
         # self.stop_cal_btn.setEnabled(False)  # Disabled until calibration starts
 
+        # Adding a calibrate button once the data is collected.
+        self.calibrate_btn = QPushButton("Calibrate", self)
+        self.calibrate_btn.clicked.connect(self.calculate_average)
+
         self.clear_log_btn = QPushButton("Clear Log", self)
         self.clear_log_btn.clicked.connect(self.cal_log.clear)
 
@@ -50,6 +53,7 @@ class CalibrationWindow(QDialog):
         btn_layout = QHBoxLayout()
         btn_layout.addWidget(self.start_cal_btn)
         btn_layout.addWidget(self.stop_cal_btn)
+        btn_layout.addWidget(self.calibrate_btn)  #  Added the calibrate button to the layout
         btn_layout.addWidget(self.clear_log_btn)
         btn_layout.addWidget(self.close_btn)
 
@@ -63,6 +67,8 @@ class CalibrationWindow(QDialog):
 
     def start_calibration(self):
         """Send the CAL command over UART via the parent MainWindow."""
+        # Import the helper that lives in the transmitter file
+        from RC_Car_Control_II_transmitter import formatTwoWordData
         main_window = self.parent()
         self.cal_log.append("=== STARTING CALIBRATION ===")
 
@@ -99,12 +105,15 @@ class CalibrationWindow(QDialog):
         self.cal_log.append("Sent: CAL")
 
         # Wait a moment for MCU to process, then clear buffer again
-        from PyQt5.QtCore import QTimer
+
         QTimer.singleShot(100, lambda: self._post_start_cleanup(main_window))
         # Update main window status
         if hasattr(main_window, 'cal_status_label'):
             main_window.cal_status_label.setText("⚠ CALIBRATION ACTIVE - Plotting Disabled")
 
+        if hasattr(main_window, "reset_calibration_buffers"):
+            main_window.reset_calibration_buffers()
+            self.cal_log.append("Cleared previous calibration samples")
 
     def _post_start_cleanup(self, main_window):
         """Clean up any stale data after MCU starts calibration."""
@@ -117,6 +126,7 @@ class CalibrationWindow(QDialog):
 
     def stop_calibration(self):
         """Stop calibration mode."""
+        from RC_Car_Control_II_transmitter import formatTwoWordData
         main_window = self.parent()
         self.cal_log.append("=== STOPPING CALIBRATION ===")
 
@@ -133,6 +143,55 @@ class CalibrationWindow(QDialog):
         # Wait a moment for MCU to process
 
         QTimer.singleShot(200, lambda: self._finish_stop(main_window))
+
+    def calculate_average(self):
+        main_window = self.parent()
+        if main_window is None:
+            self.cal_log.append("ERROR: No parent window.")
+            return
+
+        result = main_window.compute_calibration_average(min_samples=20)
+        if result is None:
+            count = len(main_window.buf_ax_cal) if hasattr(main_window, "buf_ax_cal") else 0
+            self.cal_log.append(f"Not enough samples to calibrate ({count}/20 minimum).")
+            return
+
+        self.cal_log.append("=== CALIBRATION RESULTS ===")
+        self.cal_log.append(f"Samples: {result['n']}")
+        self.cal_log.append(
+            f"  ax: avg={result['ax_avg']:+.2f} mg  "
+            f"std={result['ax_std']:.2f} mg  "
+            f"err={result['ax_pct']:.1f}%"
+        )
+        self.cal_log.append(
+            f"  ay: avg={result['ay_avg']:+.2f} mg  "
+            f"std={result['ay_std']:.2f} mg  "
+            f"err={result['ay_pct']:.1f}%"
+        )
+        self.cal_log.append(
+            f"  az: avg={result['az_avg']:+.2f} mg  "
+            f"std={result['az_std']:.2f} mg  "
+            f"err={result['az_pct']:.1f}%"
+        )
+        self.cal_log.append("--- Offsets to apply ---")
+        self.cal_log.append(
+            f"  ax_offset={result['ax_offset_mg']:+.2f} mg, "
+            f"ay_offset={result['ay_offset_mg']:+.2f} mg, "
+            f"az_offset={result['az_offset_mg']:+.2f} mg"
+        )
+
+        # ── NEW: push summary to main window label ──
+        if hasattr(main_window, 'cal_results_label'):
+            summary = (
+                f"n={result['n']}  "
+                f"ax={result['ax_avg']:+.1f}±{result['ax_std']:.1f}mg ({result['ax_pct']:.1f}%)  "
+                f"ay={result['ay_avg']:+.1f}±{result['ay_std']:.1f}mg ({result['ay_pct']:.1f}%)  "
+                f"az={result['az_avg']:+.1f}±{result['az_std']:.1f}mg ({result['az_pct']:.1f}%)"
+            )
+            main_window.cal_results_label.setText(summary)
+            main_window.cal_results_label.setStyleSheet(
+                "color: lime; background-color: #1a1a1a; padding: 2px;"
+            )
 
     def _finish_stop(self, main_window):
         """Complete the stop sequence after MCU has time to respond."""

@@ -5,6 +5,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer
 from collections import deque
 import pyqtgraph as pg
+from RC_Car_CalibrationWindow import CalibrationWindow
 
 class MainWindowWidgetSetup:
     @staticmethod
@@ -36,8 +37,9 @@ class MainWindowWidgetSetup:
         main_window.rx_label.setFont(bold_font)
 
         # set up the Q-dial for the user to steer the RC Car.
-        main_window.steering_label = QLabel("Steering: 50", main_window)
-        main_window.steering_label.setGeometry(700, 180, 120, 30)
+        main_window.steering_label = QLabel("Steering: 75", main_window)
+        main_window.steering_label.setGeometry(710, 135, 120, 20)
+        main_window.steering_label.setAlignment(Qt.AlignCenter)
 
         main_window.steering_dial = QDial(main_window)
         main_window.steering_dial.setGeometry(720, 30, 100, 100)
@@ -148,7 +150,10 @@ class MainWindowWidgetSetup:
         main_window.buf_ax = deque(maxlen=WINDOW)
         main_window.buf_ay = deque(maxlen=WINDOW)
         main_window.buf_az = deque(maxlen=WINDOW)
-        main_window.buf_vx = deque(maxlen=WINDOW)
+        main_window.buf_vx  = deque(maxlen=WINDOW)
+        main_window.buf_vy  = deque(maxlen=WINDOW)
+        main_window.buf_vz  = deque(maxlen=WINDOW)
+        main_window.buf_pwm = deque(maxlen=WINDOW)  # log PWM value at each sample
 
         # PyQtGraph container
         main_window.plot_widget = pg.GraphicsLayoutWidget(main_window)
@@ -185,14 +190,18 @@ class MainWindowWidgetSetup:
             pen=pg.mkPen('#D85A30', width=2), name='az')
 
 
-        # Bottom plot: Velocity (integrated from ay)
+        # Bottom plot: Velocity (integrated from ax, ay, az)
         main_window.plot_vx = main_window.plot_widget.addPlot(row=2, col=0)
-        main_window.plot_vx.setLabel('left', 'Velocity x', units='m/s')
+        main_window.plot_vx.setLabel('left', 'Velocity', units='m/s')
         main_window.plot_vx.setLabel('bottom', 'Time', units='s')
         main_window.plot_vx.showGrid(x=True, y=True, alpha=0.3)
         main_window.plot_vx.addLegend()
         main_window.curve_vx = main_window.plot_vx.plot(
             pen=pg.mkPen('#5DCAA5', width=2), name='vx')
+        main_window.curve_vy = main_window.plot_vx.plot(
+            pen=pg.mkPen('#4DA6FF', width=2), name='vy')
+        main_window.curve_vz = main_window.plot_vx.plot(
+            pen=pg.mkPen('#FF5C8A', width=2), name='vz')
 
         # Link all x-axes together
         main_window.plot_acc.setXLink(main_window.plot_x)
@@ -201,6 +210,8 @@ class MainWindowWidgetSetup:
         # Velocity integration state
         main_window.prev_t  = None
         main_window.curr_vx = 0.0
+        main_window.curr_vy = 0.0
+        main_window.curr_vz = 0.0
 
 
     @staticmethod
@@ -224,8 +235,6 @@ class MainWindowWidgetSetup:
 
     @staticmethod
     def setup_calibration_button(main_window):
-        from RC_Car_CalibrationWindow import CalibrationWindow
-
         main_window.calibration_btn = QPushButton("Calibration", main_window)
         main_window.calibration_btn.setGeometry(600, 130, 120, 40)
 
@@ -234,6 +243,16 @@ class MainWindowWidgetSetup:
         main_window.cal_status_label.setGeometry(730, 130, 250, 40)
         main_window.cal_status_label.setStyleSheet("color: orange; font-weight: bold; font-size: 12px;")
         main_window.cal_status_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
+        # ── NEW: show calibration results persistently on the main window ──
+        main_window.cal_results_label = QLabel("Calibration: not run", main_window)
+        main_window.cal_results_label.setGeometry(20, 452, 960, 18)
+        main_window.cal_results_label.setFont(QFont("Courier", 8))
+        main_window.cal_results_label.setStyleSheet(
+            "color: cyan; background-color: #1a1a1a; padding: 1px 4px;"
+        )
+        main_window.cal_results_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        main_window.cal_results_label.setWordWrap(False)
 
         def open_calibration_window():
             main_window._cal_window = CalibrationWindow(parent=main_window)

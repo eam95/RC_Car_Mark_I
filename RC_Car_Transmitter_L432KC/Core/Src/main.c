@@ -53,6 +53,7 @@ struct RC_CarDataRx
     uint16_t distance_cm; // Store the distance measurement in centimeters
     char stationaryFlag;  // This is Flag to indicate back to the transmitter whether there is a stationary object when the car is accelerating.
     uint32_t timestamp; // in milliseconds
+    uint32_t set_timer_period; // This variable will store the timer period in ticks, which is used to configure the timer interrupt frequency for tasks like sensor reading and control loop execution.
 
 };
 
@@ -101,7 +102,7 @@ DMA_HandleTypeDef hdma_usart2_rx;
 /* USER CODE BEGIN PV */
 
 //////  Commands Declarations  //////////////////////////////////////
-struct RC_CarDataRx RC_Data = {0};    // This initializes all members to 0
+struct RC_CarDataRx RC_Data = {.set_timer_period = 12500};
 struct UART_Comm Msg = {0}; // This initializes all members to 0
 struct CmRxBuffer CmRxBuffer = {0}; // This initializes all members to 0
 
@@ -477,7 +478,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 80-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 10000;
+  htim6.Init.Period = RC_Data.set_timer_period-1;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
