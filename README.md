@@ -72,21 +72,22 @@ The RC Car was able to respond to the user interface and received data, however 
 ![RC Car](/docs/images/picturesGeneral/EulerIntegrationMethod.png)
     *Figure 7: Euler Integration Technique.*
     
-    The integration technique was able to calculate the velocity but there arises three challenge:
+The integration technique was able to calculate the velocity but there arises three challenge
     
-    1. The small noise over time is will cause the velocity to drift away from the approximate which is a issue when integrating numerically.
-    2. If the RC car is moving but decides to stop, the integration technique does not have an initial condition measured to know if the RC Car has stopped and will show the RC Car traveling at constant speed.
-    3. The stationary RC car, is tilted at small angle in which the accelerometer on the x component feels a small pull from Earth gravity. (The Z-axis show the acceleration near 1000mg = 1g = 9.81m/s^2)
+        1. The small noise over time is will cause the velocity to drift away from the approximate which is a issue when integrating numerically.
+        2. If the RC car is moving but decides to stop, the integration technique does not have an initial condition measured to know if the RC Car has stopped and will show the RC Car traveling at constant speed.
+        3. The stationary RC car, is tilted at small angle in which the accelerometer on the x component feels a small pull from Earth gravity. (The Z-axis show the acceleration near 1000mg = 1g = 9.81m/s^2)
     
-    An attempt resolve most off three challenges, a calibration feature is added before running the RC car so the influence of Earth's gravity can be filtered out and track basically the change in motion of the RC car. The calibration will measure the acceleration and then get average out to calculate the offset required to add. Below shows the waveform of what the accelerometer measures without calibration vs with calibration for 4.5s.
+   An attempt resolve most off three challenges, a calibration feature is added before running the RC car so the influence of Earth's gravity can be filtered out and track basically the change in motion of the RC car. The calibration will measure the acceleration and then get average out to calculate the offset required to add. Below shows the waveform of what the accelerometer measures without calibration vs with calibration for 4.5s.
     
 ![RC Car](/docs/images/picturesGeneral/NoCalibrationWF.png)
     *Figure 8: The waveform of accelerometer without calibration.*
     
 ![RC Car](/docs/images/picturesGeneral/CalibrationWF.png)
-    *Figure 8: The waveform of accelerometer without calibration.*
-    
-    
+    *Figure 8: The waveform of accelerometer with calibration.*
+
+By calibrating it will calculate the velocity a little more accurate and drift from integration becomes small difference but still will add up eventual if stays still long enough as shown in the calibration waveform. This alone would not fully solve the challenge more a band-aid solution. Other sensors can implement such a hall effect sensor where the L4133 could be attach to the wheel and a magnet can stick on the wheel to generate a pulse momentarily and based on the time difference between the wheel, the linear velocity can be calculated. Another sensor such as the GPS can potentially track the position precisely. It would be effective to include more sensors to measure more physicals parameter so that more initial conditions about the car can be used to calculate the velocity of the car known as sensor fusion. 
+
 - Non-blocking LIDAR integration to prevent main loop stalls
 - Bidirectional NRF24 communication with synchronized TX/RX windows
 
