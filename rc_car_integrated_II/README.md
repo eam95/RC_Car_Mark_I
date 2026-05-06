@@ -3,37 +3,31 @@
 ## Overview
 The RC Car will drive itself automatically by a PID controller and hopefully could be an adaptive cruise controller soon as it detects a stationary object or another car is ahead. The following sensor are incorporated to the RC car:
 
-- NRF24L01 LoRa RF Sensor using the SPI protocol
-- External SN74HCT595 8-Bit Shift Registers Adapter — controls LEDs using SPI protocol for marking states in the program (serves as a marker to troubleshoot program)
+- NRF24L01 RF Sensor using the SPI protocol
+- External SN74HCT595 8-Bit Shift Registers Adapter, controls LEDs using SPI protocol for marking states in the program (serves as a marker to troubleshoot program, and not used yet)
 - Garmin Lite V3 LIDAR that can read distance up to 40m.
 - LIS3DH accelerometer as an attempt to calculate its speed.
-- IBT-4, 50A H-Bridge MOSFET Driver Chip
+- IBT-4, 50A H-Bridge MOSFET Driver Chip (PWM frequency is programmed at 4kHz)
 - FOD8001 Logic Optocoupler (Isolate the MCU from the power circuit of the motor)
 - TMH1205S Traco Power Isolated DC-DC converter (Power the MCU).
+- HiLetgo DC/DC step down converter 75W
+- LM317 Adjustable Voltage Regulator
+- Rapthor Rechargeable 12V 5200mAh Lithium ion Battery Pack Model BP007
+- Servo motor (PWM frequency is programmed at 50Hz but pulsed within 1-2ms to control the steering)
+- DC Motor
 
+With all the modules and components used the data read from the sensor is packaged into a 32byte format and then transmitted but to the transmitter.
+
+## Schematic
+
+![RC Car](../docs/schematics/RC_Car_Schematic.png)
+
+The schematic of the RC Car where it is powered by a 12V rechargable battery, but the schematic is divided by two sections. Note inside the yellow box is the Nucleo Board H723ZG connected to all the sensors but all the ground are digital ground, whereas inside the green box has all the grounds are power grounds which has the power related circuit. That is due to using a TMH1205S Traco Power Isolated DC-DC converter which powers the MCU but the ground is isolated and vice versa with the optocouplers to transmit the signal to control the servo motor, and DC motor.
 
 ## Functionalities
-The RC car is toggling the NRF24L01 from listen/talking mode (Rx/Tx mode) every 10ms (using periodic timer interrupt to toggle comm mode) so it can receive commands and data in the Bidirectional Communication mode. The python GUI, sends the commands to the RC car to stop or go forward/backward based on PWM value given. Once the RC Car recognizes it receive a command to move forward/backward it starts measure the distance from the LIDAR, and accelerations from the accelerometer with timestamp it is measured when it is Rx mode. 
- - As of 4/8/26
-    - There is Bidirectional Communication issue from the transmitter, when it is forward/backward mode it will receive data for about 3.3s-3.5s and then stop acquiring data for a second.
-    - It still collects data again and repeat the same pattern.
-    - Need to check the with the logic analyzer, to verify if the RC car is actually transmitting data, when Red on board LED is toggling.
-    - Yellow on board LED indicates the stage where it is in Receive mode.
-    - Green on board LED indicates the stage where it is in Transmitt mode.
-    - Once it Receives a command to stop the car it will quit measuring.
-    - To verify the RC car sensors are actually measuring the UART compability is added so it be easier to debug.
-        - Baud rate for board is 115200 bits/s
-        - If running on Debian OS and wish to use UART to debug picocom can be run on the terminal.
-            -  picocom -b 115200 /dev/ttyACM0
+The RC car is toggling the NRF24L01 from listen/talking mode (Rx/Tx mode) every 10ms (using periodic timer interrupt to toggle comm mode) so it can receive commands and data in the Bidirectional Communication mode. The python user interface, sends the commands to the RC car to stop or go forward/backward based on PWM value given. Once the RC Car recognizes it receive a command to move forward/backward it starts measure the distance from the LIDAR, and accelerations from the accelerometer with timestamp it is measured when it is Rx mode. Along with the moving the RC Car the servo motor is also controlled a PWM with a pulse within 1-2ms at 50Hz. As mentioned in the front page of the repo, the accelerometer is calibrated by sending a "CAL" command where it can transmit the acceleration data. Once the enough acceleration data is collected it is posted process and the average offset value along with the std deviation is calculate in order for the user interface to offset the raw measurement, form the RC Car. 
 
-- As of 4/28/26
-    - The transmission of data is successful for a few weeks back.
-    - Tested by storing 1000 data points in the MCU's RAM so it can be debuged.
-    - Upgraded the DC/DC converter module to Hiletgo 5A 75W DC-DC Step Down Power Module, which can monitor the voltage supply of the MCU which powers all the sensors.
-    - Changed the body of the RC car that includes a servo motor to potentially control steering since the RC car curves while driving.
-    - After successful data acquisition from the transmitter and plotted in real time in the Python GUI the 1000 point debug feature is removed. 
     
-
 ### STM32CubeIDE
 Built with STM32CubeIDE on Debian. Open the workspace and import both projects.
 - Note: change the gbd on the Debug launch file if Debian is used. The project won't debug if it can't find the correct gbd. Look a at line 65 and change the gbd from arm-none-eabi-gdb to gdb-multiarch. Make sure to install multiarch gdb.
