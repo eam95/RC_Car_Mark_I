@@ -88,7 +88,8 @@ typedef enum
 	CHANGE_TX_STATE,
 	RX_STATE,
 	TX_STATE,
-	STATE_FORCE_STOP
+	STATE_FORCE_STOP,
+	STATE_ACCEL_CALIBRATION
 
 } StateType;
 StateType currentState = WAIT_STATE;
@@ -106,6 +107,9 @@ struct DataToTransmit
 	int32_t a_x; // Store the acceleration in x-axis
     int32_t a_y; // Store the acceleration in y-axis
     int32_t a_z; // Store the acceleration in z-axis
+    int32_t ax_cal_avg; // The average acceleration to offset the bias in x-axis
+    int32_t ay_cal_avg; // The average acceleration to offset the bias in y-axis
+    int32_t az_cal_avg; // The average acceleration to offset the bias in z-axis
     uint16_t distance_cm; // Store the distance measurement in centimeters
     char stationaryFlag;  // This is Flag to indicate back to the transmitter whether there is a stationary object when the car is accelerating.
     uint32_t timestamp; // in milliseconds
@@ -156,7 +160,7 @@ uint8_t UART3_rxBuffer[UART_DMA_RX_SIZE]; // DMA buffer
 struct TimeTracking Tset =
 {
     .seconds_counter = 0,
-    .set_timer_period = 20000,
+    .set_timer_period = 12500,
 	.stamped_time = 0,
 	.milliAdder = 0,
 	.timeAccumulator = 0
@@ -183,6 +187,8 @@ struct DataTxBuffer TxData = {0}; // This initializes all members to 0
 uint8_t tx_addr[5] = {0x45, 0x55, 0x67, 0x10, 0x21};
 
 volatile int pwm_value = 0;
+volatile uint8_t cal_sample_flag = 0;
+
 
 
 /* USER CODE END PV */
@@ -202,6 +208,14 @@ static void MX_TIM3_Init(void);
 static void MX_TIM13_Init(void);
 /* USER CODE BEGIN PFP */
 void nrf24_setup(void);
+
+static void formatAccelPrint(uint32_t timestamp, int32_t ax, int32_t ay, int32_t az);
+static void formatAccelPacket(uint32_t timestamp, int32_t ax, int32_t ay, int32_t az);
+
+static void formatSensorPrint(uint32_t timestamp, uint16_t dist, int32_t ax, int32_t ay, int32_t az);
+static void formatSensorPacket(uint32_t timestamp, uint16_t dist, int32_t ax, int32_t ay, int32_t az);
+
+
 
 /* USER CODE END PFP */
 
@@ -254,7 +268,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   lis3dh_init();
   GarLiteV3_Init();
-  HAL_UART_Receive_DMA(&huart3, UART3_rxBuffer, UART_DMA_RX_SIZE);
+
   HAL_TIM_Base_Start(&htim24);  // ← START TIM24 for delay_us()
 
 
@@ -266,12 +280,12 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim3);
   // Use absolute compare (tick) values directly instead of percentage
   // These are timer ticks (must be <= htim1.Init.Period)
-  uint32_t pulse_ch3 = 25000U; // channel 1
-  uint32_t pulse_ch4 = 25000U; // channel
+  uint32_t pulse_ch3 = 20000U; // channel 1
+  uint32_t pulse_ch4 = 20000U; // channel
 
   // The tick set up to turn the servo motor.
   // 1ms= 1000us = 1000 ticks, 1.5ms = 75 ticks, 2ms = 2000 ticks.
-  uint32_t pulseServoMotor = 100U; // This is for the servo motor control, which will be used to control the steering of the RC car. The value can be adjusted based on the desired steering angle and the characteristics of the servo motor being used. For example, a value of 12500 ticks might correspond to a 90-degree turn, while values lower or higher than that would correspond to turns in the opposite direction or sharper turns, respectively. The exact mapping between pulse width and steering angle would need to be determined experimentally based on the specific servo motor and its response characteristics.
+  uint32_t pulseServoMotor = 75U; // This is for the servo motor control, which will be used to control the steering of the RC car. The value can be adjusted based on the desired steering angle and the characteristics of the servo motor being used. For example, a value of 12500 ticks might correspond to a 90-degree turn, while values lower or higher than that would correspond to turns in the opposite direction or sharper turns, respectively. The exact mapping between pulse width and steering angle would need to be determined experimentally based on the specific servo motor and its response characteristics.
   Receive.pwm_steer = pulseServoMotor; // Initialize the pwm_steer variable in the Receive structure with 50% duty cycle.
 
   char ReceiveCmd[PLD_S];
@@ -279,7 +293,7 @@ int main(void)
   int k = 0; // increment counter for data acquisition
 
   // Set up time Adder for timestamping and timing control
-  Tset.milliAdder = Tset.set_timer_period / 1000;
+  Tset.milliAdder = Tset.set_timer_period * 2 / 1000;
 
 
   /* Sanity checks: ensure values do not exceed ARR (which is htim1.Init.Period) */
@@ -404,8 +418,21 @@ int main(void)
                       Receive.Dset = (uint16_t)atoi(D_str);
                       nextState = SET_PID_STATE;
                   }
-                  // Data received — don't change currentState here;
-                  // let the timer ISR trigger CHANGE_TX_STATE when it's time
+                  else if (strcmp(cmd_str, "CAL") == 0)
+            	  {
+                	  // Only the Python GUI Calibration Window  will jump to this state.
+                	  // 2s worth of acceleration data will be measure so it can be measure and calibrate the offset of accelerometer data.
+                	  // A manual calibration that was tested showed, that finding the average offset help reduce drifting for the velocity calculation.
+                	  Tset.stamped_time = 0; // Reset the timestamp when starting calibration
+                	  nextState = STATE_ACCEL_CALIBRATION;
+               	  }
+                  else if (strcmp(cmd_str, "STOP_CAL") == 0)
+            	  {
+                	  // Stop Calibration.
+                	  stopState = 1;
+                	  nextState = WAIT_STATE; // After stopping calibration, switch back to wait state
+               	  }
+
               }
 
               break;
@@ -442,25 +469,9 @@ int main(void)
         		  measure_XYZ_Acceleration(&Transmit.a_x, &Transmit.a_y, &Transmit.a_z);
         		  simple_measurement(&Transmit.distance_cm, 0);
         		  Tset.stamped_time += Tset.milliAdder;
+//        		  formatSensorPrint(Tset.stamped_time, Transmit.distance_cm, Transmit.a_x, Transmit.a_y, Transmit.a_z);
+        		  formatSensorPacket(Tset.stamped_time, Transmit.distance_cm, Transmit.a_x, Transmit.a_y, Transmit.a_z);
 
-        		  uint32_t len = snprintf((char *)Transmit.cmd, sizeof(Transmit.cmd),
-        		                    "%lu,%u,%ld,%ld,%ld",
-        		                    Tset.stamped_time, Transmit.distance_cm,
-        		                    Transmit.a_x, Transmit.a_y, Transmit.a_z);
-        		  // Place \r\n at the last 2 bytes of the 32-byte array
-        		  Transmit.cmd[PLD_S - 2] = '\r';
-        		  Transmit.cmd[PLD_S - 1] = '\n';
-
-        	        // For UART: send only the data + \r\n (not the null padding)
-        	        if (len > 0)
-        	        {
-        	            // Temporarily append \r\n right after the data for UART
-        	            uint8_t uart_buf[PLD_S];
-        	            memcpy(uart_buf, Transmit.cmd, len);
-        	            uart_buf[len]     = '\r';
-        	            uart_buf[len + 1] = '\n';
-        	            HAL_UART_Transmit(&huart3, uart_buf, len + 2, HAL_MAX_DELAY);
-        	        }
         		  nrf24_transmit(Transmit.cmd, PLD_S);
         		  // The data acquisition state to confirm which was attempted to be transmited
 //        		  currentState = STATE_DATA_ACQUISITION;
@@ -475,6 +486,33 @@ int main(void)
               currentState = nextState;
 
               break;
+
+
+
+          case STATE_ACCEL_CALIBRATION:
+			  // This state is for calibrating the accelerometer data by finding the average offset when the car is stationary, which can help reduce drifting in velocity calculation.
+			  // The calibration will run until it receives the "STOP_CAL" command, which will set the stopState flag to 1 and switch back to wait state.
+			  if (stopState == 1)
+			  {
+				  // Exit calibration state
+				  currentState = COAST_STATE;
+				  nextState = WAIT_STATE; // After stopping calibration, switch back to wait state
+				  break;
+			  }
+			    if (cal_sample_flag == 0)
+			        break; // Wait for TIM3 to fire
+
+			  cal_sample_flag = 0; // Clear flag immediately
+			  // Collect accelerometer data for calibration
+			  memset(Transmit.cmd, 0, PLD_S); // Clear the buffer
+			  measure_XYZ_Acceleration(&Transmit.a_x, &Transmit.a_y, &Transmit.a_z);
+			  Tset.stamped_time += Tset.milliAdder;
+			  // Format the data to packet so it can be formated and transmitted
+//			  formatAccelPrint(Tset.stamped_time, Transmit.a_x, Transmit.a_y, Transmit.a_z);
+			  formatAccelPacket(Tset.stamped_time, Transmit.a_x, Transmit.a_y, Transmit.a_z);
+			  // send the data.
+			  nrf24_transmit(Transmit.cmd, PLD_S);
+			  break;
 
     	  case STATE_DATA_ACQUISITION:
     		  // This state is for testing the data acquisition from the RC car.
@@ -858,7 +896,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 250-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 10000-1;
+  htim3.Init.Period = Tset.set_timer_period - 1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -1122,17 +1160,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
     {
-        // Only toggle the comm state and request the main loop to handle the transition
+        if (currentState == STATE_ACCEL_CALIBRATION)
+        {
+            cal_sample_flag = 1; // signal calibration to take a sample
+        }
+
+        // Always toggle comm state so the radio can receive STOP_CAL
         if (currentCommState == RX_STATE)
-        {
             currentState = CHANGE_RX_STATE;
-        }
-        else if (currentCommState == TX_STATE) // TX_STATE
-        {
+        else if (currentCommState == TX_STATE)
             currentState = CHANGE_TX_STATE;
-        }
     }
 }
+
+
 
 
 
@@ -1177,6 +1218,47 @@ void nrf24_setup(void)
 	  nrf24_open_rx_pipe(0, tx_addr);
 	  ce_high();
 
+}
+
+static void formatAccelPrint(uint32_t timestamp, int32_t ax, int32_t ay, int32_t az)
+{
+    uint8_t uart_buf[PLD_S];
+    uint32_t len = snprintf((char *)uart_buf, PLD_S, "%lu,%ld,%ld,%ld", timestamp, ax, ay, az);
+    if (len > 0 && (len + 2) <= PLD_S)
+    {
+        uart_buf[len]     = '\r';
+        uart_buf[len + 1] = '\n';
+        HAL_UART_Transmit(&huart3, uart_buf, len + 2, HAL_MAX_DELAY);
+    }
+}
+
+static void formatAccelPacket(uint32_t timestamp, int32_t ax, int32_t ay, int32_t az)
+{
+    memset(Transmit.cmd, 0, PLD_S);
+    snprintf((char *)Transmit.cmd, PLD_S, "%lu,%ld,%ld,%ld", timestamp, ax, ay, az);
+    Transmit.cmd[PLD_S - 2] = '\r';
+    Transmit.cmd[PLD_S - 1] = '\n';
+}
+
+
+static void formatSensorPrint(uint32_t timestamp, uint16_t dist, int32_t ax, int32_t ay, int32_t az)
+{
+    uint8_t uart_buf[PLD_S];
+    uint32_t len = snprintf((char *)uart_buf, PLD_S, "%lu,%u,%ld,%ld,%ld", timestamp, dist, ax, ay, az);
+    if (len > 0 && (len + 2) <= PLD_S)
+    {
+        uart_buf[len]     = '\r';
+        uart_buf[len + 1] = '\n';
+        HAL_UART_Transmit(&huart3, uart_buf, len + 2, HAL_MAX_DELAY);
+    }
+}
+
+static void formatSensorPacket(uint32_t timestamp, uint16_t dist, int32_t ax, int32_t ay, int32_t az)
+{
+    memset(Transmit.cmd, 0, PLD_S);
+    snprintf((char *)Transmit.cmd, PLD_S, "%lu,%u,%ld,%ld,%ld", timestamp, dist, ax, ay, az);
+    Transmit.cmd[PLD_S - 2] = '\r';
+    Transmit.cmd[PLD_S - 1] = '\n';
 }
 
 

@@ -1,0 +1,228 @@
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel,
+                             QComboBox, QPushButton, QTextEdit,
+                             QSlider, QRadioButton, QButtonGroup, QDial)
+from PyQt5.QtGui import QFont
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer
+from collections import deque
+import pyqtgraph as pg
+from RC_Car_CalibrationWindow_Windows import CalibrationWindow
+
+class MainWindowWidgetSetup:
+    @staticmethod
+    def setup_textbox_messages(main_window):
+        main_window.tx_label = QLabel("Transmitted Data:", main_window)
+        main_window.tx_label.setGeometry(20, 225, 400, 25)
+        main_window.text_box = QTextEdit(main_window)
+        main_window.text_box.setGeometry(20, 250, 400, 200)
+        main_window.text_box.setReadOnly(True)
+
+        main_window.rx_label = QLabel("Received Data:", main_window)
+        main_window.rx_label.setGeometry(500, 225, 400, 25)
+        main_window.RxText_box = QTextEdit(main_window)
+        main_window.RxText_box.setGeometry(450, 250, 450, 200)
+        main_window.RxText_box.setReadOnly(True)
+        main_window.rx_data_signal.connect(main_window.append_rx_text)
+
+        bold_font = QFont()
+        bold_font.setBold(True)
+        main_window.tx_label.setFont(bold_font)
+        main_window.rx_label.setFont(bold_font)
+
+        main_window.steering_label = QLabel("Steering: 75", main_window)
+        main_window.steering_label.setGeometry(710, 135, 120, 20)
+        main_window.steering_label.setAlignment(Qt.AlignCenter)
+
+        main_window.steering_dial = QDial(main_window)
+        main_window.steering_dial.setGeometry(720, 30, 100, 100)
+        main_window.steering_dial.setRange(50, 100)
+        main_window.steering_dial.setValue(75)
+        main_window.steering_dial.setNotchesVisible(True)
+        main_window.steering_dial.setWrapping(False)
+        main_window.steering_dial.valueChanged.connect(main_window.on_steering_change)
+
+        main_window._last_steering_value = 50
+        main_window.steering_debounce_timer = QTimer(main_window)
+        main_window.steering_debounce_timer.setSingleShot(True)
+        main_window.steering_debounce_timer.setInterval(10)
+        main_window.steering_debounce_timer.timeout.connect(main_window.send_debounced_steering)
+        main_window.steering_dial.sliderReleased.connect(main_window.on_steering_released)
+
+    @staticmethod
+    def setup_uart_widgets(main_window):
+        main_window.baud_label = QLabel("Select Baud Rate:", main_window)
+        main_window.baud_label.setGeometry(20, 20, 120, 30)
+
+        main_window.baud_combo = QComboBox(main_window)
+        main_window.baud_combo.setGeometry(150, 20, 150, 30)
+        main_window.baud_combo.addItems([
+            "9600", "19200", "38400", "57600", "115200"])
+
+        main_window.com_label = QLabel("Select COM Port:", main_window)
+        main_window.com_label.setGeometry(20, 70, 120, 30)
+
+        main_window.com_combo = QComboBox(main_window)
+        main_window.com_combo.setGeometry(150, 70, 150, 30)
+
+        main_window.refresh_btn = QPushButton("Refresh", main_window)
+        main_window.refresh_btn.setGeometry(320, 70, 120, 30)
+        main_window.refresh_btn.clicked.connect(main_window.refresh_com_ports)
+
+        main_window.connect_btn = QPushButton("Connect", main_window)
+        main_window.connect_btn.setGeometry(100, 130, 120, 40)
+        main_window.connect_btn.clicked.connect(main_window.connect_to_microcontroller)
+
+        main_window.disconnect_btn = QPushButton("Disconnect", main_window)
+        main_window.disconnect_btn.setGeometry(300, 130, 120, 40)
+        main_window.disconnect_btn.clicked.connect(main_window.disconnect_com_port)
+
+    @staticmethod
+    def setup_pwm_widgets(main_window):
+        main_window.pwm_label = QLabel("PWM value: 0", main_window)
+        main_window.pwm_label.setGeometry(20, 190, 120, 30)
+
+        main_window.pwm_slider = QSlider(Qt.Orientation.Horizontal, main_window)
+        main_window.pwm_slider.setGeometry(150, 190, 400, 30)
+        main_window.pwm_slider.setRange(0, 65535)
+        main_window.pwm_slider.setTickInterval(25)
+        main_window.pwm_slider.setEnabled(False)
+        main_window.pwm_slider.valueChanged.connect(main_window.on_pwm_change)
+
+        main_window.dir_disabled_rb = QRadioButton("Disabled", main_window)
+        main_window.dir_disabled_rb.setGeometry(570, 180, 100, 30)
+        main_window.dir_forward_rb = QRadioButton("Forward", main_window)
+        main_window.dir_forward_rb.setGeometry(570, 205, 100, 30)
+        main_window.dir_backward_rb = QRadioButton("Backward", main_window)
+        main_window.dir_backward_rb.setGeometry(680, 205, 100, 30)
+
+        main_window.dir_group = QButtonGroup(main_window)
+        main_window.dir_group.addButton(main_window.dir_disabled_rb)
+        main_window.dir_group.addButton(main_window.dir_forward_rb)
+        main_window.dir_group.addButton(main_window.dir_backward_rb)
+
+        main_window.dir_disabled_rb.setChecked(True)
+        main_window.dir_disabled_rb.setEnabled(False)
+        main_window.dir_forward_rb.setEnabled(False)
+        main_window.dir_backward_rb.setEnabled(False)
+        main_window.current_direction = None
+
+        main_window.dir_group.buttonClicked.connect(main_window.on_direction_change)
+
+        main_window._last_pwm_value = 0
+        main_window.pwm_debounce_timer = QTimer(main_window)
+        main_window.pwm_debounce_timer.setSingleShot(True)
+        main_window.pwm_debounce_timer.setInterval(10)
+        main_window.pwm_debounce_timer.timeout.connect(main_window.send_debounced_pwm)
+        main_window.pwm_slider.sliderReleased.connect(main_window.on_slider_released)
+
+    @staticmethod
+    def setup_clear_buffer_button(main_window):
+        main_window.clear_buffer_btn = QPushButton("Clear Buffers", main_window)
+        main_window.clear_buffer_btn.setGeometry(450, 130, 120, 40)
+        main_window.clear_buffer_btn.clicked.connect(main_window.send_clear_buffer)
+
+    @staticmethod
+    def setup_plot_widgets(main_window):
+        WINDOW = 10000
+
+        main_window.buf_t   = deque(maxlen=WINDOW)
+        main_window.buf_x   = deque(maxlen=WINDOW)
+        main_window.buf_ax  = deque(maxlen=WINDOW)
+        main_window.buf_ay  = deque(maxlen=WINDOW)
+        main_window.buf_az  = deque(maxlen=WINDOW)
+        main_window.buf_vx  = deque(maxlen=WINDOW)
+        main_window.buf_vy  = deque(maxlen=WINDOW)
+        main_window.buf_vz  = deque(maxlen=WINDOW)
+        main_window.buf_pwm = deque(maxlen=WINDOW)
+
+        main_window.plot_widget = pg.GraphicsLayoutWidget(main_window)
+        main_window.plot_widget.setGeometry(20, 470, 950, 400)
+
+        main_window.plot_x = main_window.plot_widget.addPlot(row=0, col=0)
+        main_window.plot_x.setLabel('left', 'Distance', units='cm')
+        main_window.plot_x.setLabel('bottom', 'Time', units='s')
+        main_window.plot_x.showGrid(x=True, y=True, alpha=0.3)
+        main_window.plot_x.addLegend()
+        main_window.curve_x = main_window.plot_x.plot(
+            list(main_window.buf_x),
+            pen=pg.mkPen('#5DCAA5', width=2), name='Distance')
+
+        main_window.plot_acc = main_window.plot_widget.addPlot(row=1, col=0)
+        main_window.plot_acc.setLabel('left', 'Acceleration', units='g')
+        main_window.plot_acc.setLabel('bottom', 'Time', units='s')
+        main_window.plot_acc.showGrid(x=True, y=True, alpha=0.3)
+        main_window.plot_acc.addLegend()
+        main_window.plot_acc.setYRange(-2000, 2000, padding=0)
+        main_window.plot_acc.setMouseEnabled(x=True, y=False)
+        main_window.plot_acc.enableAutoRange(axis='y', enable=False)
+        main_window.curve_ax = main_window.plot_acc.plot(
+            list(main_window.buf_ax),
+            pen=pg.mkPen('#7F77DD', width=2), name='ax')
+        main_window.curve_ay = main_window.plot_acc.plot(
+            list(main_window.buf_ay),
+            pen=pg.mkPen('#EF9F27', width=2), name='ay')
+        main_window.curve_az = main_window.plot_acc.plot(
+            list(main_window.buf_az),
+            pen=pg.mkPen('#D85A30', width=2), name='az')
+
+        main_window.plot_vx = main_window.plot_widget.addPlot(row=2, col=0)
+        main_window.plot_vx.setLabel('left', 'Velocity', units='m/s')
+        main_window.plot_vx.setLabel('bottom', 'Time', units='s')
+        main_window.plot_vx.showGrid(x=True, y=True, alpha=0.3)
+        main_window.plot_vx.addLegend()
+        main_window.curve_vx = main_window.plot_vx.plot(
+            pen=pg.mkPen('#5DCAA5', width=2), name='vx')
+        main_window.curve_vy = main_window.plot_vx.plot(
+            pen=pg.mkPen('#4DA6FF', width=2), name='vy')
+        main_window.curve_vz = main_window.plot_vx.plot(
+            pen=pg.mkPen('#FF5C8A', width=2), name='vz')
+
+        main_window.plot_acc.setXLink(main_window.plot_x)
+        main_window.plot_vx.setXLink(main_window.plot_x)
+
+        main_window.prev_t  = None
+        main_window.curr_vx = 0.0
+        main_window.curr_vy = 0.0
+        main_window.curr_vz = 0.0
+
+    @staticmethod
+    def setup_directory_textbox(main_window, directory_path):
+        main_window.dir_label = QLabel("Current Directory:", main_window)
+        main_window.dir_label.setGeometry(20, 0, 150, 25)
+        main_window.dir_label.setFont(QFont("Arial", 10, QFont.Bold))
+        main_window.directory_textbox = QTextEdit(main_window)
+        main_window.directory_textbox.setGeometry(170, 0, 650, 25)
+        main_window.directory_textbox.setReadOnly(False)
+        main_window.directory_textbox.setText(directory_path)
+
+        main_window.select_folder_btn = QPushButton("Select Folder", main_window)
+        main_window.select_folder_btn.setGeometry(830, 0, 120, 25)
+        main_window.select_folder_btn.clicked.connect(main_window.select_output_directory)
+
+        main_window.export_csv_btn = QPushButton("Export CSV", main_window)
+        main_window.export_csv_btn.setGeometry(960, 0, 120, 25)
+        main_window.export_csv_btn.clicked.connect(main_window.export_csv)
+
+    @staticmethod
+    def setup_calibration_button(main_window):
+        main_window.calibration_btn = QPushButton("Calibration", main_window)
+        main_window.calibration_btn.setGeometry(600, 130, 120, 40)
+
+        main_window.cal_status_label = QLabel("", main_window)
+        main_window.cal_status_label.setGeometry(730, 130, 250, 40)
+        main_window.cal_status_label.setStyleSheet("color: orange; font-weight: bold; font-size: 12px;")
+        main_window.cal_status_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
+        main_window.cal_results_label = QLabel("Calibration: not run", main_window)
+        main_window.cal_results_label.setGeometry(20, 452, 960, 18)
+        main_window.cal_results_label.setFont(QFont("Courier", 8))
+        main_window.cal_results_label.setStyleSheet(
+            "color: cyan; background-color: #1a1a1a; padding: 1px 4px;"
+        )
+        main_window.cal_results_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        main_window.cal_results_label.setWordWrap(False)
+
+        def open_calibration_window():
+            main_window._cal_window = CalibrationWindow(parent=main_window)
+            main_window._cal_window.show()
+
+        main_window.calibration_btn.clicked.connect(open_calibration_window)

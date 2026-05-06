@@ -30,7 +30,6 @@ Release/
 rc_car_data.csv
 *.iml
 
-
 # OS files
 .DS_Store
 Thumbs.db
@@ -42,3 +41,9 @@ Thumbs.db
 !rc_car_integrated_II/.cproject
 !rc_car_integrated_II/Debug/
 !rc_car_integrated_II/Debug/**
+**/Debug/*.elf
+**/Debug/*.map
+**/Debug/*.list
+**/Debug/Core/Src/*.o
+**/Debug/Core/Src/*.su
+**/Debug/Core/Src/*.cyclo
