@@ -58,91 +58,83 @@ Here is a small video attach of the working project (Will add video soon)
 
 ## Key Challenges
 
-The RC Car was able to respond to the user interface and receive data, however 
-there were some challenges faced during the project.
+The RC Car was able to respond to the user interface and received data, however there some challenges that were faced in the project.
 
 - **Data Acquisition**
 
-    The RC Car and transmitter toggle the NRF24L01 RF module between Listen/Talk 
-    mode (Receive/Transmit) at 10ms intervals, receiving data every 20ms. After 
-    the RC Car crashed during a test drive, the NRF24L01 socket became loose and 
-    would occasionally cut communication for ~1s before resuming. The next plan 
-    is to add an enclosure, move the NRF24L01 to the center of the RC Car, solder 
-    it directly to the board, and add a larger bypass capacitor to maintain stable 
-    supply voltage to the RF module.
+    The RC car and transmitter is toggling the NRF24L01 RF module to Listen/Talk 
+    mode (Transmit/ Receive Mode) at the fastest as 10ms. As a result it will be 
+    receiving data every 20ms based on how it is switching modes. However after 
+    the RC Car crashed from a test drive, the socket to put the NRF24L01 RF module 
+    is potentially loose and would sometimes cut communication for about a 1s and 
+    then communicate again but is able to receive the next data point it has 
+    received for a moment. The next plan the is add an enclosure and move the 
+    NRF24L01 to the center of the RC Car and would need to be solder and 
+    potentially add a larger bypass capacitor to maintain the supply voltage of 
+    the RF module.
+    
+    Here below shows the data aquisition in real time where there are time gaps 
+    for a second and then eventually resume collecting the data. The time gap will 
+    impact on transmitting commands to the RC Car, and also impact the velocity 
+    estimation as it will be explained in the next section.
 
-    The figure below shows the data acquisition in real time where time gaps of 
-    approximately one second appear before data collection resumes. These gaps 
-    impact command transmission to the RC Car and also affect velocity estimation 
-    as described in the next section.
+    ![RC Car](/docs/images/picturesGeneral/timeGapIssue.png)
 
-    ![Time Gap Issue](/docs/images/picturesGeneral/timeGapIssue.png)
+    *Figure 6: The Python User Interface with marking where the NRF24L01 lost 
+    communication and reconnected again afterwards.*
 
-    *Figure 6: Python GUI showing time gaps where the NRF24L01 lost communication 
-    and reconnected.*
+- **Real-time Velocity Estimation**
 
-- **Real-Time Velocity Estimation**
+    The data aquisition of the accelerator was a success, and the user interface 
+    storing the acceleration data in buffer. Using the acceleration data, a 
+    numerical integration was applied to estimate the velocity at the moment of 
+    time. The calculation used for numerically integrating the velocity uses Euler 
+    Method of Integration which is derived below.
 
-    The accelerometer data acquisition was successful and the GUI stores the 
-    acceleration data in a rolling buffer. Using this data, numerical integration 
-    is applied to estimate velocity at each point in time. The Euler method of 
-    integration is used, derived as shown below.
+    ![RC Car](/docs/images/picturesGeneral/EulerIntegrationMethod.png)
 
-    ![Euler Integration](/docs/images/picturesGeneral/EulerIntegrationMethod.png)
+    *Figure 7: Euler Integration Technique.*
 
-    *Figure 7: Euler integration technique used for velocity estimation.*
+    The integration technique was able to calculate the velocity but there arises 
+    three challenges:
 
-    This technique was able to estimate velocity, however three challenges arise:
+    1. The small noise over time is will cause the velocity to drift away from 
+       the approximate which is a issue when integrating numerically.
+    2. If the RC car is moving but decides to stop, the integration technique 
+       does not have an initial condition measured to know if the RC Car has 
+       stopped and will show the RC Car traveling at constant speed.
+    3. The stationary RC car, is tilted at small angle in which the accelerometer 
+       on the x component feels a small pull from Earth gravity. (The Z-axis show 
+       the acceleration near 1000mg = 1g = 9.81m/s^2)
 
-    1. Small noise accumulates over time causing the velocity estimate to drift 
-       away from the true value — a known limitation of numerical integration.
-    2. When the RC Car stops moving, the integrator has no way to detect the 
-       stop condition and continues showing a constant velocity instead of 
-       returning to zero.
-    3. The stationary RC Car sits at a slight angle, causing the accelerometer 
-       X-axis to sense a small component of Earth's gravity. (The Z-axis 
-       correctly reads ~1000mg = 1g = 9.81 m/s².)
+    An attempt resolve most off three challenges, a calibration feature is added 
+    before running the RC car so the influence of Earth's gravity can be filtered 
+    out and track basically the change in motion of the RC car. The calibration 
+    will measure the acceleration and then get average out to calculate the offset 
+    required to add. Below shows the waveform of what the accelerometer measures 
+    without calibration vs with calibration for 4.5s.
 
-    To partially address all three challenges, a calibration feature was added. 
-    Before running the RC Car, the user collects stationary accelerometer samples 
-    which are averaged to compute an offset on each axis. Subtracting this offset 
-    filters out the gravitational bias and tracks only changes in motion. The 
-    figures below compare the accelerometer waveform without and with calibration 
-    over 4.5 seconds.
+    ![RC Car](/docs/images/picturesGeneral/NoCalibrationWF.png)
 
-![No Calibration](/docs/images/picturesGeneral/NoCalibrationWF.png)
+    *Figure 8: The waveform of accelerometer without calibration.*
 
-*Figure 8: Accelerometer waveform without calibration.*
+    ![RC Car](/docs/images/picturesGeneral/CalibrationWF.png)
 
-![With Calibration](/docs/images/picturesGeneral/CalibrationWF.png)
+    *Figure 9: The waveform of accelerometer with calibration.*
 
-*Figure 9: Accelerometer waveform with calibration applied.*
+    By calibrating it will calculate the velocity a little more accurate and drift 
+    from integration becomes small difference but still will add up eventual if 
+    stays still long enough as shown in the calibration waveform. This alone would 
+    not fully solve the challenge more a band-aid solution. Other sensors can 
+    implement such a hall effect sensor where the L4133 could be attach to the 
+    wheel and a magnet can stick on the wheel to generate a pulse momentarily and 
+    based on the time difference between the wheel, the linear velocity can be 
+    calculated. Another sensor such as the GPS can potentially track the position 
+    precisely. It would be effective to include more sensors to measure more 
+    physicals parameter so that more initial conditions about the car can be used 
+    to calculate the velocity of the car known as sensor fusion.
 
-Calibration improves velocity accuracy and reduces drift noticeably, but it is ultimately a partial solution — drift still accumulates if the car remains
-stationary long enough. A more complete solution would involve additional 
-sensors such as:
-    - A **Hall effect sensor** (e.g. A1133) mounted near the wheel with a magnet 
-      to generate pulses — the time between pulses gives precise linear velocity.
-    - A **GPS module** for absolute position tracking.
 
-    Combining multiple sensor sources to compute a more accurate state estimate 
-    is known as **sensor fusion** and would be the next step for improving 
-    velocity estimation reliability.
-
-- **Non-Blocking LIDAR Integration**
-
-    The Garmin LIDAR Lite V3 acquisition can block the main loop when the target 
-    is near maximum range or the I2C bus stalls, causing data gaps of up to 1.4s. 
-    The solution is a non-blocking pipelined measurement that triggers acquisition 
-    at the end of one cycle and reads the result at the start of the next, so the 
-    main loop is never held waiting.
-
-- **Bidirectional NRF24 Communication**
-
-    Synchronizing TX/RX windows between two independent MCU clocks causes packet 
-    loss when windows misalign. This was addressed by making the transmitter 
-    RX-dominant, only briefly switching to TX mode when a command from the GUI 
-    is pending.
 
 
 
