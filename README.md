@@ -1,47 +1,43 @@
 # RC Car Mark I
 
-## Overview
-This is my master's project for an attempt to make an adaptive cruise controller on an RC car using STM32 microcontrollers. The transmitter will be controlled by a Python GUI with features that include:
+This is my Masters of Electrical Engineering which is an attempt to make an Adaptive Cruise Control on a RC Car. 
 
-- PID gain values input to tune the PID controller.
-- Controls for the RC car.
-- RC car has accelerometer to measure its velocity, and LIDAR to measure the relative distance for any leading cars.
-- Data acquisition measured for both LIDAR and Accelerometer based on the sample time.
+## Project Overview
+2-3 sentences: what it does, why you built it, what it demonstrates.
+The purpose of this project will explore the realms electronics, embeded systems, mechanics, control engineeing, software development, sensor practicalites, and data acquisition. The RC Car regarding to the hardware, I wanted to explore control systems in practice including sensor integration need to make the RC Car drive autonomously at its tuned speed, slow down or stop when it detect vehicle/object ahead. Along making the control systems possible a python software is developed for real time data acquisition so that the signal collected can used for the control systems. 
 
-![RC Car](docs/images/RC_Project_Display.jpg)
+## Engineering Disciplines Involved
+- Embedded Systems (STM32H7, STM32L432KC)
+- Wireless Communication (NRF24L01 2.4GHz)
+- Sensor Integration (LIS3DH IMU, Garmin LIDAR Lite V3)
+- Real-Time Data Acquisition & Visualization (Python/PyQt5)
+- PCB/Perfboard Hardware Design
+
+## System Architecture
+The Architecture setup for the project is shown in the block diagram at a highlevel overview.
+![RC Car](/docs/images/blockDiagrams/blockDiagramHighlLevelProject.png)
+The transmiter board has the stm32 L432KC Nucleo-Board which has 4 colored status LEDs to indicate the events in the program, and NRF24L01 LoRa RF module to communicate with the RC Car. The transmitter has a USB connection with computer in order for the Python User Interface to send commands to the transmiter and collect data it has received from the RC Car as shown below.
+![RC Car](/docs/images/picturesGeneral/transmitterAndPythonUserInterface.jpg)
+The RC Car also has the NRF24L01 LoRa RF module to communicate with each other based on the commands it has received from the Python User face as shown below.
+![RC Car](/docs/images/picturesGeneral/transmitterAndRC_Car.jpg)
 
 
-## Hardware
 
-### RC Car
-- Garmin V3 Lite LIDAR
-- LIS3DH Accelerometer
-- IBT-4, 50A H-Bridge MOSFET Driver Chip
-- NRF24L01 LoRa RF Sensor
-- Nucleo H723ZG MCU
-- SN74HCT595 8-Bit Shift Registers — controls LEDs using SPI for marking states in the program (serves as a marker to troubleshoot program)
+## Sub-Projects
+The entire project consist of three subprojects based on the described System Architecture section. Each of the sub project will provide the ReadMe.md layout with the description high level system, state diagrams, schematic, Hardware/Software used.
 
-### Transmitter
-- NRF24L01 LoRa RF Sensor
-- SN74HCT595 8-Bit Shift Registers — controls LEDs using SPI for marking states in the program (serves as a marker to troubleshoot program)
-- Hooked to micro-USB to use UART Protocol for Python GUI to communicate with MCU
-- Nucleo L432KC MCU
+| Folder | Description |
+|--------|-------------|
+| `rc_car_integrated_II/` | STM32H7 RC car firmware — sensors, motor control, wireless TX |
+| `RC_Car_Transmitter_L432KC/` | STM32L432KC transmitter firmware — relay between radio and PC |
+| `Python_GUI/` | Real-time data logging and control GUI |
 
-## Software
+## Key Challenges
+- Achieving consistent 40ms wireless data sampling under motor RF noise
+- Non-blocking LIDAR integration to prevent main loop stalls
+- Bidirectional NRF24 communication with synchronized TX/RX windows
+- Real-time velocity estimation from accelerometer integration
 
-### STM32CubeIDE
-Built with STM32CubeIDE on Debian. Open the workspace and import both projects.
 
-### Python GUI
-
-The GUI communicates with the transmitter MCU over serial (UART). It requires the following Python packages:
-
-| Package | Purpose |
-|---------|---------|
-| `PyQt5` | GUI framework (widgets, signals, timers) |
-| `serial` / `pyserial` | Serial port communication with the MCU |
-| `sys`, `os`, `time` | Standard library utilities |
-
-#### Wayland Note
-On Wayland, Qt may trigger the warning: *"qt.qpa.wayland: Wayland does not support QWindow::requestActivate()"*. The GUI handles this by silencing the Wayland QPA logging category. To force X11 via XWayland instead, set the environment variable before running:
-
+## Report
+See [RC_Car_Report.pdf](RC_Car_Report.pdf) for full technical documentation.
