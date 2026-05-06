@@ -60,15 +60,36 @@ Here is a small video attach of the working project (Will add video soon)
 The RC Car was able to respond to the user interface and received data, however there some challenges that were faced in the project.
 
 - Data Acquisition
-    - The RC car and transmitter is toggling the NRF24L01 RF module to Listen/Talk mode (Transmit/ Receive Mode) at the fastest as 10ms. As a result it will be receiving data every 20ms based on how it is switching modes. However after the RC Car crashed from a test drive, the socket to put the NRF24L01 RF module is potentially loose and would sometimes cut communication for about a 1s and then communicate again but is able to receive the next data point it has received for a moment. The next plan the is add an enclosure and move the NRF24L01 to the center of the RC Car and would need to be solder and potentially add a larger bypass capacitor to maintain the supply voltage of the RF module.
-    Here below shows 
+    The RC car and transmitter is toggling the NRF24L01 RF module to Listen/Talk mode (Transmit/ Receive Mode) at the fastest as 10ms. As a result it will be receiving data every 20ms based on how it is switching modes. However after the RC Car crashed from a test drive, the socket to put the NRF24L01 RF module is potentially loose and would sometimes cut communication for about a 1s and then communicate again but is able to receive the next data point it has received for a moment. The next plan the is add an enclosure and move the NRF24L01 to the center of the RC Car and would need to be solder and potentially add a larger bypass capacitor to maintain the supply voltage of the RF module.
+    Here below shows the data aquisition in real time where there are time gaps for a second and then eventually resume collecting the data. The time gap will impact on transmitting commands to the RC Car, and also impact the velocity estimation as it will be explained in the next section. 
     
-    ![RC Car](/docs/images/picturesGeneral/timeGapIssue.png)
+![RC Car](/docs/images/picturesGeneral/timeGapIssue.png)
     *Figure 6: The Python User Interface with marking where the NRF24L01 lost communication and reconnected again afterwards.*
+    
+- Real-time velocity estimation
+    The data aquisition of the accelerator was a success, and the user interface storing the acceleration data in buffer. Using the acceleration data, a numerical integration was applied to estimate the velocity at the moment of time. The calculation used for numerically integrating the velocity uses Euler Method of Integration which is derived below.
+    
+![RC Car](/docs/images/picturesGeneral/EulerIntegrationMethod.png)
+    *Figure 7: Euler Integration Technique.*
+    
+    The integration technique was able to calculate the velocity but there arises three challenge:
+    
+    1. The small noise over time is will cause the velocity to drift away from the approximate which is a issue when integrating numerically.
+    2. If the RC car is moving but decides to stop, the integration technique does not have an initial condition measured to know if the RC Car has stopped and will show the RC Car traveling at constant speed.
+    3. The stationary RC car, is tilted at small angle in which the accelerometer on the x component feels a small pull from Earth gravity. (The Z-axis show the acceleration near 1000mg = 1g = 9.81m/s^2)
+    
+    An attempt resolve most off three challenges, a calibration feature is added before running the RC car so the influence of Earth's gravity can be filtered out and track basically the change in motion of the RC car. The calibration will measure the acceleration and then get average out to calculate the offset required to add. Below shows the waveform of what the accelerometer measures without calibration vs with calibration for 4.5s.
+    
+![RC Car](/docs/images/picturesGeneral/NoCalibrationWF.png)
+    *Figure 8: The waveform of accelerometer without calibration.*
+    
+![RC Car](/docs/images/picturesGeneral/CalibrationWF.png)
+    *Figure 8: The waveform of accelerometer without calibration.*
+    
     
 - Non-blocking LIDAR integration to prevent main loop stalls
 - Bidirectional NRF24 communication with synchronized TX/RX windows
-- Real-time velocity estimation from accelerometer integration
+
 
 
 ## Report
