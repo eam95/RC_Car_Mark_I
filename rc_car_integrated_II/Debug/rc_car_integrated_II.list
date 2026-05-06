@@ -33,15 +33,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_macro  00036b40  00000000  00000000  0003d538  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_line   0002379d  00000000  00000000  00074078  2**0
+ 15 .debug_line   00024c3b  00000000  00000000  00074078  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_str    0015718a  00000000  00000000  00097815  2**0
+ 16 .debug_str    00157198  00000000  00000000  00098cb3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .comment      00000043  00000000  00000000  001ee99f  2**0
+ 17 .comment      00000043  00000000  00000000  001efe4b  2**0
                   CONTENTS, READONLY
- 18 .debug_frame  00007cdc  00000000  00000000  001ee9e4  2**2
+ 18 .debug_frame  00007cdc  00000000  00000000  001efe90  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_line_str 00000070  00000000  00000000  001f66c0  2**0
+ 19 .debug_line_str 0000007e  00000000  00000000  001f7b6c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -161,8 +161,8 @@ Disassembly of section .text:
  80003e6:	bf08      	it	eq
  80003e8:	2800      	cmpeq	r0, #0
  80003ea:	bf1c      	itt	ne
- 80003ec:	f04f 31ff 	movne.w	r1, #4294967295	@ 0xffffffff
- 80003f0:	f04f 30ff 	movne.w	r0, #4294967295	@ 0xffffffff
+ 80003ec:	f04f 31ff 	movne.w	r1, #4294967295
+ 80003f0:	f04f 30ff 	movne.w	r0, #4294967295
  80003f4:	f000 b988 	b.w	8000708 <__aeabi_idiv0>
  80003f8:	f1ad 0c08 	sub.w	ip, sp, #8
  80003fc:	e96d ce04 	strd	ip, lr, [sp, #-16]!
@@ -201,7 +201,7 @@ Disassembly of section .text:
  800045a:	429a      	cmp	r2, r3
  800045c:	d909      	bls.n	8000472 <__udivmoddi4+0x62>
  800045e:	18fb      	adds	r3, r7, r3
- 8000460:	f101 30ff 	add.w	r0, r1, #4294967295	@ 0xffffffff
+ 8000460:	f101 30ff 	add.w	r0, r1, #4294967295
  8000464:	f080 80ea 	bcs.w	800063c <__udivmoddi4+0x22c>
  8000468:	429a      	cmp	r2, r3
  800046a:	f240 80e7 	bls.w	800063c <__udivmoddi4+0x22c>
@@ -216,7 +216,7 @@ Disassembly of section .text:
  8000486:	459c      	cmp	ip, r3
  8000488:	d909      	bls.n	800049e <__udivmoddi4+0x8e>
  800048a:	18fb      	adds	r3, r7, r3
- 800048c:	f100 32ff 	add.w	r2, r0, #4294967295	@ 0xffffffff
+ 800048c:	f100 32ff 	add.w	r2, r0, #4294967295
  8000490:	f080 80d6 	bcs.w	8000640 <__udivmoddi4+0x230>
  8000494:	459c      	cmp	ip, r3
  8000496:	f240 80d3 	bls.w	8000640 <__udivmoddi4+0x230>
@@ -270,7 +270,7 @@ Disassembly of section .text:
  800051a:	429a      	cmp	r2, r3
  800051c:	d907      	bls.n	800052e <__udivmoddi4+0x11e>
  800051e:	18fb      	adds	r3, r7, r3
- 8000520:	f10c 38ff 	add.w	r8, ip, #4294967295	@ 0xffffffff
+ 8000520:	f10c 38ff 	add.w	r8, ip, #4294967295
  8000524:	d202      	bcs.n	800052c <__udivmoddi4+0x11c>
  8000526:	429a      	cmp	r2, r3
  8000528:	f200 80e0 	bhi.w	80006ec <__udivmoddi4+0x2dc>
@@ -283,7 +283,7 @@ Disassembly of section .text:
  8000540:	429c      	cmp	r4, r3
  8000542:	d907      	bls.n	8000554 <__udivmoddi4+0x144>
  8000544:	18fb      	adds	r3, r7, r3
- 8000546:	f102 30ff 	add.w	r0, r2, #4294967295	@ 0xffffffff
+ 8000546:	f102 30ff 	add.w	r0, r2, #4294967295
  800054a:	d202      	bcs.n	8000552 <__udivmoddi4+0x142>
  800054c:	429c      	cmp	r4, r3
  800054e:	f200 80ca 	bhi.w	80006e6 <__udivmoddi4+0x2d6>
@@ -311,7 +311,7 @@ Disassembly of section .text:
  8000596:	fa02 f201 	lsl.w	r2, r2, r1
  800059a:	d909      	bls.n	80005b0 <__udivmoddi4+0x1a0>
  800059c:	193c      	adds	r4, r7, r4
- 800059e:	f100 3aff 	add.w	sl, r0, #4294967295	@ 0xffffffff
+ 800059e:	f100 3aff 	add.w	sl, r0, #4294967295
  80005a2:	f080 809c 	bcs.w	80006de <__udivmoddi4+0x2ce>
  80005a6:	45a6      	cmp	lr, r4
  80005a8:	f240 8099 	bls.w	80006de <__udivmoddi4+0x2ce>
@@ -326,7 +326,7 @@ Disassembly of section .text:
  80005c8:	45a4      	cmp	ip, r4
  80005ca:	d908      	bls.n	80005de <__udivmoddi4+0x1ce>
  80005cc:	193c      	adds	r4, r7, r4
- 80005ce:	f103 3eff 	add.w	lr, r3, #4294967295	@ 0xffffffff
+ 80005ce:	f103 3eff 	add.w	lr, r3, #4294967295
  80005d2:	f080 8082 	bcs.w	80006da <__udivmoddi4+0x2ca>
  80005d6:	45a4      	cmp	ip, r4
  80005d8:	d97f      	bls.n	80006da <__udivmoddi4+0x2ca>
@@ -388,7 +388,7 @@ Disassembly of section .text:
  8000676:	b280      	uxth	r0, r0
  8000678:	d93e      	bls.n	80006f8 <__udivmoddi4+0x2e8>
  800067a:	1879      	adds	r1, r7, r1
- 800067c:	f108 3cff 	add.w	ip, r8, #4294967295	@ 0xffffffff
+ 800067c:	f108 3cff 	add.w	ip, r8, #4294967295
  8000680:	d201      	bcs.n	8000686 <__udivmoddi4+0x276>
  8000682:	4589      	cmp	r9, r1
  8000684:	d81f      	bhi.n	80006c6 <__udivmoddi4+0x2b6>
@@ -401,7 +401,7 @@ Disassembly of section .text:
  800069c:	4542      	cmp	r2, r8
  800069e:	d229      	bcs.n	80006f4 <__udivmoddi4+0x2e4>
  80006a0:	18ba      	adds	r2, r7, r2
- 80006a2:	f109 31ff 	add.w	r1, r9, #4294967295	@ 0xffffffff
+ 80006a2:	f109 31ff 	add.w	r1, r9, #4294967295
  80006a6:	d2c4      	bcs.n	8000632 <__udivmoddi4+0x222>
  80006a8:	4542      	cmp	r2, r8
  80006aa:	d2c2      	bcs.n	8000632 <__udivmoddi4+0x222>
@@ -465,7 +465,7 @@ void GarLiteV3_i2c_write(uint8_t reg, uint8_t *buf, uint16_t len)
 	if (HAL_I2C_Mem_Write(&hi2c2, LIDARLITEV3_I2C_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, buf, len, HAL_MAX_DELAY) != HAL_OK)
  800071c:	79fb      	ldrb	r3, [r7, #7]
  800071e:	b29a      	uxth	r2, r3
- 8000720:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000720:	f04f 33ff 	mov.w	r3, #4294967295
  8000724:	9302      	str	r3, [sp, #8]
  8000726:	88bb      	ldrh	r3, [r7, #4]
  8000728:	9301      	str	r3, [sp, #4]
@@ -481,7 +481,7 @@ void GarLiteV3_i2c_write(uint8_t reg, uint8_t *buf, uint16_t len)
 	{
 //		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 		HAL_UART_Transmit(&huart3, (uint8_t *)"Garmin Lidar I2C Command Transmit Error\r\n", strlen("Garmin Lidar I2C Command Transmit Error\r\n"), HAL_MAX_DELAY);
- 800073e:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800073e:	f04f 33ff 	mov.w	r3, #4294967295
  8000742:	2229      	movs	r2, #41	@ 0x29
  8000744:	4904      	ldr	r1, [pc, #16]	@ (8000758 <GarLiteV3_i2c_write+0x4c>)
  8000746:	4805      	ldr	r0, [pc, #20]	@ (800075c <GarLiteV3_i2c_write+0x50>)
@@ -519,7 +519,7 @@ void GarLiteV3_i2c_read(uint8_t reg, uint8_t *buf, uint16_t len)
 	if (HAL_I2C_Mem_Read(&hi2c2, LIDARLITEV3_I2C_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, buf, len, HAL_MAX_DELAY) != HAL_OK)
  8000770:	79fb      	ldrb	r3, [r7, #7]
  8000772:	b29a      	uxth	r2, r3
- 8000774:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000774:	f04f 33ff 	mov.w	r3, #4294967295
  8000778:	9302      	str	r3, [sp, #8]
  800077a:	88bb      	ldrh	r3, [r7, #4]
  800077c:	9301      	str	r3, [sp, #4]
@@ -535,7 +535,7 @@ void GarLiteV3_i2c_read(uint8_t reg, uint8_t *buf, uint16_t len)
 	{
 //		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 		HAL_UART_Transmit(&huart3,  (uint8_t *)"Garmin Lidar I2C Command Transmit Error\r\n", strlen("Garmin Lidar I2C Command Transmit Error\r\n"), HAL_MAX_DELAY);
- 8000792:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000792:	f04f 33ff 	mov.w	r3, #4294967295
  8000796:	2229      	movs	r2, #41	@ 0x29
  8000798:	4904      	ldr	r1, [pc, #16]	@ (80007ac <GarLiteV3_i2c_read+0x4c>)
  800079a:	4805      	ldr	r0, [pc, #20]	@ (80007b0 <GarLiteV3_i2c_read+0x50>)
@@ -684,7 +684,7 @@ void simple_measurement(uint16_t *distanceCm, uint8_t print)
  8000890:	4603      	mov	r3, r0
  8000892:	b29a      	uxth	r2, r3
  8000894:	f107 0108 	add.w	r1, r7, #8
- 8000898:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000898:	f04f 33ff 	mov.w	r3, #4294967295
  800089c:	480a      	ldr	r0, [pc, #40]	@ (80008c8 <simple_measurement+0xdc>)
  800089e:	f00c ff0f 	bl	800d6c0 <HAL_UART_Transmit>
 		  }
@@ -785,7 +785,7 @@ void print_config_ACQ_COMMAND_reg(void)
  800092e:	4603      	mov	r3, r0
  8000930:	b29a      	uxth	r2, r3
  8000932:	1d39      	adds	r1, r7, #4
- 8000934:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000934:	f04f 33ff 	mov.w	r3, #4294967295
  8000938:	4830      	ldr	r0, [pc, #192]	@ (80009fc <print_config_ACQ_COMMAND_reg+0xfc>)
  800093a:	f00c fec1 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -803,7 +803,7 @@ void print_config_ACQ_COMMAND_reg(void)
  8000954:	4603      	mov	r3, r0
  8000956:	b29a      	uxth	r2, r3
  8000958:	1d39      	adds	r1, r7, #4
- 800095a:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800095a:	f04f 33ff 	mov.w	r3, #4294967295
  800095e:	4827      	ldr	r0, [pc, #156]	@ (80009fc <print_config_ACQ_COMMAND_reg+0xfc>)
  8000960:	f00c feae 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -864,7 +864,7 @@ void print_config_ACQ_COMMAND_reg(void)
  80009ba:	4603      	mov	r3, r0
  80009bc:	b29a      	uxth	r2, r3
  80009be:	1d39      	adds	r1, r7, #4
- 80009c0:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80009c0:	f04f 33ff 	mov.w	r3, #4294967295
  80009c4:	480d      	ldr	r0, [pc, #52]	@ (80009fc <print_config_ACQ_COMMAND_reg+0xfc>)
  80009c6:	f00c fe7b 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -882,7 +882,7 @@ void print_config_ACQ_COMMAND_reg(void)
  80009de:	4603      	mov	r3, r0
  80009e0:	b29a      	uxth	r2, r3
  80009e2:	1d39      	adds	r1, r7, #4
- 80009e4:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80009e4:	f04f 33ff 	mov.w	r3, #4294967295
  80009e8:	4804      	ldr	r0, [pc, #16]	@ (80009fc <print_config_ACQ_COMMAND_reg+0xfc>)
  80009ea:	f00c fe69 	bl	800d6c0 <HAL_UART_Transmit>
 }
@@ -965,7 +965,7 @@ void print_STATUS_reg(uint8_t regval)
  8000a6e:	4603      	mov	r3, r0
  8000a70:	b29a      	uxth	r2, r3
  8000a72:	f107 0108 	add.w	r1, r7, #8
- 8000a76:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000a76:	f04f 33ff 	mov.w	r3, #4294967295
  8000a7a:	4890      	ldr	r0, [pc, #576]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000a7c:	f00c fe20 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -983,7 +983,7 @@ void print_STATUS_reg(uint8_t regval)
  8000a98:	4603      	mov	r3, r0
  8000a9a:	b29a      	uxth	r2, r3
  8000a9c:	f107 0108 	add.w	r1, r7, #8
- 8000aa0:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000aa0:	f04f 33ff 	mov.w	r3, #4294967295
  8000aa4:	4885      	ldr	r0, [pc, #532]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000aa6:	f00c fe0b 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1014,7 +1014,7 @@ void print_STATUS_reg(uint8_t regval)
  8000adc:	4603      	mov	r3, r0
  8000ade:	b29a      	uxth	r2, r3
  8000ae0:	f107 0108 	add.w	r1, r7, #8
- 8000ae4:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000ae4:	f04f 33ff 	mov.w	r3, #4294967295
  8000ae8:	4874      	ldr	r0, [pc, #464]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000aea:	f00c fde9 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1045,7 +1045,7 @@ void print_STATUS_reg(uint8_t regval)
  8000b20:	4603      	mov	r3, r0
  8000b22:	b29a      	uxth	r2, r3
  8000b24:	f107 0108 	add.w	r1, r7, #8
- 8000b28:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000b28:	f04f 33ff 	mov.w	r3, #4294967295
  8000b2c:	4863      	ldr	r0, [pc, #396]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000b2e:	f00c fdc7 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1076,7 +1076,7 @@ void print_STATUS_reg(uint8_t regval)
  8000b64:	4603      	mov	r3, r0
  8000b66:	b29a      	uxth	r2, r3
  8000b68:	f107 0108 	add.w	r1, r7, #8
- 8000b6c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000b6c:	f04f 33ff 	mov.w	r3, #4294967295
  8000b70:	4852      	ldr	r0, [pc, #328]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000b72:	f00c fda5 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1107,7 +1107,7 @@ void print_STATUS_reg(uint8_t regval)
  8000ba8:	4603      	mov	r3, r0
  8000baa:	b29a      	uxth	r2, r3
  8000bac:	f107 0108 	add.w	r1, r7, #8
- 8000bb0:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000bb0:	f04f 33ff 	mov.w	r3, #4294967295
  8000bb4:	4841      	ldr	r0, [pc, #260]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000bb6:	f00c fd83 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1138,7 +1138,7 @@ void print_STATUS_reg(uint8_t regval)
  8000bec:	4603      	mov	r3, r0
  8000bee:	b29a      	uxth	r2, r3
  8000bf0:	f107 0108 	add.w	r1, r7, #8
- 8000bf4:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000bf4:	f04f 33ff 	mov.w	r3, #4294967295
  8000bf8:	4830      	ldr	r0, [pc, #192]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000bfa:	f00c fd61 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1169,7 +1169,7 @@ void print_STATUS_reg(uint8_t regval)
  8000c30:	4603      	mov	r3, r0
  8000c32:	b29a      	uxth	r2, r3
  8000c34:	f107 0108 	add.w	r1, r7, #8
- 8000c38:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000c38:	f04f 33ff 	mov.w	r3, #4294967295
  8000c3c:	481f      	ldr	r0, [pc, #124]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000c3e:	f00c fd3f 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1200,7 +1200,7 @@ void print_STATUS_reg(uint8_t regval)
  8000c74:	4603      	mov	r3, r0
  8000c76:	b29a      	uxth	r2, r3
  8000c78:	f107 0108 	add.w	r1, r7, #8
- 8000c7c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000c7c:	f04f 33ff 	mov.w	r3, #4294967295
  8000c80:	480e      	ldr	r0, [pc, #56]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000c82:	f00c fd1d 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1218,7 +1218,7 @@ void print_STATUS_reg(uint8_t regval)
  8000c9e:	4603      	mov	r3, r0
  8000ca0:	b29a      	uxth	r2, r3
  8000ca2:	f107 0108 	add.w	r1, r7, #8
- 8000ca6:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000ca6:	f04f 33ff 	mov.w	r3, #4294967295
  8000caa:	4804      	ldr	r0, [pc, #16]	@ (8000cbc <print_STATUS_reg+0x270>)
  8000cac:	f00c fd08 	bl	800d6c0 <HAL_UART_Transmit>
 }
@@ -1287,7 +1287,7 @@ uint8_t read_FULL_DELAY_HIGH_reg(uint8_t print)
  8000d3c:	4603      	mov	r3, r0
  8000d3e:	b29a      	uxth	r2, r3
  8000d40:	f107 010c 	add.w	r1, r7, #12
- 8000d44:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000d44:	f04f 33ff 	mov.w	r3, #4294967295
  8000d48:	4825      	ldr	r0, [pc, #148]	@ (8000de0 <read_FULL_DELAY_HIGH_reg+0xe0>)
  8000d4a:	f00c fcb9 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1305,7 +1305,7 @@ uint8_t read_FULL_DELAY_HIGH_reg(uint8_t print)
  8000d68:	4603      	mov	r3, r0
  8000d6a:	b29a      	uxth	r2, r3
  8000d6c:	f107 010c 	add.w	r1, r7, #12
- 8000d70:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000d70:	f04f 33ff 	mov.w	r3, #4294967295
  8000d74:	481a      	ldr	r0, [pc, #104]	@ (8000de0 <read_FULL_DELAY_HIGH_reg+0xe0>)
  8000d76:	f00c fca3 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1323,7 +1323,7 @@ uint8_t read_FULL_DELAY_HIGH_reg(uint8_t print)
  8000d94:	4603      	mov	r3, r0
  8000d96:	b29a      	uxth	r2, r3
  8000d98:	f107 010c 	add.w	r1, r7, #12
- 8000d9c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000d9c:	f04f 33ff 	mov.w	r3, #4294967295
  8000da0:	480f      	ldr	r0, [pc, #60]	@ (8000de0 <read_FULL_DELAY_HIGH_reg+0xe0>)
  8000da2:	f00c fc8d 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1341,7 +1341,7 @@ uint8_t read_FULL_DELAY_HIGH_reg(uint8_t print)
  8000dbe:	4603      	mov	r3, r0
  8000dc0:	b29a      	uxth	r2, r3
  8000dc2:	f107 010c 	add.w	r1, r7, #12
- 8000dc6:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000dc6:	f04f 33ff 	mov.w	r3, #4294967295
  8000dca:	4805      	ldr	r0, [pc, #20]	@ (8000de0 <read_FULL_DELAY_HIGH_reg+0xe0>)
  8000dcc:	f00c fc78 	bl	800d6c0 <HAL_UART_Transmit>
 	}
@@ -1399,7 +1399,7 @@ uint8_t read_FULL_DELAY_LOW_reg(uint8_t print)
  8000e2c:	4603      	mov	r3, r0
  8000e2e:	b29a      	uxth	r2, r3
  8000e30:	f107 010c 	add.w	r1, r7, #12
- 8000e34:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000e34:	f04f 33ff 	mov.w	r3, #4294967295
  8000e38:	4825      	ldr	r0, [pc, #148]	@ (8000ed0 <read_FULL_DELAY_LOW_reg+0xe0>)
  8000e3a:	f00c fc41 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1417,7 +1417,7 @@ uint8_t read_FULL_DELAY_LOW_reg(uint8_t print)
  8000e58:	4603      	mov	r3, r0
  8000e5a:	b29a      	uxth	r2, r3
  8000e5c:	f107 010c 	add.w	r1, r7, #12
- 8000e60:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000e60:	f04f 33ff 	mov.w	r3, #4294967295
  8000e64:	481a      	ldr	r0, [pc, #104]	@ (8000ed0 <read_FULL_DELAY_LOW_reg+0xe0>)
  8000e66:	f00c fc2b 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1435,7 +1435,7 @@ uint8_t read_FULL_DELAY_LOW_reg(uint8_t print)
  8000e84:	4603      	mov	r3, r0
  8000e86:	b29a      	uxth	r2, r3
  8000e88:	f107 010c 	add.w	r1, r7, #12
- 8000e8c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000e8c:	f04f 33ff 	mov.w	r3, #4294967295
  8000e90:	480f      	ldr	r0, [pc, #60]	@ (8000ed0 <read_FULL_DELAY_LOW_reg+0xe0>)
  8000e92:	f00c fc15 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1453,7 +1453,7 @@ uint8_t read_FULL_DELAY_LOW_reg(uint8_t print)
  8000eae:	4603      	mov	r3, r0
  8000eb0:	b29a      	uxth	r2, r3
  8000eb2:	f107 010c 	add.w	r1, r7, #12
- 8000eb6:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000eb6:	f04f 33ff 	mov.w	r3, #4294967295
  8000eba:	4805      	ldr	r0, [pc, #20]	@ (8000ed0 <read_FULL_DELAY_LOW_reg+0xe0>)
  8000ebc:	f00c fc00 	bl	800d6c0 <HAL_UART_Transmit>
 	}
@@ -1524,7 +1524,7 @@ void config_THRESHOLD_BYPASS_reg(uint8_t sensitivity, uint8_t print)
  8000f34:	4603      	mov	r3, r0
  8000f36:	b29a      	uxth	r2, r3
  8000f38:	f107 010c 	add.w	r1, r7, #12
- 8000f3c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000f3c:	f04f 33ff 	mov.w	r3, #4294967295
  8000f40:	4824      	ldr	r0, [pc, #144]	@ (8000fd4 <config_THRESHOLD_BYPASS_reg+0xf4>)
  8000f42:	f00c fbbd 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1542,7 +1542,7 @@ void config_THRESHOLD_BYPASS_reg(uint8_t sensitivity, uint8_t print)
  8000f60:	4603      	mov	r3, r0
  8000f62:	b29a      	uxth	r2, r3
  8000f64:	f107 010c 	add.w	r1, r7, #12
- 8000f68:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000f68:	f04f 33ff 	mov.w	r3, #4294967295
  8000f6c:	4819      	ldr	r0, [pc, #100]	@ (8000fd4 <config_THRESHOLD_BYPASS_reg+0xf4>)
  8000f6e:	f00c fba7 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1560,7 +1560,7 @@ void config_THRESHOLD_BYPASS_reg(uint8_t sensitivity, uint8_t print)
  8000f8c:	4603      	mov	r3, r0
  8000f8e:	b29a      	uxth	r2, r3
  8000f90:	f107 010c 	add.w	r1, r7, #12
- 8000f94:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000f94:	f04f 33ff 	mov.w	r3, #4294967295
  8000f98:	480e      	ldr	r0, [pc, #56]	@ (8000fd4 <config_THRESHOLD_BYPASS_reg+0xf4>)
  8000f9a:	f00c fb91 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -1578,7 +1578,7 @@ void config_THRESHOLD_BYPASS_reg(uint8_t sensitivity, uint8_t print)
  8000fb6:	4603      	mov	r3, r0
  8000fb8:	b29a      	uxth	r2, r3
  8000fba:	f107 010c 	add.w	r1, r7, #12
- 8000fbe:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8000fbe:	f04f 33ff 	mov.w	r3, #4294967295
  8000fc2:	4804      	ldr	r0, [pc, #16]	@ (8000fd4 <config_THRESHOLD_BYPASS_reg+0xf4>)
  8000fc4:	f00c fb7c 	bl	800d6c0 <HAL_UART_Transmit>
 	}
@@ -1616,7 +1616,7 @@ void lis3dh_i2c_write(uint8_t reg, uint8_t *buf, uint16_t len)
 	if (HAL_I2C_Mem_Write(&hi2c1, LIS3DH_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, buf, len, HAL_MAX_DELAY) != HAL_OK)
  8000ffc:	79fb      	ldrb	r3, [r7, #7]
  8000ffe:	b29a      	uxth	r2, r3
- 8001000:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001000:	f04f 33ff 	mov.w	r3, #4294967295
  8001004:	9302      	str	r3, [sp, #8]
  8001006:	88bb      	ldrh	r3, [r7, #4]
  8001008:	9301      	str	r3, [sp, #4]
@@ -1635,7 +1635,7 @@ void lis3dh_i2c_write(uint8_t reg, uint8_t *buf, uint16_t len)
  8001022:	480c      	ldr	r0, [pc, #48]	@ (8001054 <lis3dh_i2c_write+0x70>)
  8001024:	f006 f9eb 	bl	80073fe <HAL_GPIO_TogglePin>
 		HAL_UART_Transmit(&huart3, (uint8_t *)"LIS3DH I2C Command Transmit Error\r\n", strlen("LIS3DH I2C Command Transmit Error\r\n"), HAL_MAX_DELAY);
- 8001028:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001028:	f04f 33ff 	mov.w	r3, #4294967295
  800102c:	2223      	movs	r2, #35	@ 0x23
  800102e:	490b      	ldr	r1, [pc, #44]	@ (800105c <lis3dh_i2c_write+0x78>)
  8001030:	480b      	ldr	r0, [pc, #44]	@ (8001060 <lis3dh_i2c_write+0x7c>)
@@ -1687,7 +1687,7 @@ void lis3dh_i2c_read(uint8_t reg, uint8_t *buf, uint16_t len)
 	if (HAL_I2C_Mem_Read(&hi2c1, LIS3DH_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, buf, len, HAL_MAX_DELAY) != HAL_OK)
  800107c:	79fb      	ldrb	r3, [r7, #7]
  800107e:	b29a      	uxth	r2, r3
- 8001080:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001080:	f04f 33ff 	mov.w	r3, #4294967295
  8001084:	9302      	str	r3, [sp, #8]
  8001086:	88bb      	ldrh	r3, [r7, #4]
  8001088:	9301      	str	r3, [sp, #4]
@@ -1706,7 +1706,7 @@ void lis3dh_i2c_read(uint8_t reg, uint8_t *buf, uint16_t len)
  80010a2:	480e      	ldr	r0, [pc, #56]	@ (80010dc <lis3dh_i2c_read+0x78>)
  80010a4:	f006 f9ab 	bl	80073fe <HAL_GPIO_TogglePin>
 		HAL_UART_Transmit(&huart3, (uint8_t *)"LIS3DH I2C Command Receive Error\r\n", strlen("LIS3DH I2C Command Receive Error\r\n"), HAL_MAX_DELAY);
- 80010a8:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80010a8:	f04f 33ff 	mov.w	r3, #4294967295
  80010ac:	2222      	movs	r2, #34	@ 0x22
  80010ae:	490c      	ldr	r1, [pc, #48]	@ (80010e0 <lis3dh_i2c_read+0x7c>)
  80010b0:	480c      	ldr	r0, [pc, #48]	@ (80010e4 <lis3dh_i2c_read+0x80>)
@@ -2238,7 +2238,7 @@ void print_config_temp_cfg_reg(void)
  80013d6:	4603      	mov	r3, r0
  80013d8:	b29a      	uxth	r2, r3
  80013da:	1d39      	adds	r1, r7, #4
- 80013dc:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80013dc:	f04f 33ff 	mov.w	r3, #4294967295
  80013e0:	4826      	ldr	r0, [pc, #152]	@ (800147c <print_config_temp_cfg_reg+0xd4>)
  80013e2:	f00c f96d 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -2256,7 +2256,7 @@ void print_config_temp_cfg_reg(void)
  80013fc:	4603      	mov	r3, r0
  80013fe:	b29a      	uxth	r2, r3
  8001400:	1d39      	adds	r1, r7, #4
- 8001402:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001402:	f04f 33ff 	mov.w	r3, #4294967295
  8001406:	481d      	ldr	r0, [pc, #116]	@ (800147c <print_config_temp_cfg_reg+0xd4>)
  8001408:	f00c f95a 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -2287,7 +2287,7 @@ void print_config_temp_cfg_reg(void)
  800143a:	4603      	mov	r3, r0
  800143c:	b29a      	uxth	r2, r3
  800143e:	1d39      	adds	r1, r7, #4
- 8001440:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001440:	f04f 33ff 	mov.w	r3, #4294967295
  8001444:	480d      	ldr	r0, [pc, #52]	@ (800147c <print_config_temp_cfg_reg+0xd4>)
  8001446:	f00c f93b 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -2305,7 +2305,7 @@ void print_config_temp_cfg_reg(void)
  800145e:	4603      	mov	r3, r0
  8001460:	b29a      	uxth	r2, r3
  8001462:	1d39      	adds	r1, r7, #4
- 8001464:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001464:	f04f 33ff 	mov.w	r3, #4294967295
  8001468:	4804      	ldr	r0, [pc, #16]	@ (800147c <print_config_temp_cfg_reg+0xd4>)
  800146a:	f00c f929 	bl	800d6c0 <HAL_UART_Transmit>
 }
@@ -2435,7 +2435,7 @@ void print_config_ctrl_reg1(void)
  8001536:	4603      	mov	r3, r0
  8001538:	b29a      	uxth	r2, r3
  800153a:	1d39      	adds	r1, r7, #4
- 800153c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800153c:	f04f 33ff 	mov.w	r3, #4294967295
  8001540:	48a4      	ldr	r0, [pc, #656]	@ (80017d4 <print_config_ctrl_reg1+0x2cc>)
  8001542:	f00c f8bd 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -2453,7 +2453,7 @@ void print_config_ctrl_reg1(void)
  800155c:	4603      	mov	r3, r0
  800155e:	b29a      	uxth	r2, r3
  8001560:	1d39      	adds	r1, r7, #4
- 8001562:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001562:	f04f 33ff 	mov.w	r3, #4294967295
  8001566:	489b      	ldr	r0, [pc, #620]	@ (80017d4 <print_config_ctrl_reg1+0x2cc>)
  8001568:	f00c f8aa 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -2596,7 +2596,7 @@ void print_config_ctrl_reg1(void)
  800167c:	4603      	mov	r3, r0
  800167e:	b29a      	uxth	r2, r3
  8001680:	1d39      	adds	r1, r7, #4
- 8001682:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001682:	f04f 33ff 	mov.w	r3, #4294967295
  8001686:	4853      	ldr	r0, [pc, #332]	@ (80017d4 <print_config_ctrl_reg1+0x2cc>)
  8001688:	f00c f81a 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -2627,7 +2627,7 @@ void print_config_ctrl_reg1(void)
  80016ba:	4603      	mov	r3, r0
  80016bc:	b29a      	uxth	r2, r3
  80016be:	1d39      	adds	r1, r7, #4
- 80016c0:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80016c0:	f04f 33ff 	mov.w	r3, #4294967295
  80016c4:	4843      	ldr	r0, [pc, #268]	@ (80017d4 <print_config_ctrl_reg1+0x2cc>)
  80016c6:	f00b fffb 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -2782,7 +2782,7 @@ void print_config_ctrl_reg1(void)
  8001844:	4603      	mov	r3, r0
  8001846:	b29a      	uxth	r2, r3
  8001848:	1d39      	adds	r1, r7, #4
- 800184a:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800184a:	f04f 33ff 	mov.w	r3, #4294967295
  800184e:	480d      	ldr	r0, [pc, #52]	@ (8001884 <print_config_ctrl_reg1+0x37c>)
  8001850:	f00b ff36 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -2800,7 +2800,7 @@ void print_config_ctrl_reg1(void)
  8001868:	4603      	mov	r3, r0
  800186a:	b29a      	uxth	r2, r3
  800186c:	1d39      	adds	r1, r7, #4
- 800186e:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800186e:	f04f 33ff 	mov.w	r3, #4294967295
  8001872:	4804      	ldr	r0, [pc, #16]	@ (8001884 <print_config_ctrl_reg1+0x37c>)
  8001874:	f00b ff24 	bl	800d6c0 <HAL_UART_Transmit>
 }
@@ -2917,7 +2917,7 @@ void print_config_ctrl_reg2(void)
  800192a:	4603      	mov	r3, r0
  800192c:	b29a      	uxth	r2, r3
  800192e:	1d39      	adds	r1, r7, #4
- 8001930:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001930:	f04f 33ff 	mov.w	r3, #4294967295
  8001934:	4876      	ldr	r0, [pc, #472]	@ (8001b10 <print_config_ctrl_reg2+0x214>)
  8001936:	f00b fec3 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -2934,7 +2934,7 @@ void print_config_ctrl_reg2(void)
  8001950:	4603      	mov	r3, r0
  8001952:	b29a      	uxth	r2, r3
  8001954:	1d39      	adds	r1, r7, #4
- 8001956:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001956:	f04f 33ff 	mov.w	r3, #4294967295
  800195a:	486d      	ldr	r0, [pc, #436]	@ (8001b10 <print_config_ctrl_reg2+0x214>)
  800195c:	f00b feb0 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3000,7 +3000,7 @@ void print_config_ctrl_reg2(void)
  80019d6:	4603      	mov	r3, r0
  80019d8:	b29a      	uxth	r2, r3
  80019da:	1d39      	adds	r1, r7, #4
- 80019dc:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80019dc:	f04f 33ff 	mov.w	r3, #4294967295
  80019e0:	484b      	ldr	r0, [pc, #300]	@ (8001b10 <print_config_ctrl_reg2+0x214>)
  80019e2:	f00b fe6d 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3029,7 +3029,7 @@ void print_config_ctrl_reg2(void)
  8001a14:	4603      	mov	r3, r0
  8001a16:	b29a      	uxth	r2, r3
  8001a18:	1d39      	adds	r1, r7, #4
- 8001a1a:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001a1a:	f04f 33ff 	mov.w	r3, #4294967295
  8001a1e:	483c      	ldr	r0, [pc, #240]	@ (8001b10 <print_config_ctrl_reg2+0x214>)
  8001a20:	f00b fe4e 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3058,7 +3058,7 @@ void print_config_ctrl_reg2(void)
  8001a52:	4603      	mov	r3, r0
  8001a54:	b29a      	uxth	r2, r3
  8001a56:	1d39      	adds	r1, r7, #4
- 8001a58:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001a58:	f04f 33ff 	mov.w	r3, #4294967295
  8001a5c:	482c      	ldr	r0, [pc, #176]	@ (8001b10 <print_config_ctrl_reg2+0x214>)
  8001a5e:	f00b fe2f 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3087,7 +3087,7 @@ void print_config_ctrl_reg2(void)
  8001a90:	4603      	mov	r3, r0
  8001a92:	b29a      	uxth	r2, r3
  8001a94:	1d39      	adds	r1, r7, #4
- 8001a96:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001a96:	f04f 33ff 	mov.w	r3, #4294967295
  8001a9a:	481d      	ldr	r0, [pc, #116]	@ (8001b10 <print_config_ctrl_reg2+0x214>)
  8001a9c:	f00b fe10 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3116,7 +3116,7 @@ void print_config_ctrl_reg2(void)
  8001ace:	4603      	mov	r3, r0
  8001ad0:	b29a      	uxth	r2, r3
  8001ad2:	1d39      	adds	r1, r7, #4
- 8001ad4:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001ad4:	f04f 33ff 	mov.w	r3, #4294967295
  8001ad8:	480d      	ldr	r0, [pc, #52]	@ (8001b10 <print_config_ctrl_reg2+0x214>)
  8001ada:	f00b fdf1 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3134,7 +3134,7 @@ void print_config_ctrl_reg2(void)
  8001af2:	4603      	mov	r3, r0
  8001af4:	b29a      	uxth	r2, r3
  8001af6:	1d39      	adds	r1, r7, #4
- 8001af8:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001af8:	f04f 33ff 	mov.w	r3, #4294967295
  8001afc:	4804      	ldr	r0, [pc, #16]	@ (8001b10 <print_config_ctrl_reg2+0x214>)
  8001afe:	f00b fddf 	bl	800d6c0 <HAL_UART_Transmit>
 }
@@ -3270,7 +3270,7 @@ void print_config_ctrl_reg3(void)
  8001bf6:	4603      	mov	r3, r0
  8001bf8:	b29a      	uxth	r2, r3
  8001bfa:	1d39      	adds	r1, r7, #4
- 8001bfc:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001bfc:	f04f 33ff 	mov.w	r3, #4294967295
  8001c00:	4881      	ldr	r0, [pc, #516]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001c02:	f00b fd5d 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3287,7 +3287,7 @@ void print_config_ctrl_reg3(void)
  8001c1c:	4603      	mov	r3, r0
  8001c1e:	b29a      	uxth	r2, r3
  8001c20:	1d39      	adds	r1, r7, #4
- 8001c22:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001c22:	f04f 33ff 	mov.w	r3, #4294967295
  8001c26:	4878      	ldr	r0, [pc, #480]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001c28:	f00b fd4a 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3308,7 +3308,7 @@ void print_config_ctrl_reg3(void)
  8001c4a:	4603      	mov	r3, r0
  8001c4c:	b29a      	uxth	r2, r3
  8001c4e:	1d39      	adds	r1, r7, #4
- 8001c50:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001c50:	f04f 33ff 	mov.w	r3, #4294967295
  8001c54:	486c      	ldr	r0, [pc, #432]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001c56:	f00b fd33 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3329,7 +3329,7 @@ void print_config_ctrl_reg3(void)
  8001c7a:	4603      	mov	r3, r0
  8001c7c:	b29a      	uxth	r2, r3
  8001c7e:	1d39      	adds	r1, r7, #4
- 8001c80:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001c80:	f04f 33ff 	mov.w	r3, #4294967295
  8001c84:	4860      	ldr	r0, [pc, #384]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001c86:	f00b fd1b 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3350,7 +3350,7 @@ void print_config_ctrl_reg3(void)
  8001caa:	4603      	mov	r3, r0
  8001cac:	b29a      	uxth	r2, r3
  8001cae:	1d39      	adds	r1, r7, #4
- 8001cb0:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001cb0:	f04f 33ff 	mov.w	r3, #4294967295
  8001cb4:	4854      	ldr	r0, [pc, #336]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001cb6:	f00b fd03 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3371,7 +3371,7 @@ void print_config_ctrl_reg3(void)
  8001cda:	4603      	mov	r3, r0
  8001cdc:	b29a      	uxth	r2, r3
  8001cde:	1d39      	adds	r1, r7, #4
- 8001ce0:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001ce0:	f04f 33ff 	mov.w	r3, #4294967295
  8001ce4:	4848      	ldr	r0, [pc, #288]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001ce6:	f00b fceb 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3392,7 +3392,7 @@ void print_config_ctrl_reg3(void)
  8001d0a:	4603      	mov	r3, r0
  8001d0c:	b29a      	uxth	r2, r3
  8001d0e:	1d39      	adds	r1, r7, #4
- 8001d10:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001d10:	f04f 33ff 	mov.w	r3, #4294967295
  8001d14:	483c      	ldr	r0, [pc, #240]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001d16:	f00b fcd3 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3413,7 +3413,7 @@ void print_config_ctrl_reg3(void)
  8001d3a:	4603      	mov	r3, r0
  8001d3c:	b29a      	uxth	r2, r3
  8001d3e:	1d39      	adds	r1, r7, #4
- 8001d40:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001d40:	f04f 33ff 	mov.w	r3, #4294967295
  8001d44:	4830      	ldr	r0, [pc, #192]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001d46:	f00b fcbb 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3434,7 +3434,7 @@ void print_config_ctrl_reg3(void)
  8001d6a:	4603      	mov	r3, r0
  8001d6c:	b29a      	uxth	r2, r3
  8001d6e:	1d39      	adds	r1, r7, #4
- 8001d70:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001d70:	f04f 33ff 	mov.w	r3, #4294967295
  8001d74:	4824      	ldr	r0, [pc, #144]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001d76:	f00b fca3 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3455,7 +3455,7 @@ void print_config_ctrl_reg3(void)
  8001d9a:	4603      	mov	r3, r0
  8001d9c:	b29a      	uxth	r2, r3
  8001d9e:	1d39      	adds	r1, r7, #4
- 8001da0:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001da0:	f04f 33ff 	mov.w	r3, #4294967295
  8001da4:	4818      	ldr	r0, [pc, #96]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001da6:	f00b fc8b 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3481,7 +3481,7 @@ void print_config_ctrl_reg3(void)
  8001dc6:	4603      	mov	r3, r0
  8001dc8:	b29a      	uxth	r2, r3
  8001dca:	1d39      	adds	r1, r7, #4
- 8001dcc:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001dcc:	f04f 33ff 	mov.w	r3, #4294967295
  8001dd0:	480d      	ldr	r0, [pc, #52]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001dd2:	f00b fc75 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3499,7 +3499,7 @@ void print_config_ctrl_reg3(void)
  8001dea:	4603      	mov	r3, r0
  8001dec:	b29a      	uxth	r2, r3
  8001dee:	1d39      	adds	r1, r7, #4
- 8001df0:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001df0:	f04f 33ff 	mov.w	r3, #4294967295
  8001df4:	4804      	ldr	r0, [pc, #16]	@ (8001e08 <print_config_ctrl_reg3+0x240>)
  8001df6:	f00b fc63 	bl	800d6c0 <HAL_UART_Transmit>
 }
@@ -3649,7 +3649,7 @@ void print_config_ctrl_reg4(void)
  8001ef6:	4603      	mov	r3, r0
  8001ef8:	b29a      	uxth	r2, r3
  8001efa:	1d39      	adds	r1, r7, #4
- 8001efc:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001efc:	f04f 33ff 	mov.w	r3, #4294967295
  8001f00:	489a      	ldr	r0, [pc, #616]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  8001f02:	f00b fbdd 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3666,7 +3666,7 @@ void print_config_ctrl_reg4(void)
  8001f1c:	4603      	mov	r3, r0
  8001f1e:	b29a      	uxth	r2, r3
  8001f20:	1d39      	adds	r1, r7, #4
- 8001f22:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001f22:	f04f 33ff 	mov.w	r3, #4294967295
  8001f26:	4891      	ldr	r0, [pc, #580]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  8001f28:	f00b fbca 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3695,7 +3695,7 @@ void print_config_ctrl_reg4(void)
  8001f58:	4603      	mov	r3, r0
  8001f5a:	b29a      	uxth	r2, r3
  8001f5c:	1d39      	adds	r1, r7, #4
- 8001f5e:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001f5e:	f04f 33ff 	mov.w	r3, #4294967295
  8001f62:	4882      	ldr	r0, [pc, #520]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  8001f64:	f00b fbac 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3724,7 +3724,7 @@ void print_config_ctrl_reg4(void)
  8001f96:	4603      	mov	r3, r0
  8001f98:	b29a      	uxth	r2, r3
  8001f9a:	1d39      	adds	r1, r7, #4
- 8001f9c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8001f9c:	f04f 33ff 	mov.w	r3, #4294967295
  8001fa0:	4872      	ldr	r0, [pc, #456]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  8001fa2:	f00b fb8d 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3789,7 +3789,7 @@ void print_config_ctrl_reg4(void)
  8002016:	4603      	mov	r3, r0
  8002018:	b29a      	uxth	r2, r3
  800201a:	1d39      	adds	r1, r7, #4
- 800201c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800201c:	f04f 33ff 	mov.w	r3, #4294967295
  8002020:	4852      	ldr	r0, [pc, #328]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  8002022:	f00b fb4d 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3818,7 +3818,7 @@ void print_config_ctrl_reg4(void)
  8002054:	4603      	mov	r3, r0
  8002056:	b29a      	uxth	r2, r3
  8002058:	1d39      	adds	r1, r7, #4
- 800205a:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800205a:	f04f 33ff 	mov.w	r3, #4294967295
  800205e:	4843      	ldr	r0, [pc, #268]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  8002060:	f00b fb2e 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3844,7 +3844,7 @@ void print_config_ctrl_reg4(void)
  800208c:	4603      	mov	r3, r0
  800208e:	b29a      	uxth	r2, r3
  8002090:	1d39      	adds	r1, r7, #4
- 8002092:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002092:	f04f 33ff 	mov.w	r3, #4294967295
  8002096:	4835      	ldr	r0, [pc, #212]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  8002098:	f00b fb12 	bl	800d6c0 <HAL_UART_Transmit>
  800209c:	e02f      	b.n	80020fe <print_config_ctrl_reg4+0x236>
@@ -3865,7 +3865,7 @@ void print_config_ctrl_reg4(void)
  80020be:	4603      	mov	r3, r0
  80020c0:	b29a      	uxth	r2, r3
  80020c2:	1d39      	adds	r1, r7, #4
- 80020c4:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80020c4:	f04f 33ff 	mov.w	r3, #4294967295
  80020c8:	4828      	ldr	r0, [pc, #160]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  80020ca:	f00b faf9 	bl	800d6c0 <HAL_UART_Transmit>
         if (st & ENABLE_SELF_TEST0) { snprintf(buf, sizeof(buf), "Self-test: ST0 set\r\n"); HAL_UART_Transmit(&huart3, (uint8_t *)buf, strlen(buf), HAL_MAX_DELAY); }
@@ -3884,7 +3884,7 @@ void print_config_ctrl_reg4(void)
  80020ee:	4603      	mov	r3, r0
  80020f0:	b29a      	uxth	r2, r3
  80020f2:	1d39      	adds	r1, r7, #4
- 80020f4:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80020f4:	f04f 33ff 	mov.w	r3, #4294967295
  80020f8:	481c      	ldr	r0, [pc, #112]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  80020fa:	f00b fae1 	bl	800d6c0 <HAL_UART_Transmit>
     }
@@ -3914,7 +3914,7 @@ void print_config_ctrl_reg4(void)
  800212c:	4603      	mov	r3, r0
  800212e:	b29a      	uxth	r2, r3
  8002130:	1d39      	adds	r1, r7, #4
- 8002132:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002132:	f04f 33ff 	mov.w	r3, #4294967295
  8002136:	480d      	ldr	r0, [pc, #52]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  8002138:	f00b fac2 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -3932,7 +3932,7 @@ void print_config_ctrl_reg4(void)
  8002150:	4603      	mov	r3, r0
  8002152:	b29a      	uxth	r2, r3
  8002154:	1d39      	adds	r1, r7, #4
- 8002156:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002156:	f04f 33ff 	mov.w	r3, #4294967295
  800215a:	4804      	ldr	r0, [pc, #16]	@ (800216c <print_config_ctrl_reg4+0x2a4>)
  800215c:	f00b fab0 	bl	800d6c0 <HAL_UART_Transmit>
 }
@@ -4060,7 +4060,7 @@ void print_config_ctrl_reg5(void)
  8002246:	4603      	mov	r3, r0
  8002248:	b29a      	uxth	r2, r3
  800224a:	1d39      	adds	r1, r7, #4
- 800224c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800224c:	f04f 33ff 	mov.w	r3, #4294967295
  8002250:	4854      	ldr	r0, [pc, #336]	@ (80023a4 <print_config_ctrl_reg5+0x18c>)
  8002252:	f00b fa35 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -4077,7 +4077,7 @@ void print_config_ctrl_reg5(void)
  800226c:	4603      	mov	r3, r0
  800226e:	b29a      	uxth	r2, r3
  8002270:	1d39      	adds	r1, r7, #4
- 8002272:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002272:	f04f 33ff 	mov.w	r3, #4294967295
  8002276:	484b      	ldr	r0, [pc, #300]	@ (80023a4 <print_config_ctrl_reg5+0x18c>)
  8002278:	f00b fa22 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -4106,7 +4106,7 @@ void print_config_ctrl_reg5(void)
  80022a8:	4603      	mov	r3, r0
  80022aa:	b29a      	uxth	r2, r3
  80022ac:	1d39      	adds	r1, r7, #4
- 80022ae:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80022ae:	f04f 33ff 	mov.w	r3, #4294967295
  80022b2:	483c      	ldr	r0, [pc, #240]	@ (80023a4 <print_config_ctrl_reg5+0x18c>)
  80022b4:	f00b fa04 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -4135,7 +4135,7 @@ void print_config_ctrl_reg5(void)
  80022e6:	4603      	mov	r3, r0
  80022e8:	b29a      	uxth	r2, r3
  80022ea:	1d39      	adds	r1, r7, #4
- 80022ec:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80022ec:	f04f 33ff 	mov.w	r3, #4294967295
  80022f0:	482c      	ldr	r0, [pc, #176]	@ (80023a4 <print_config_ctrl_reg5+0x18c>)
  80022f2:	f00b f9e5 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -4164,7 +4164,7 @@ void print_config_ctrl_reg5(void)
  8002324:	4603      	mov	r3, r0
  8002326:	b29a      	uxth	r2, r3
  8002328:	1d39      	adds	r1, r7, #4
- 800232a:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800232a:	f04f 33ff 	mov.w	r3, #4294967295
  800232e:	481d      	ldr	r0, [pc, #116]	@ (80023a4 <print_config_ctrl_reg5+0x18c>)
  8002330:	f00b f9c6 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -4193,7 +4193,7 @@ void print_config_ctrl_reg5(void)
  8002362:	4603      	mov	r3, r0
  8002364:	b29a      	uxth	r2, r3
  8002366:	1d39      	adds	r1, r7, #4
- 8002368:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002368:	f04f 33ff 	mov.w	r3, #4294967295
  800236c:	480d      	ldr	r0, [pc, #52]	@ (80023a4 <print_config_ctrl_reg5+0x18c>)
  800236e:	f00b f9a7 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -4211,7 +4211,7 @@ void print_config_ctrl_reg5(void)
  8002386:	4603      	mov	r3, r0
  8002388:	b29a      	uxth	r2, r3
  800238a:	1d39      	adds	r1, r7, #4
- 800238c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800238c:	f04f 33ff 	mov.w	r3, #4294967295
  8002390:	4804      	ldr	r0, [pc, #16]	@ (80023a4 <print_config_ctrl_reg5+0x18c>)
  8002392:	f00b f995 	bl	800d6c0 <HAL_UART_Transmit>
 }
@@ -4339,7 +4339,7 @@ void print_config_ctrl_reg6(void)
  800246e:	4603      	mov	r3, r0
  8002470:	b29a      	uxth	r2, r3
  8002472:	1d39      	adds	r1, r7, #4
- 8002474:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002474:	f04f 33ff 	mov.w	r3, #4294967295
  8002478:	4867      	ldr	r0, [pc, #412]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  800247a:	f00b f921 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -4356,7 +4356,7 @@ void print_config_ctrl_reg6(void)
  8002494:	4603      	mov	r3, r0
  8002496:	b29a      	uxth	r2, r3
  8002498:	1d39      	adds	r1, r7, #4
- 800249a:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 800249a:	f04f 33ff 	mov.w	r3, #4294967295
  800249e:	485e      	ldr	r0, [pc, #376]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  80024a0:	f00b f90e 	bl	800d6c0 <HAL_UART_Transmit>
 
@@ -4377,7 +4377,7 @@ void print_config_ctrl_reg6(void)
  80024c2:	4603      	mov	r3, r0
  80024c4:	b29a      	uxth	r2, r3
  80024c6:	1d39      	adds	r1, r7, #4
- 80024c8:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80024c8:	f04f 33ff 	mov.w	r3, #4294967295
  80024cc:	4852      	ldr	r0, [pc, #328]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  80024ce:	f00b f8f7 	bl	800d6c0 <HAL_UART_Transmit>
 	}
@@ -4398,7 +4398,7 @@ void print_config_ctrl_reg6(void)
  80024f2:	4603      	mov	r3, r0
  80024f4:	b29a      	uxth	r2, r3
  80024f6:	1d39      	adds	r1, r7, #4
- 80024f8:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80024f8:	f04f 33ff 	mov.w	r3, #4294967295
  80024fc:	4846      	ldr	r0, [pc, #280]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  80024fe:	f00b f8df 	bl	800d6c0 <HAL_UART_Transmit>
 	}
@@ -4419,7 +4419,7 @@ void print_config_ctrl_reg6(void)
  8002522:	4603      	mov	r3, r0
  8002524:	b29a      	uxth	r2, r3
  8002526:	1d39      	adds	r1, r7, #4
- 8002528:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002528:	f04f 33ff 	mov.w	r3, #4294967295
  800252c:	483a      	ldr	r0, [pc, #232]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  800252e:	f00b f8c7 	bl	800d6c0 <HAL_UART_Transmit>
 	}
@@ -4440,7 +4440,7 @@ void print_config_ctrl_reg6(void)
  8002552:	4603      	mov	r3, r0
  8002554:	b29a      	uxth	r2, r3
  8002556:	1d39      	adds	r1, r7, #4
- 8002558:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002558:	f04f 33ff 	mov.w	r3, #4294967295
  800255c:	482e      	ldr	r0, [pc, #184]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  800255e:	f00b f8af 	bl	800d6c0 <HAL_UART_Transmit>
 	}
@@ -4461,7 +4461,7 @@ void print_config_ctrl_reg6(void)
  8002582:	4603      	mov	r3, r0
  8002584:	b29a      	uxth	r2, r3
  8002586:	1d39      	adds	r1, r7, #4
- 8002588:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002588:	f04f 33ff 	mov.w	r3, #4294967295
  800258c:	4822      	ldr	r0, [pc, #136]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  800258e:	f00b f897 	bl	800d6c0 <HAL_UART_Transmit>
 	}
@@ -4482,7 +4482,7 @@ void print_config_ctrl_reg6(void)
  80025b2:	4603      	mov	r3, r0
  80025b4:	b29a      	uxth	r2, r3
  80025b6:	1d39      	adds	r1, r7, #4
- 80025b8:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80025b8:	f04f 33ff 	mov.w	r3, #4294967295
  80025bc:	4816      	ldr	r0, [pc, #88]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  80025be:	f00b f87f 	bl	800d6c0 <HAL_UART_Transmit>
  80025c2:	e011      	b.n	80025e8 <print_config_ctrl_reg6+0x1a8>
@@ -4500,7 +4500,7 @@ void print_config_ctrl_reg6(void)
  80025d8:	4603      	mov	r3, r0
  80025da:	b29a      	uxth	r2, r3
  80025dc:	1d39      	adds	r1, r7, #4
- 80025de:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80025de:	f04f 33ff 	mov.w	r3, #4294967295
  80025e2:	480d      	ldr	r0, [pc, #52]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  80025e4:	f00b f86c 	bl	800d6c0 <HAL_UART_Transmit>
 		}
@@ -4518,7 +4518,7 @@ void print_config_ctrl_reg6(void)
  80025fc:	4603      	mov	r3, r0
  80025fe:	b29a      	uxth	r2, r3
  8002600:	1d39      	adds	r1, r7, #4
- 8002602:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 8002602:	f04f 33ff 	mov.w	r3, #4294967295
  8002606:	4804      	ldr	r0, [pc, #16]	@ (8002618 <print_config_ctrl_reg6+0x1d8>)
  8002608:	f00b f85a 	bl	800d6c0 <HAL_UART_Transmit>
 }
@@ -8153,7 +8153,7 @@ static void MX_TIM24_Init(void)
  8003be2:	609a      	str	r2, [r3, #8]
   htim24.Init.Period = 4294967295;
  8003be4:	4b18      	ldr	r3, [pc, #96]	@ (8003c48 <MX_TIM24_Init+0x94>)
- 8003be6:	f04f 32ff 	mov.w	r2, #4294967295	@ 0xffffffff
+ 8003be6:	f04f 32ff 	mov.w	r2, #4294967295
  8003bea:	60da      	str	r2, [r3, #12]
   htim24.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
  8003bec:	4b16      	ldr	r3, [pc, #88]	@ (8003c48 <MX_TIM24_Init+0x94>)
@@ -9960,7 +9960,7 @@ void *_sbrk(ptrdiff_t incr)
  80046ce:	220c      	movs	r2, #12
  80046d0:	601a      	str	r2, [r3, #0]
     return (void *)-1;
- 80046d2:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
+ 80046d2:	f04f 33ff 	mov.w	r3, #4294967295
  80046d6:	e009      	b.n	80046ec <_sbrk+0x54>
   }
 
@@ -10497,7 +10497,7 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
  8004964:	2200      	movs	r2, #0
  8004966:	6879      	ldr	r1, [r7, #4]
- 8004968:	f04f 30ff 	mov.w	r0, #4294967295	@ 0xffffffff
+ 8004968:	f04f 30ff 	mov.w	r0, #4294967295
  800496c:	f000 f92f 	bl	8004bce <HAL_NVIC_SetPriority>
     uwTickPrio = TickPriority;
  8004970:	4a06      	ldr	r2, [pc, #24]	@ (800498c <HAL_InitTick+0x68>)
@@ -10590,7 +10590,7 @@ __weak void HAL_Delay(uint32_t Delay)
   /* Add a freq to guarantee minimum wait */
   if (wait < HAL_MAX_DELAY)
  80049e2:	68fb      	ldr	r3, [r7, #12]
- 80049e4:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 80049e4:	f1b3 3fff 	cmp.w	r3, #4294967295
  80049e8:	d005      	beq.n	80049f6 <HAL_Delay+0x26>
   {
     wait += (uint32_t)(uwTickFreq);
@@ -10826,7 +10826,7 @@ __STATIC_INLINE uint32_t NVIC_EncodePriority (uint32_t PriorityGroup, uint32_t P
 
   return (
            ((PreemptPriority & (uint32_t)((1UL << (PreemptPriorityBits)) - 1UL)) << SubPriorityBits) |
- 8004b40:	f04f 32ff 	mov.w	r2, #4294967295	@ 0xffffffff
+ 8004b40:	f04f 32ff 	mov.w	r2, #4294967295
  8004b44:	69bb      	ldr	r3, [r7, #24]
  8004b46:	fa02 f303 	lsl.w	r3, r2, r3
  8004b4a:	43da      	mvns	r2, r3
@@ -10835,7 +10835,7 @@ __STATIC_INLINE uint32_t NVIC_EncodePriority (uint32_t PriorityGroup, uint32_t P
  8004b50:	697b      	ldr	r3, [r7, #20]
  8004b52:	409a      	lsls	r2, r3
            ((SubPriority     & (uint32_t)((1UL << (SubPriorityBits    )) - 1UL)))
- 8004b54:	f04f 31ff 	mov.w	r1, #4294967295	@ 0xffffffff
+ 8004b54:	f04f 31ff 	mov.w	r1, #4294967295
  8004b58:	697b      	ldr	r3, [r7, #20]
  8004b5a:	fa01 f303 	lsl.w	r3, r1, r3
  8004b5e:	43d9      	mvns	r1, r3
@@ -10881,7 +10881,7 @@ __STATIC_INLINE uint32_t SysTick_Config(uint32_t ticks)
  8004b90:	6053      	str	r3, [r2, #4]
   NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL); /* set Priority for Systick Interrupt */
  8004b92:	210f      	movs	r1, #15
- 8004b94:	f04f 30ff 	mov.w	r0, #4294967295	@ 0xffffffff
+ 8004b94:	f04f 30ff 	mov.w	r0, #4294967295
  8004b98:	f7ff ff8e 	bl	8004ab8 <__NVIC_SetPriority>
   SysTick->VAL   = 0UL;                                             /* Load the SysTick Counter Value */
  8004b9c:	4b05      	ldr	r3, [pc, #20]	@ (8004bb4 <SysTick_Config+0x40>)
@@ -18065,7 +18065,7 @@ static HAL_StatusTypeDef I2C_WaitOnFlagUntilTimeout(I2C_HandleTypeDef *hi2c, uin
     /* Check for the Timeout */
     if (Timeout != HAL_MAX_DELAY)
  8007b86:	683b      	ldr	r3, [r7, #0]
- 8007b88:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 8007b88:	f1b3 3fff 	cmp.w	r3, #4294967295
  8007b8c:	d02d      	beq.n	8007bea <I2C_WaitOnFlagUntilTimeout+0x8a>
     {
       if (((HAL_GetTick() - Tickstart) > Timeout) || (Timeout == 0U))
@@ -18182,7 +18182,7 @@ static HAL_StatusTypeDef I2C_WaitOnTXISFlagUntilTimeout(I2C_HandleTypeDef *hi2c,
     /* Check for the Timeout */
     if (Timeout != HAL_MAX_DELAY)
  8007c34:	68bb      	ldr	r3, [r7, #8]
- 8007c36:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 8007c36:	f1b3 3fff 	cmp.w	r3, #4294967295
  8007c3a:	d025      	beq.n	8007c88 <I2C_WaitOnTXISFlagUntilTimeout+0x76>
     {
       if (((HAL_GetTick() - Tickstart) > Timeout) || (Timeout == 0U))
@@ -18394,7 +18394,7 @@ static HAL_StatusTypeDef I2C_IsErrorOccurred(I2C_HandleTypeDef *hi2c, uint32_t T
       /* Check for the Timeout */
       if (Timeout != HAL_MAX_DELAY)
  8007d5e:	68bb      	ldr	r3, [r7, #8]
- 8007d60:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 8007d60:	f1b3 3fff 	cmp.w	r3, #4294967295
  8007d64:	d045      	beq.n	8007df2 <I2C_IsErrorOccurred+0xca>
       {
         if (((HAL_GetTick() - tickstart) > Timeout) || (Timeout == 0U))
@@ -26073,7 +26073,7 @@ HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, const uint8_t *pData
  800aee0:	429a      	cmp	r2, r3
  800aee2:	d803      	bhi.n	800aeec <HAL_SPI_Transmit+0x164>
  800aee4:	683b      	ldr	r3, [r7, #0]
- 800aee6:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800aee6:	f1b3 3fff 	cmp.w	r3, #4294967295
  800aeea:	d102      	bne.n	800aef2 <HAL_SPI_Transmit+0x16a>
  800aeec:	683b      	ldr	r3, [r7, #0]
  800aeee:	2b00      	cmp	r3, #0
@@ -26210,7 +26210,7 @@ HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, const uint8_t *pData
  800afb6:	429a      	cmp	r2, r3
  800afb8:	d803      	bhi.n	800afc2 <HAL_SPI_Transmit+0x23a>
  800afba:	683b      	ldr	r3, [r7, #0]
- 800afbc:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800afbc:	f1b3 3fff 	cmp.w	r3, #4294967295
  800afc0:	d102      	bne.n	800afc8 <HAL_SPI_Transmit+0x240>
  800afc2:	683b      	ldr	r3, [r7, #0]
  800afc4:	2b00      	cmp	r3, #0
@@ -26372,7 +26372,7 @@ HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, const uint8_t *pData
  800b0c4:	429a      	cmp	r2, r3
  800b0c6:	d803      	bhi.n	800b0d0 <HAL_SPI_Transmit+0x348>
  800b0c8:	683b      	ldr	r3, [r7, #0]
- 800b0ca:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800b0ca:	f1b3 3fff 	cmp.w	r3, #4294967295
  800b0ce:	d102      	bne.n	800b0d6 <HAL_SPI_Transmit+0x34e>
  800b0d0:	683b      	ldr	r3, [r7, #0]
  800b0d2:	2b00      	cmp	r3, #0
@@ -26761,7 +26761,7 @@ HAL_StatusTypeDef HAL_SPI_Receive(SPI_HandleTypeDef *hspi, uint8_t *pData, uint1
  800b312:	429a      	cmp	r2, r3
  800b314:	d803      	bhi.n	800b31e <HAL_SPI_Receive+0x1ba>
  800b316:	683b      	ldr	r3, [r7, #0]
- 800b318:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800b318:	f1b3 3fff 	cmp.w	r3, #4294967295
  800b31c:	d102      	bne.n	800b324 <HAL_SPI_Receive+0x1c0>
  800b31e:	683b      	ldr	r3, [r7, #0]
  800b320:	2b00      	cmp	r3, #0
@@ -26965,7 +26965,7 @@ HAL_StatusTypeDef HAL_SPI_Receive(SPI_HandleTypeDef *hspi, uint8_t *pData, uint1
  800b44c:	429a      	cmp	r2, r3
  800b44e:	d803      	bhi.n	800b458 <HAL_SPI_Receive+0x2f4>
  800b450:	683b      	ldr	r3, [r7, #0]
- 800b452:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800b452:	f1b3 3fff 	cmp.w	r3, #4294967295
  800b456:	d102      	bne.n	800b45e <HAL_SPI_Receive+0x2fa>
  800b458:	683b      	ldr	r3, [r7, #0]
  800b45a:	2b00      	cmp	r3, #0
@@ -27181,7 +27181,7 @@ HAL_StatusTypeDef HAL_SPI_Receive(SPI_HandleTypeDef *hspi, uint8_t *pData, uint1
  800b5d0:	429a      	cmp	r2, r3
  800b5d2:	d803      	bhi.n	800b5dc <HAL_SPI_Receive+0x478>
  800b5d4:	683b      	ldr	r3, [r7, #0]
- 800b5d6:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800b5d6:	f1b3 3fff 	cmp.w	r3, #4294967295
  800b5da:	d102      	bne.n	800b5e2 <HAL_SPI_Receive+0x47e>
  800b5dc:	683b      	ldr	r3, [r7, #0]
  800b5de:	2b00      	cmp	r3, #0
@@ -27637,7 +27637,7 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, const uint8_t
  800b87a:	429a      	cmp	r2, r3
  800b87c:	d803      	bhi.n	800b886 <HAL_SPI_TransmitReceive+0x23e>
  800b87e:	6bbb      	ldr	r3, [r7, #56]	@ 0x38
- 800b880:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800b880:	f1b3 3fff 	cmp.w	r3, #4294967295
  800b884:	d102      	bne.n	800b88c <HAL_SPI_TransmitReceive+0x244>
  800b886:	6bbb      	ldr	r3, [r7, #56]	@ 0x38
  800b888:	2b00      	cmp	r3, #0
@@ -27915,7 +27915,7 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, const uint8_t
  800ba32:	429a      	cmp	r2, r3
  800ba34:	d803      	bhi.n	800ba3e <HAL_SPI_TransmitReceive+0x3f6>
  800ba36:	6bbb      	ldr	r3, [r7, #56]	@ 0x38
- 800ba38:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800ba38:	f1b3 3fff 	cmp.w	r3, #4294967295
  800ba3c:	d102      	bne.n	800ba44 <HAL_SPI_TransmitReceive+0x3fc>
  800ba3e:	6bbb      	ldr	r3, [r7, #56]	@ 0x38
  800ba40:	2b00      	cmp	r3, #0
@@ -28192,7 +28192,7 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, const uint8_t
  800bc1a:	429a      	cmp	r2, r3
  800bc1c:	d803      	bhi.n	800bc26 <HAL_SPI_TransmitReceive+0x5de>
  800bc1e:	6bbb      	ldr	r3, [r7, #56]	@ 0x38
- 800bc20:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800bc20:	f1b3 3fff 	cmp.w	r3, #4294967295
  800bc24:	d102      	bne.n	800bc2c <HAL_SPI_TransmitReceive+0x5e4>
  800bc26:	6bbb      	ldr	r3, [r7, #56]	@ 0x38
  800bc28:	2b00      	cmp	r3, #0
@@ -28513,7 +28513,7 @@ static HAL_StatusTypeDef SPI_WaitOnFlagUntilTimeout(const SPI_HandleTypeDef *hsp
  800be1a:	429a      	cmp	r2, r3
  800be1c:	d803      	bhi.n	800be26 <SPI_WaitOnFlagUntilTimeout+0x2a>
  800be1e:	683b      	ldr	r3, [r7, #0]
- 800be20:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800be20:	f1b3 3fff 	cmp.w	r3, #4294967295
  800be24:	d102      	bne.n	800be2c <SPI_WaitOnFlagUntilTimeout+0x30>
  800be26:	683b      	ldr	r3, [r7, #0]
  800be28:	2b00      	cmp	r3, #0
@@ -35982,7 +35982,7 @@ HAL_StatusTypeDef UART_WaitOnFlagUntilTimeout(UART_HandleTypeDef *huart, uint32_
     /* Check for the Timeout */
     if (Timeout != HAL_MAX_DELAY)
  800ef4a:	69bb      	ldr	r3, [r7, #24]
- 800ef4c:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
+ 800ef4c:	f1b3 3fff 	cmp.w	r3, #4294967295
  800ef50:	d04b      	beq.n	800efea <UART_WaitOnFlagUntilTimeout+0xb2>
     {
       if (((HAL_GetTick() - Tickstart) > Timeout) || (Timeout == 0U))
@@ -36841,7 +36841,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800f40c:	230a      	movne	r3, #10
  800f40e:	2308      	moveq	r3, #8
  800f410:	f106 4c00 	add.w	ip, r6, #2147483648	@ 0x80000000
- 800f414:	f10c 3cff 	add.w	ip, ip, #4294967295	@ 0xffffffff
+ 800f414:	f10c 3cff 	add.w	ip, ip, #4294967295
  800f418:	2200      	movs	r2, #0
  800f41a:	fbbc f9f3 	udiv	r9, ip, r3
  800f41e:	4610      	mov	r0, r2
@@ -36873,7 +36873,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800f45e:	d804      	bhi.n	800f46a <_strtol_l.isra.0+0xc6>
  800f460:	3c57      	subs	r4, #87	@ 0x57
  800f462:	e7e4      	b.n	800f42e <_strtol_l.isra.0+0x8a>
- 800f464:	f04f 32ff 	mov.w	r2, #4294967295	@ 0xffffffff
+ 800f464:	f04f 32ff 	mov.w	r2, #4294967295
  800f468:	e7ed      	b.n	800f446 <_strtol_l.isra.0+0xa2>
  800f46a:	1c53      	adds	r3, r2, #1
  800f46c:	d108      	bne.n	800f480 <_strtol_l.isra.0+0xdc>
@@ -36914,7 +36914,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800f4b8:	da08      	bge.n	800f4cc <sniprintf+0x20>
  800f4ba:	238b      	movs	r3, #139	@ 0x8b
  800f4bc:	602b      	str	r3, [r5, #0]
- 800f4be:	f04f 30ff 	mov.w	r0, #4294967295	@ 0xffffffff
+ 800f4be:	f04f 30ff 	mov.w	r0, #4294967295
  800f4c2:	b01d      	add	sp, #116	@ 0x74
  800f4c4:	e8bd 4030 	ldmia.w	sp!, {r4, r5, lr}
  800f4c8:	b002      	add	sp, #8
@@ -36924,7 +36924,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800f4d4:	f04f 0300 	mov.w	r3, #0
  800f4d8:	931b      	str	r3, [sp, #108]	@ 0x6c
  800f4da:	bf14      	ite	ne
- 800f4dc:	f104 33ff 	addne.w	r3, r4, #4294967295	@ 0xffffffff
+ 800f4dc:	f104 33ff 	addne.w	r3, r4, #4294967295
  800f4e0:	4623      	moveq	r3, r4
  800f4e2:	9304      	str	r3, [sp, #16]
  800f4e4:	9307      	str	r3, [sp, #28]
@@ -37107,7 +37107,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800f652:	f000 fb9f 	bl	800fd94 <_sbrk_r>
  800f656:	1c43      	adds	r3, r0, #1
  800f658:	d103      	bne.n	800f662 <sbrk_aligned+0x26>
- 800f65a:	f04f 34ff 	mov.w	r4, #4294967295	@ 0xffffffff
+ 800f65a:	f04f 34ff 	mov.w	r4, #4294967295
  800f65e:	4620      	mov	r0, r4
  800f660:	bd70      	pop	{r4, r5, r6, pc}
  800f662:	1cc4      	adds	r4, r0, #3
@@ -37317,7 +37317,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800f840:	89a3      	ldrh	r3, [r4, #12]
  800f842:	f043 0340 	orr.w	r3, r3, #64	@ 0x40
  800f846:	81a3      	strh	r3, [r4, #12]
- 800f848:	f04f 30ff 	mov.w	r0, #4294967295	@ 0xffffffff
+ 800f848:	f04f 30ff 	mov.w	r0, #4294967295
  800f84c:	e7e9      	b.n	800f822 <__ssputs_r+0x8a>
 	...
 
@@ -37340,7 +37340,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800f872:	b930      	cbnz	r0, 800f882 <_svfiprintf_r+0x32>
  800f874:	230c      	movs	r3, #12
  800f876:	603b      	str	r3, [r7, #0]
- 800f878:	f04f 30ff 	mov.w	r0, #4294967295	@ 0xffffffff
+ 800f878:	f04f 30ff 	mov.w	r0, #4294967295
  800f87c:	b01d      	add	sp, #116	@ 0x74
  800f87e:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
  800f882:	2340      	movs	r3, #64	@ 0x40
@@ -37376,7 +37376,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800f8d2:	2b00      	cmp	r3, #0
  800f8d4:	f000 809f 	beq.w	800fa16 <_svfiprintf_r+0x1c6>
  800f8d8:	2300      	movs	r3, #0
- 800f8da:	f04f 32ff 	mov.w	r2, #4294967295	@ 0xffffffff
+ 800f8da:	f04f 32ff 	mov.w	r2, #4294967295
  800f8de:	e9cd 2305 	strd	r2, r3, [sp, #20]
  800f8e2:	f10a 0a01 	add.w	sl, sl, #1
  800f8e6:	9304      	str	r3, [sp, #16]
@@ -37600,7 +37600,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800fae6:	47c8      	blx	r9
  800fae8:	3001      	adds	r0, #1
  800faea:	d103      	bne.n	800faf4 <_printf_common+0xac>
- 800faec:	f04f 30ff 	mov.w	r0, #4294967295	@ 0xffffffff
+ 800faec:	f04f 30ff 	mov.w	r0, #4294967295
  800faf0:	e8bd 87f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
  800faf4:	3501      	adds	r5, #1
  800faf6:	e7c6      	b.n	800fa86 <_printf_common+0x3e>
@@ -37743,7 +37743,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800fc5a:	bfde      	ittt	le
  800fc5c:	2330      	movle	r3, #48	@ 0x30
  800fc5e:	f806 3c01 	strble.w	r3, [r6, #-1]
- 800fc62:	f106 36ff 	addle.w	r6, r6, #4294967295	@ 0xffffffff
+ 800fc62:	f106 36ff 	addle.w	r6, r6, #4294967295
  800fc66:	1b92      	subs	r2, r2, r6
  800fc68:	6122      	str	r2, [r4, #16]
  800fc6a:	f8cd a000 	str.w	sl, [sp]
@@ -37754,7 +37754,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  800fc76:	f7ff fee7 	bl	800fa48 <_printf_common>
  800fc7a:	3001      	adds	r0, #1
  800fc7c:	d14a      	bne.n	800fd14 <_printf_i+0x1f0>
- 800fc7e:	f04f 30ff 	mov.w	r0, #4294967295	@ 0xffffffff
+ 800fc7e:	f04f 30ff 	mov.w	r0, #4294967295
  800fc82:	b004      	add	sp, #16
  800fc84:	e8bd 87f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
  800fc88:	6823      	ldr	r3, [r4, #0]
@@ -37898,7 +37898,7 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
 0800fdb4 <memcpy>:
  800fdb4:	440a      	add	r2, r1
  800fdb6:	4291      	cmp	r1, r2
- 800fdb8:	f100 33ff 	add.w	r3, r0, #4294967295	@ 0xffffffff
+ 800fdb8:	f100 33ff 	add.w	r3, r0, #4294967295
  800fdbc:	d100      	bne.n	800fdc0 <memcpy+0xc>
  800fdbe:	4770      	bx	lr
  800fdc0:	b510      	push	{r4, lr}
