@@ -109,13 +109,6 @@ mode (sending commands from the GUI to the RC Car).
 | `STATE_DATA_ACQUISITION` | Stores received packets in buffer up to 1000 points |
 | `STATE_FORCE_RC_STOP` | Sends coast command to RC Car after buffer limit reached |
 
-### Interrupt Sources
-
-| Interrupt | Trigger | Action |
-|-----------|---------|--------|
-| TIM6 ISR (10ms) | Periodic timer | Alternates between `STATE_SET_TRANSMIT_MODE` and `STATE_SET_RECEIVE_MODE` |
-| UART DMA RxCplt | Full 32-byte UART packet received from GUI | Sets `cmdFlag=1`, transitions to `STATE_TRANSMIT` immediately |
-| GPIO EXTI (IRQ pin) | NRF24L01 data ready interrupt | Confirms data available in RX FIFO |
 
 ---
 
