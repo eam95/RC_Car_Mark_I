@@ -68,7 +68,7 @@ The firmware is driven by a state machine toggled by the TIM3 ISR every 10ms.
 The radio alternates between RX mode (listening for commands) and TX mode
 (transmitting sensor data). The diagram below shows the full state flow.
 
-*(State machine diagram — to be added)*
+![RC Car FSM](..docs/images/blockDiagrams/RC_CarStateDiagram.png)
 
 ### States
 

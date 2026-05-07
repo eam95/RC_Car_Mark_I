@@ -95,7 +95,7 @@ The firmware is driven by a state machine toggled by the TIM6 ISR every 10ms.
 The radio alternates between RX mode (listening for RC Car telemetry) and TX
 mode (sending commands from the GUI to the RC Car).
 
-*(State machine diagram — to be added)*
+![Transmitter FSM](..docs/images/blockDiagrams/transmitterStateDiagram.png)
 
 ### States
 
