@@ -482,7 +482,7 @@ int main(void)
         	  }
 
 
-              // Now execute the motor command
+              // jump to accel calibration state
               currentState = nextState;
 
               break;
@@ -506,7 +506,7 @@ int main(void)
 			  // Collect accelerometer data for calibration
 			  memset(Transmit.cmd, 0, PLD_S); // Clear the buffer
 			  measure_XYZ_Acceleration(&Transmit.a_x, &Transmit.a_y, &Transmit.a_z);
-			  Tset.stamped_time += Tset.milliAdder;
+			  Tset.stamped_time += Tset.milliAdder/2;
 			  // Format the data to packet so it can be formated and transmitted
 //			  formatAccelPrint(Tset.stamped_time, Transmit.a_x, Transmit.a_y, Transmit.a_z);
 			  formatAccelPacket(Tset.stamped_time, Transmit.a_x, Transmit.a_y, Transmit.a_z);
@@ -571,8 +571,7 @@ int main(void)
           case STEER_STATE:
 			  // This is for steering control using the servo motor.
         	  __HAL_TIM_SET_COMPARE(&htim13, TIM_CHANNEL_1, Receive.pwm_steer);
-        	  currentState = WAIT_STATE; // After executing the steering command, switch back to wait state to wait for the next command, which allows for more responsive steering control as the system will be ready to receive new commands immediately after adjusting the steering angle.
-
+//        	  currentState = WAIT_STATE;
 			  break;
 
           case SET_PID_STATE:

@@ -47,10 +47,15 @@ With the transmitter Micro-USB cable hooked to the computer, the user interface 
 
 ## Test Run
 
-Here is a small video attach of the working project (Will add video soon)
+There is a two small ~5mins video of the RC Car being able to move and collect data in real time (close to fullly collecting data). The second video shows the calibration feature.
 
+![RC Car](/docs/videos/controlsTestRun.mp4)
 
 *Figure 5: As small test run video.*
+
+![RC Car](/docs/videos/controlsTestRun.mp4)
+
+*Figure 6: Calibration Feature.*
 
 
 ## Key Challenges
@@ -77,7 +82,7 @@ The RC Car was able to respond to the user interface and received data, however 
 
     ![RC Car](/docs/images/picturesGeneral/timeGapIssue.png)
 
-    *Figure 6: The Python User Interface with marking where the NRF24L01 lost 
+    *Figure 7: The Python User Interface with marking where the NRF24L01 lost 
     communication and reconnected again afterwards.*
 
 - **Real-time Velocity Estimation**
@@ -87,7 +92,7 @@ The RC Car was able to respond to the user interface and received data, however 
 
     ![RC Car](/docs/images/picturesGeneral/EulerIntegrationMethod.png)
 
-    *Figure 7: Euler Integration Technique.*
+    *Figure 8: Euler Integration Technique.*
 
     The integration technique was able to calculate the velocity but 
     three challenges arise:
@@ -100,11 +105,11 @@ The RC Car was able to respond to the user interface and received data, however 
 
     ![RC Car](/docs/images/picturesGeneral/NoCalibrationWF.png)
 
-    *Figure 8: The waveform of accelerometer without calibration.*
+    *Figure 9: The waveform of accelerometer without calibration.*
 
     ![RC Car](/docs/images/picturesGeneral/CalibrationWF.png)
 
-    *Figure 9: The waveform of accelerometer with calibration.*
+    *Figure 10: The waveform of accelerometer with calibration.*
 
     By calibrating it will calculate the velocity a little more accurate and drift from integration becomes small difference but still will add up eventual if stays still long enough as shown in the calibration waveform. This alone would not fully solve the challenge more a band-aid solution. Other sensors can 
     implement such a hall effect sensor where the A1133 could be attach to the wheel and a magnet can stick on the wheel to generate a pulse momentarily and based on the time difference between the wheel, the linear velocity can be calculated. Another sensor such as the GPS can potentially track the position precisely. It would be effective to include more sensors to measure more 
