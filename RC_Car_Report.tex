@@ -30,13 +30,13 @@
 \author{
   \IEEEauthorblockN{Erickson A.\ Mijangos}
   \IEEEauthorblockA{Department of Electrical Engineering\\
-  University Name, City, State\\
-  email@university.edu}
+  California State University Fullerton, Fullerton, California\\
+  eamijangos@csu.fullerton.edu}
   \and
   \IEEEauthorblockN{Dr.\ Mike Turi}
   \IEEEauthorblockA{Department of Electrical Engineering\\
-  University Name, City, State\\
-  email@university.edu}
+  California State University Fullerton, Fullerton, California\\
+  mturi@fullerton.edu}
 }
 
 % =============================================================================
@@ -46,8 +46,7 @@
 
 % --- Abstract ----------------------------------------------------------------
 \begin{abstract}
-Write your abstract here. Summarize the system, methods, and key results
-in 150--250 words.
+The RC Car is built from the ground up as an attempt to test drive the adaptive cruise control. The microcontrollers selected for this project are the STM32 from ST Microelectronics which are the L432KC and H723ZG Nucleo-Boards. Along with developing the RC Car and the transmitter, a Python User Interface is developed for data acqusition in order to analyze and develop the adaptive cruise controller. The sensor integrated to the RC Car is LIS3DH accelerometer, and Garmin V3 Lite LIDAR as an attempt to measure the physical data necessary from the RC Car to develop the Adaptive Cruise Controller. The accelerometer was used to determine the velocity of the RC Car, and the LIDAR as an attempt to measure relative distance and velocity of another RC Car ahead. During the test there were challenges to develop the Adaptive Cruise Controller: the velocity calculated by the accelerometer started to drift from the true velocity as time increased due small noise, and the NRF24L01 sampling every 20ms was losing some communication for 1-1.5s which affect velocity calculation and started to drift. Since the Earth influence the accelerometer, a calibration was attempted but the communication cut still affected to determine if the calibration was effective. Based on the test the adaptive cruise controller could not be implemented, and implementing more sensors could provide more parameters to accurately calculate the velocity of the RC Car. 
 \end{abstract}
 
 \begin{IEEEkeywords}
