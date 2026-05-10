@@ -61,7 +61,16 @@ Adaptive Cruise Control, STM32, PID Controller, LIDAR, NRF24L01, PyQt5, UART.
 \section{Introduction}
 \label{sec:intro}
 
-Your introduction goes here. Hi my namer Mango.
+The purpose of this project is to explore electronics, software development, sensor integration, numerical analysis, real time data acquisition and primarily control engineering by building an RC Car from the ground up. An RC Car is designed to develop an Adaptive Cruise Controller with data acquisition im order to properly implement it. In Figure~\ref{fig:blockdiagram} shows the basics high-level overview of the entire project, the RC Car will listen and send data back to the transmitter in which is connected to a Python User Interface. The RC Car and transmitter are communicating with each other using the NRF24L01 Programmable RF module and the transmitter is connect to the computer by UART communication and will either send commands to the trasnmitter or receive data. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{docs/images/blockDiagrams/blockDiagramHighlLevelProject.png}
+	\caption{High-level overview of the project architecture.}
+	\label{fig:blockdiagram}
+\end{figure}
+
+
 
 % --- II. Hardware Architecture -----------------------------------------------
 \section{Hardware Architecture}
