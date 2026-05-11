@@ -10,6 +10,7 @@
 \usepackage{cite}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{float}  % add to preamble
 
 % --- Code listing style ------------------------------------------------------
 \definecolor{lightgray}{rgb}{0.95,0.95,0.95}
@@ -61,15 +62,30 @@ Adaptive Cruise Control, STM32, PID Controller, LIDAR, NRF24L01, PyQt5, UART.
 \section{Introduction}
 \label{sec:intro}
 
-The purpose of this project is to explore electronics, software development, sensor integration, numerical analysis, real time data acquisition and primarily control engineering by building an RC Car from the ground up. An RC Car is designed to develop an Adaptive Cruise Controller with data acquisition im order to properly implement it. In Figure~\ref{fig:blockdiagram} shows the basics high-level overview of the entire project, the RC Car will listen and send data back to the transmitter in which is connected to a Python User Interface. The RC Car and transmitter are communicating with each other using the NRF24L01 Programmable RF module and the transmitter is connect to the computer by UART communication and will either send commands to the trasnmitter or receive data. 
+The purpose of this project is to explore electronics, software development, sensor integration, numerical analysis, real time data acquisition and primarily control engineering by building an RC Car from the ground up. An RC Car is designed to develop an Adaptive Cruise Controller with data acquisition in order to properly implement it. In Figure~\ref{fig:blockdiagram} shows a high-level overview of the entire project, the RC Car will listen and send data back to the transmitter in which is connected to a Python User Interface. The RC Car and transmitter are communicating with each other using the NRF24L01 Programmable RF module and the transmitter is connected to the computer by USB using the UART protocol and will either send commands to the transmitter or receive data. 
+The setup of the Transmitter and Python User Interface is shown in Figure~\ref{fig:TransmitterUI} whereas the RC Car and transmitter in Figure~\ref{fig:TransmitterRC}.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth]{docs/images/blockDiagrams/blockDiagramHighlLevelProject.png}
 	\caption{High-level overview of the project architecture.}
 	\label{fig:blockdiagram}
 \end{figure}
- Testing
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.25\textwidth, angle=270]{docs/images/picturesGeneral/transmitterAndPythonUserInterface.jpg}
+	\caption{The Transmitter connected to the python user interface.}
+	\label{fig:TransmitterUI}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.25\textwidth, angle=270]{docs/images/picturesGeneral/transmitterAndRC_Car.jpg}
+	\caption{The Transmitter and RC Car.}
+	\label{fig:TransmitterRC}
+\end{figure}
+
 
 
 % --- II. Hardware Architecture -----------------------------------------------
