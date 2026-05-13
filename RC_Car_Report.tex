@@ -10,131 +10,255 @@
 \usepackage{cite}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{float}  % add to preamble
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{stfloats}
 
 % --- Code listing style ------------------------------------------------------
 \definecolor{lightgray}{rgb}{0.95,0.95,0.95}
 \definecolor{darkgreen}{rgb}{0.0,0.5,0.0}
-
 \lstset{
-  basicstyle=\ttfamily\footnotesize,
-  breaklines=true,
-  frame=single,
-  backgroundcolor=\color{lightgray},
-  keywordstyle=\color{blue},
-  commentstyle=\color{darkgreen},
+	basicstyle=\ttfamily\footnotesize,
+	breaklines=true,
+	frame=single,
+	backgroundcolor=\color{lightgray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{darkgreen},
 }
 
 % --- Title and Authors -------------------------------------------------------
 \title{Adaptive Cruise Controller for RC Car Using STM32}
 
 \author{
-  \IEEEauthorblockN{Erickson A.\ Mijangos}
-  \IEEEauthorblockA{Department of Electrical Engineering\\
-  California State University Fullerton, Fullerton, California\\
-  eamijangos@csu.fullerton.edu}
-  \and
-  \IEEEauthorblockN{Dr.\ Mike Turi}
-  \IEEEauthorblockA{Department of Electrical Engineering\\
-  California State University Fullerton, Fullerton, California\\
-  mturi@fullerton.edu}
+	\IEEEauthorblockN{Erickson A.\ Mijangos}
+	\IEEEauthorblockA{Department of Electrical Engineering\\
+		California State University Fullerton, Fullerton, California\\
+		eamijangos@csu.fullerton.edu}
+	\and
+	\IEEEauthorblockN{Dr.\ Mike Turi}
+	\IEEEauthorblockA{Department of Electrical Engineering\\
+		California State University Fullerton, Fullerton, California\\
+		mturi@fullerton.edu}
 }
 
 % =============================================================================
 \begin{document}
+	\maketitle
+	
+	% --- Abstract ----------------------------------------------------------------
+	\begin{abstract}
+		This project documents the design and development of an RC Car built from the 
+		ground up, as an attempt to implement and test an Adaptive Cruise Control 
+		System. Two STM32 Nucleo-Boards from STMicroelectronics are used: the 
+		STM32L432KC for the transmitter and the STM32H723ZG for the RC Car. A Python 
+		User Interface is developed for controlling the RC Car and performing data 
+		acquisition in order to analyze and develop the adaptive cruise controller.
+		
+		The sensors integrated to the RC Car are the LIS3DH accelerometer and the 
+		Garmin LIDAR Lite V3. The accelerometer was used to determine the velocity of 
+		the RC Car, and the LIDAR to measure the relative distance to a leading vehicle 
+		ahead. During testing, two challenges arose: the velocity calculated by the 
+		accelerometer drifted from the true value over time due to sensor noise, and the 
+		NRF24L01 lost communication for 1--1.5s every 20ms cycle which affected velocity 
+		calculation.
+		
+		Due to Earth's gravitational influence on the accelerometer, a calibration 
+		feature was implemented, but the communication losses made it difficult to 
+		confirm its effectiveness. Based on the test results, the adaptive cruise 
+		controller could not be fully implemented. Future work includes integrating a 
+		Hall Effect sensor and applying a Kalman Filter for sensor fusion to improve 
+		velocity accuracy and enable closed-loop speed control.
+	\end{abstract}
+	
+	\begin{IEEEkeywords}
+		Adaptive Cruise Control, STM32, PID Controller, LIDAR, NRF24L01, PyQt5, UART.
+	\end{IEEEkeywords}
+	
+	% --- I. Introduction ---------------------------------------------------------
+	\section{Introduction}
+	\label{sec:intro}
+	
+	The purpose of this project is to explore electronics, software development,
+	sensor integration, numerical analysis, real-time data acquisition, and
+	primarily control engineering by building an RC Car from the ground up.
+	The RC Car is designed to develop an Adaptive Cruise Controller with data
+	acquisition in order to properly implement it. Figure~\ref{fig:blockdiagram}
+	shows a high-level overview of the entire project — the RC Car listens and
+	sends data back to the transmitter, which is connected to a Python User
+	Interface. The RC Car and transmitter communicate using the NRF24L01
+	programmable RF module, and the transmitter connects to the computer via USB
+	using the UART protocol to send commands and receive data.
+	
+	% Block diagram — single column, stays on page 1
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.48\textwidth]{docs/images/blockDiagrams/blockDiagramHighlLevelProject.png}
+		\caption{High-level overview of the project architecture.}
+		\label{fig:blockdiagram}
+	\end{figure}
+	
+	The setup of the Transmitter and Python User Interface is shown in
+	Figure~\ref{fig:TransmitterUI}, and the RC Car with the transmitter is shown
+	in Figure~\ref{fig:TransmitterRC}. The RC Car integrates the LIS3DH
+	accelerometer to measure velocity and the Garmin LIDAR Lite V3 to measure
+	relative distance.
+	
+	Based on a simulation study conducted in MATLAB/Simulink at
+	CSULB\footnote{Full report available in the project repository:
+		\href{https://github.com/eam95/RC_Car_Mark_I/blob/main/docs/EE471\_ACC\_CSULB.pdf}
+		{\texttt{EE471\_ACC\_CSULB.pdf}}.}, the Adaptive Cruise Control system is
+	designed to autonomously maintain the desired velocity while detecting and
+	measuring the relative distance to a leading vehicle ahead. As shown in
+	Figure~\ref{fig:ACC_Func}, the relative distance and vehicle speed are
+	analyzed to tune the adaptive cruise controller.
+	% Put ACC Func figure here so it stays on page 1
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.45\textwidth]{docs/images/picturesGeneral/ACC_Functionality.png}
+		\caption{Speed/Spacing Control to setup Adaptive Cruise Control.}
+		\label{fig:ACC_Func}
+	\end{figure}
+	To implement the adaptive cruise controller in hardware, the Garmin LIDAR
+	Lite V3 serves as the primary distance sensor, measuring the relative
+	distance between the Ego Car (the RC Car under ACC control) and the Leading
+	Car (a second RC Car given a specified motion). The LIS3DH accelerometer
+	measures the Ego Car velocity, in which a PID controller can be developed to
+	make the RC Car autonomous. The Leading Car will be given a speed with a
+	small oscillation to simulate realistic driver behavior, as shown in
+	Figure~\ref{fig:ACC_Simu_UI}.
+	
+	To achieve the simulated behavior of the adaptive cruise controller, the
+	control system shown in Figure~\ref{fig:ACC_HighLevel} models the Leading
+	Vehicle motion and the Sensor Model, which depends on the relative position
+	and velocity of the leading vehicle and the ego vehicle, so it can be fed
+	into the ego vehicle plant to predetermine next motion. The input signals
+	measured from the relative and ego vehicle parameters are used to determine the
+	ego vehicle Adaptive Cruise Controller are shown in Figure~\ref{fig:EgoSensorBlock}.
+	
+	% --- All introduction figures on page 2 -------------------------------------
+	\clearpage
+	
+	% Photos side by side
+	\begin{figure*}[t]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\textwidth, angle=270]{docs/images/picturesGeneral/transmitterAndPythonUserInterface.jpg}
+			\caption{The Transmitter connected to the Python user interface.}
+			\label{fig:TransmitterUI}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\textwidth, angle=270]{docs/images/picturesGeneral/transmitterAndRC_Car.jpg}
+			\caption{The Transmitter and RC Car.}
+			\label{fig:TransmitterRC}
+		\end{minipage}
+	\end{figure*}
+	
 
-\maketitle
+	% MATLAB Simulink UI
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.9\textwidth]{docs/images/picturesGeneral/ACC_SimulinkModel.png}
+		\caption{The User Interface developed in MATLAB and Simulink.}
+		\label{fig:ACC_Simu_UI}
+	\end{figure*}
+	
+	% --- ACC model on page 3 ------------------------------------
+	\clearpage
+	
+	% ACC high level model
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=1\textwidth]{docs/images/blockDiagrams/blockDiagramHighlLevelACC_Model.png}
+		\caption{High-level overview of ACC model.}
+		\label{fig:ACC_HighLevel}
+	\end{figure*}
+	
+	% Ego sensor model
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.85\textwidth]{docs/images/blockDiagrams/EgoSensorModel.png}
+		\caption{Block diagram of vehicle plant and derivation for velocity 
+			and position motion.}
+		\label{fig:EgoSensorBlock}
+	\end{figure*}
+	\clearpage
+	% --- Continuation And Hardware Architecture on page 4 ------------------------------------
+	
+	To place the adpative cruise controller into test, data acquisition with a descent sample rate from both accelerometer and LIDAR are required. To analyze and process the signals collected, the python user interface needs to be implemented in order acquire data in real time so a proper adaptive cruise controller can be implemented.
+	
+	\section{Hardware Architecture}
+	\label{sec:hardware}
 
-% --- Abstract ----------------------------------------------------------------
-\begin{abstract}
-This project documents the design and developement of an RC Car is built from the ground up, as an attempt to implement and test the Adaptive Cruise Control System. Two STM32 Nucleo-Boards from STMicroelectronics are used for the development. The STM32L432KC is used for the transmitter and the STM32H723ZG for the RC Car system. A Python User Interface is developed for controllering the RC Car also perform data acquisition in order to analyze and develop the adaptive cruise controller. 
+	\subsection{RC Car Design}
+	
+The RC Car uses the STM32H723ZG Nucleo-Board, due to having the 550MHz clock speed, to achieve better timer control if necessary, minimize the execution time per instruction/code, accessiblities of more peripheals, and the larger system RAM to store large amount of data for testing purposes. The peripheals used in this MCU are SPI, USART, I2C, timers, and Direct Memory Access to either control sensor and transmit data during development. In Figure~\ref{fig:Schematic_RC_Car}, shows the STM32H723ZG Nucleo-Board integrated with all the sensors, and power system section. 
 
-The sensor integrated to the RC Car is LIS3DH accelerometer, and Garmin LIDAR Lite V3 to measure the physical data necessary from the RC Car to develop the Adaptive Cruise Controller. The accelerometer was used to determine the velocity of the RC Car, and the LIDAR as an attempt to measure relative distance and velocity of another RC Car ahead. During the test there were challenges to develop the Adaptive Cruise Controller: the velocity calculated by the accelerometer started to drift from the true velocity as time increased due small noise, and the NRF24L01 trasnmit every 20ms was losing some communication for 1-1.5s which affect velocity calculation and started to drift. 
-
-Due to Earth's gravitional influence on the accelerometer, a calibration was attempted but the communication cut still affected to determine if the calibration was effective. Based on the test, the adaptive cruise controller could not be implemented, and implementing more sensors could provide more parameters to accurately calculate the velocity of the RC Car. In the future work, implement more sensor such as the Hall Effect senosr on the wheels and applying the Kalman Filter for sensor can improve velocity accuracy to enable closed-loop speed control.
-\end{abstract}
-
-\begin{IEEEkeywords}
-Adaptive Cruise Control, STM32, PID Controller, LIDAR, NRF24L01, PyQt5, UART.
-\end{IEEEkeywords}
-
-% --- I. Introduction ---------------------------------------------------------
-\section{Introduction}
-\label{sec:intro}
-
-The purpose of this project is to explore electronics, software development, sensor integration, numerical analysis, real time data acquisition and primarily control engineering by building an RC Car from the ground up. An RC Car is designed to develop an Adaptive Cruise Controller with data acquisition in order to properly implement it. In Figure~\ref{fig:blockdiagram} shows a high-level overview of the entire project, the RC Car will listen and send data back to the transmitter in which is connected to a Python User Interface. The RC Car and transmitter are communicating with each other using the NRF24L01 Programmable RF module and the transmitter is connected to the computer by USB using the UART protocol and will either send commands to the transmitter or receive data. 
-The setup of the Transmitter and Python User Interface is shown in Figure~\ref{fig:TransmitterUI} whereas the RC Car and transmitter in Figure~\ref{fig:TransmitterRC}.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.5\textwidth]{docs/images/blockDiagrams/blockDiagramHighlLevelProject.png}
-	\caption{High-level overview of the project architecture.}
-	\label{fig:blockdiagram}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.25\textwidth, angle=270]{docs/images/picturesGeneral/transmitterAndPythonUserInterface.jpg}
-	\caption{The Transmitter connected to the python user interface.}
-	\label{fig:TransmitterUI}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.25\textwidth, angle=270]{docs/images/picturesGeneral/transmitterAndRC_Car.jpg}
-	\caption{The Transmitter and RC Car.}
-	\label{fig:TransmitterRC}
-\end{figure}
+The Entire RC Car is powered with a 12V battery, but the RC Car is divided by subsections based on the schematic. On the left there a yellow box is drawn to show the MCU along with its sensors, and on the right in the green box shows the power system and the motor driver. The power section is electically isolated due to the FOD8001 Logic Optocouplers, and the TMH1205S 2W Traco Isolated DC-DC Converter that isolate the power ground and digital ground on the MCU section. This feature is added due to capability to troubleshoot, isolate noise that can influence the sensors during data transmission, and if any power section components/modules are destroyed it would not destory the MCU and the sensors.
 
 
-
-% --- II. Hardware Architecture -----------------------------------------------
-\section{Hardware Architecture}
-\label{sec:hardware}
-
-Your hardware section goes here.
-
-\subsection{RC Car Node}
-
-Subsection content.
-
-\subsection{Transmitter Node}
-
-Subsection content.
-
-% --- III. Firmware Design ----------------------------------------------------
-\section{Firmware Design}
-\label{sec:firmware}
-
-Your firmware section goes here.
-
-% --- IV. Python GUI ----------------------------------------------------------
-\section{Python Graphical User Interface}
-\label{sec:software}
-
-Your GUI section goes here.
-
-% --- V. Results --------------------------------------------------------------
-\section{Experimental Results}
-\label{sec:results}
-
-Your results go here.
-
-% --- VI. Conclusion ----------------------------------------------------------
-\section{Conclusion}
-\label{sec:conclusion}
-
-Your conclusion goes here.
-
-% --- References --------------------------------------------------------------
-\begin{thebibliography}{9}
-
-\bibitem{stm32h723}
-STMicroelectronics, \textit{STM32H723ZG Datasheet}, Rev.~4, 2022.
-
-\bibitem{lidar}
-Garmin Ltd., \textit{LIDAR-Lite v3 Operation Manual}, 2017.
-
-\end{thebibliography}
-
+	
+	\subsection{Transmitter Design}
+	
+	Subsection content.
+	
+	% --- Schematic of RC Car and Transmitter on page 5 ------------------------------------
+	\clearpage
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.95\textwidth]{docs/schematics/RC_Car_Schematic.png}
+		\caption{The Schematic of RC Car.}
+		\label{fig:Schematic_RC_Car}
+	\end{figure*}
+	
+		\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.95\textwidth]{docs/schematics/TransmitterSchematic.png}
+		\caption{The Schematic of Transmitter.}
+		\label{fig:Schematic_Transmitter}
+	\end{figure*}
+	
+	\clearpage
+	% --- III. Firmware Design on page 6 ----------------------------------------------------
+	\section{Firmware Design}
+	\label{sec:firmware}
+	\subsection{RC Car Firmware Design}
+	
+	Your RC Car firmware section goes here.
+	
+		\subsection{Transmitter Firmware Design}
+	
+	Your Transmitter firmware section goes here.
+	
+	% --- IV. Python GUI ----------------------------------------------------------
+	\section{Python Graphical User Interface}
+	\label{sec:software}
+	
+	Your GUI section goes here.
+	
+	% --- V. Results --------------------------------------------------------------
+	\section{Experimental Results}
+	\label{sec:results}
+	
+	Your results go here.
+	
+	% --- VI. Conclusion ----------------------------------------------------------
+	\section{Conclusion}
+	\label{sec:conclusion}
+	
+	Your conclusion goes here.
+	
+	% --- References --------------------------------------------------------------
+	\begin{thebibliography}{9}
+		
+		\bibitem{stm32h723}
+		STMicroelectronics, \textit{STM32H723ZG Datasheet}, Rev.~4, 2022.
+		
+		\bibitem{lidar}
+		Garmin Ltd., \textit{LIDAR-Lite v3 Operation Manual}, 2017.
+		
+	\end{thebibliography}
+	
 \end{document}

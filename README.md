@@ -49,11 +49,14 @@ With the transmitter Micro-USB cable hooked to the computer, the user interface 
 
 There is a two small ~5mins video of the RC Car being able to move and collect data in real time (close to fullly collecting data). The second video shows the calibration feature.
 
-![RC Car](/docs/videos/controlsTestRun.mp4)
+<!-- ![RC Car](/docs/videos/controlsTestRun.mp4) -->
+https://www.youtube.com/watch?v=ox59gKyVjFU&t=96s
 
 *Figure 5: As small test run video.*
 
-![RC Car](/docs/videos/controlsTestRun.mp4)
+<!-- ![RC Car](/docs/videos/controlsTestRun.mp4) -->
+https://www.youtube.com/watch?v=ydO1_pEh5iw&t=91s
+
 
 *Figure 6: Calibration Feature.*
 
