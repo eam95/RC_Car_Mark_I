@@ -193,10 +193,22 @@
 	\label{sec:hardware}
 
 	\subsection{RC Car Design}
-	
-The RC Car uses the STM32H723ZG Nucleo-Board, due to having the 550MHz clock speed, to achieve better timer control if necessary, minimize the execution time per instruction/code, accessiblities of more peripheals, and the larger system RAM to store large amount of data for testing purposes. The peripheals used in this MCU are SPI, USART, I2C, timers, and Direct Memory Access to either control sensor and transmit data during development. In Figure~\ref{fig:Schematic_RC_Car}, shows the STM32H723ZG Nucleo-Board integrated with all the sensors, and power system section. 
 
-The Entire RC Car is powered with a 12V battery, but the RC Car is divided by subsections based on the schematic. On the left there a yellow box is drawn to show the MCU along with its sensors, and on the right in the green box shows the power system and the motor driver. The power section is electically isolated due to the FOD8001 Logic Optocouplers, and the TMH1205S 2W Traco Isolated DC-DC Converter that isolate the power ground and digital ground on the MCU section. This feature is added due to capability to troubleshoot, isolate noise that can influence the sensors during data transmission, and if any power section components/modules are destroyed it would not destory the MCU and the sensors.
+The RC Car uses the STM32H723ZG Nucleo-Board, due to having the 550MHz clock speed, to achieve better timer control if necessary, minimize the execution time per instruction/code, accessibility of more peripherals, and the larger system RAM to store large amount of data for testing purposes. The peripherals used in this MCU are SPI, USART, I2C, timers, and Direct Memory Access to either control sensor and transmit data during development. In Figure~\ref{fig:Schematic_RC_Car}, shows the STM32H723ZG Nucleo-Board integrated with all the sensors, and power system section. 
+
+
+The Entire RC Car is powered with a 12V battery, but the RC Car is divided by subsections based on the schematic. On the left there a yellow box is drawn to show the MCU along with its sensors, and on the right in the green box shows the power system and the motor driver. The power section is electrically isolated due to the FOD8001 Logic Optocouplers, and the TMH1205S 2W Traco Isolated DC-DC Converter that isolate the power ground and digital ground on the MCU section. This feature is added due to capability to troubleshoot, isolate noise that can influence the sensors during data transmission, and if any power section components/modules are destroyed it would not destroy the MCU and the sensors.
+
+As labeled in the RC Car schematic the sensors used are labeled to the their corresponding pins on the MCU and their protocols. The NRF24L01 RF module uses the SPI protocol where the data rate is set to ~3.9 Mbit/s. According to the datasheet of the NRF24L01 would need 130us to switch RX or TX mode, and also to including the execution timing of the program which can add more time. When bidirectional communication was first tested, the bare minimum to have a reliable communication is 4ms. To provide reliable bidirectional communication for most of the time is 10ms before toggling RX/TX mode. The 10ms toggling time also considers the amount of time to read the sensor data and package the data for transmission. 
+
+The remaining two sensors that uses I2C protocol are the LIS3DH accelerometer, and Garmin LIDAR V3 Lite. The clock speed that the MCU can configure for I2C protocol is either 100kHz or 400kHz. Both sensors are clocked to 400kHz, and was first confirmed that it is reliable when both sensors library were written. The perf board that holds the MCU, have the wires soldered and close to the MCU in order to ensure I2C is reliable and minimize the stray capacitance that can affect the rise and fall times of both data and clock lines. 
+% RC Car Labeled
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.3\textwidth]{docs/images/picturesGeneral/RC_CarLabeled.png}
+	\caption{RC Car Labeled.}
+	\label{fig:RC_CarLabeled}
+\end{figure}
 
 
 	
