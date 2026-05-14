@@ -184,7 +184,7 @@
 			and position motion.}
 		\label{fig:EgoSensorBlock}
 	\end{figure*}
-	\clearpage
+%	\clearpage
 	% --- Continuation And Hardware Architecture on page 4 ------------------------------------
 	
 	To place the adpative cruise controller into test, data acquisition with a descent sample rate from both accelerometer and LIDAR are required. To analyze and process the signals collected, the python user interface needs to be implemented in order acquire data in real time so a proper adaptive cruise controller can be implemented.
@@ -194,14 +194,22 @@
 
 	\subsection{RC Car Design}
 
-The RC Car uses the STM32H723ZG Nucleo-Board, due to having the 550MHz clock speed, to achieve better timer control if necessary, minimize the execution time per instruction/code, accessibility of more peripherals, and the larger system RAM to store large amount of data for testing purposes. The peripherals used in this MCU are SPI, USART, I2C, timers, and Direct Memory Access to either control sensor and transmit data during development. In Figure~\ref{fig:Schematic_RC_Car}, shows the STM32H723ZG Nucleo-Board integrated with all the sensors, and power system section. 
-
+The RC Car uses the STM32H723ZG Nucleo-Board, due to having the 550MHz clock speed, to achieve better timer control if necessary, minimize the execution time per instruction/code, accessibility of more peripherals, and the larger system RAM to store large amount of data for testing purposes. The peripherals used in this MCU are SPI, USART, I2C, timers, and Direct Memory Access to either control sensor and transmit data during development. In Figure~\ref{fig:Schematic_RC_Car}, shows the STM32H723ZG Nucleo-Board integrated with all the sensors, and power system section along with the RC Car with the all sensors/modules labeled in Figure~\ref{fig:RC_CarLabeled}.
 
 The Entire RC Car is powered with a 12V battery, but the RC Car is divided by subsections based on the schematic. On the left there a yellow box is drawn to show the MCU along with its sensors, and on the right in the green box shows the power system and the motor driver. The power section is electrically isolated due to the FOD8001 Logic Optocouplers, and the TMH1205S 2W Traco Isolated DC-DC Converter that isolate the power ground and digital ground on the MCU section. This feature is added due to capability to troubleshoot, isolate noise that can influence the sensors during data transmission, and if any power section components/modules are destroyed it would not destroy the MCU and the sensors.
 
-As labeled in the RC Car schematic the sensors used are labeled to the their corresponding pins on the MCU and their protocols. The NRF24L01 RF module uses the SPI protocol where the data rate is set to ~3.9 Mbit/s. According to the datasheet of the NRF24L01 would need 130us to switch RX or TX mode, and also to including the execution timing of the program which can add more time. When bidirectional communication was first tested, the bare minimum to have a reliable communication is 4ms. To provide reliable bidirectional communication for most of the time is 10ms before toggling RX/TX mode. The 10ms toggling time also considers the amount of time to read the sensor data and package the data for transmission. 
+As labeled in the RC Car schematic the sensors used are labeled to the their corresponding pins on the MCU and their protocols. The NRF24L01 RF module uses the SPI protocol where the data rate is set to ~3.9 Mbit/s. According to the datasheet of the NRF24L01 would need 130us to switch RX or TX mode, and also to including the execution timing of the program which can add more time. When bidirectional communication was first tested, the bare minimum to have a reliable communication is 4ms. To provide reliable bidirectional communication for most of the time is 10ms before toggling RX/TX mode. The 10ms toggling time also considers the amount of time to read the sensor data and package the data for transmission. On the MCU, three built-in LEDs are used to track the state of the RC Car firmware. 
+Adding the status LEDs helps the user keep track and troubleshoot the RC Car during the development or issue.
+\begin{itemize}
+	\item \textbf{Yellow LED} — Transmitter is in TX mode (sending sensor data to transmitter)
+	\item \textbf{Red LED} — Data packet transmitted from RC Car
+	\item \textbf{Green LED} — Command received from transmitter for RC Car next action
+\end{itemize}
 
-The remaining two sensors that uses I2C protocol are the LIS3DH accelerometer, and Garmin LIDAR V3 Lite. The clock speed that the MCU can configure for I2C protocol is either 100kHz or 400kHz. Both sensors are clocked to 400kHz, and was first confirmed that it is reliable when both sensors library were written. The perf board that holds the MCU, have the wires soldered and close to the MCU in order to ensure I2C is reliable and minimize the stray capacitance that can affect the rise and fall times of both data and clock lines. 
+The remaining two sensors that uses I2C protocol are the LIS3DH accelerometer, and Garmin LIDAR V3 Lite. The clock speed that the MCU can configure for I2C protocol is either 100kHz or 400kHz. Both sensors are clocked to 400kHz, and was confirmed that it is reliable when both sensors library were written. The perf board that holds the MCU, have the wires soldered and close to the MCU in order to ensure I2C is reliable and minimize the stray capacitance that can affect the rise and fall times of both data and clock lines. Both sensors would be sampled when it is in the state to transmit data to the transmitter which is every 20ms.
+
+With the MCU and the sensors isolated from the power section, the FOD8001 optocouplers and servo motor needs to still be powered. The 12V serving as the main power source of the RC Car, the MCU, optocouplers, and motor driver still need to be powered properly by adding voltage regulators, and DC/DC converters. The optocoupler on the power section, still needs to be powered about 5V so that the PWM pulse can be passed to the motor driver and servo motor. 
+
 % RC Car Labeled
 \begin{figure}[H]
 	\centering
@@ -211,10 +219,7 @@ The remaining two sensors that uses I2C protocol are the LIS3DH accelerometer, a
 \end{figure}
 
 
-	
-	\subsection{Transmitter Design}
-	
-	Subsection content.
+
 	
 	% --- Schematic of RC Car and Transmitter on page 5 ------------------------------------
 	\clearpage
@@ -225,15 +230,43 @@ The remaining two sensors that uses I2C protocol are the LIS3DH accelerometer, a
 		\label{fig:Schematic_RC_Car}
 	\end{figure*}
 	
-		\begin{figure*}[t]
+
+	
+%	\clearpage
+	% --- Continuation, Transmitter Design, & Firmware Design on page 6 ----------------------------------------------------
+	Two of the optocouplers responsible to pass the PWM pulses to the MOSFET motor driver, are powered by the LM317 voltage regulator, where it can be tuned 5V based on the adjustable circuit from the Texas Instruments datasheet as shown in the schematic. For both the third optocoupler and servo motor, are powered by the 75W HiLetgo DC/DC stepdown converter. Although the both the third optocoupler and servo motor can be powered the LM317, it was not due to potential concerns that the it would heat up and go to thermal runaway. The servo draws about 500-700mA when it was manually tested with 5V supply along with function generator, generating the PWM that is pulsing within 1-2ms, with a time period of 20ms (PWM frequency is 50Hz). Since the LM317 drops the 12V to 5V, it would have a 7V drop across it and if more current is drawn it would dissipate more heat. As a result it is a safer route to use the 75W HiLetgo DC/DC stepdown converter to power the optocoupler along with the servo motor. 
+	
+	The 75W HiLetgo DC/DC stepdown converter can display the input and output voltage it was provided. The battery can be monitored from checking the HiLetgo DC/DC converter that is intacted to the servo motor and third optocoupler but toggling the output push button. The traco isolated DC/DC converter is stepdown to about 5.2V-5.4V from the 12V battery, but a HiLetgo DC/DC converter is added between the output of the isolated DC/DC converter and the MCU so that it can be tuned to 5V. It can be powered by the isolated DC/DC converter but according to the schematic of the H723ZG Nucleo-Board on the Micro-USB port it has a zener diode to clamp the supply voltage of the entire board to 5V and would be safer to tune it at 5V. When the battery runs low, the bare miminum voltage that be supplied to the MCU to work proper is 4.6V before it powers off and become unreliable.
+	
+	\subsection{Transmitter Design}
+	
+	Compare to the RC Car, the schematic of the transmitter is simpler as shown in Figure~\ref{fig:Schematic_Transmitter}, along with the actual labeled transmiter in Figure~\ref{fig:Labeled_Transmitter}. The Nucleo-L432KC board was chosen for the transmitter due to it small Ardunio Nano like size, and the max clock speed is 80MHz. The performance does not need to be robust compared to Nucleo-H723ZG board since primarily it would be toggling every 10ms from RX/TX mode and USART interrupts are used to send commands to transmitter from the Python User interface and transmit data it has receive to the User Interface. The transmitter is connected to the computer to transmit/receive data by using the UART protocol with a baud rate of 115200 bits/s. 
+	 
+	% RC Car Labeled
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.35\textwidth]{docs/images/picturesGeneral/transmitterZoomedIn.png}
+		\caption{Transmitter Labeled.}
+		\label{fig:Labeled_Transmitter}
+	\end{figure}
+	
+	\clearpage
+	\begin{figure*}[t]
 		\centering
 		\includegraphics[width=0.95\textwidth]{docs/schematics/TransmitterSchematic.png}
 		\caption{The Schematic of Transmitter.}
 		\label{fig:Schematic_Transmitter}
 	\end{figure*}
+	Along with the NRF24L01 RF module, a shift register is added to control four status LEDs where:
+	\begin{itemize}
+		\item \textbf{Blue LED} — Transmitter is in RX mode (listening for RC Car data)
+		\item \textbf{Yellow LED} — Transmitter is in TX mode (sending command to RC Car)
+		\item \textbf{Red LED} — Data packet received from RC Car
+		\item \textbf{Green LED} — Command received from Python GUI and ready to transmit
+	\end{itemize}
+	Adding the status LEDs help the user track the actions of the transmitter for trouble-shooting and development. 
 	
-	\clearpage
-	% --- III. Firmware Design on page 6 ----------------------------------------------------
+	
 	\section{Firmware Design}
 	\label{sec:firmware}
 	\subsection{RC Car Firmware Design}
