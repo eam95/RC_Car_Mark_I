@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2026.2.15)  14 MAY 2026 01:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2026.2.15)  14 MAY 2026 03:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -655,6 +655,33 @@ t line 256.
 (pdftex.def)             Requested size: 490.19843pt x 314.44562pt.
 
 
+<docs/images/blockDiagrams/RC_CarStateDiagram.png, id=121, 785.18344pt x 933.48
+75pt>
+File: docs/images/blockDiagrams/RC_CarStateDiagram.png Graphic file (type png)
+<use docs/images/blockDiagrams/RC_CarStateDiagram.png>
+Package pdftex.def Info: docs/images/blockDiagrams/RC_CarStateDiagram.png  used
+ on input line 285.
+(pdftex.def)             Requested size: 516.0pt x 613.49704pt.
+
+
+[6
+
+ <./docs/schematics/TransmitterSchematic.png>] [7 <./docs/images/blockDiagrams/
+RC_CarStateDiagram.png>]
+Overfull \hbox (12.0pt too wide) in paragraph at lines 292--293
+ \T1/pcr/m/n/10 timestamp_ms,distance_cm,ax_mg,ay_mg,az_mg\n 
+ []
+
+<docs/images/blockDiagrams/transmitterStateDiagram.png, id=134, 883.04906pt x 6
+63.98062pt>
+File: docs/images/blockDiagrams/transmitterStateDiagram.png Graphic file (type 
+png)
+<use docs/images/blockDiagrams/transmitterStateDiagram.png>
+Package pdftex.def Info: docs/images/blockDiagrams/transmitterStateDiagram.png 
+ used on input line 301.
+(pdftex.def)             Requested size: 412.80157pt x 310.3891pt.
+
+
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -668,9 +695,10 @@ Before submitting the final camera ready copy, remember to:
 
 
 
-[6
+[8
 
- <./docs/schematics/TransmitterSchematic.png>] (./RC_Car_Report.aux)
+ <./docs/images/blockDiagrams/transmitterStateDiagram.png>]
+(./RC_Car_Report.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -679,11 +707,11 @@ Package rerunfilecheck Info: File `RC_Car_Report.out' has not changed.
 (rerunfilecheck)             Checksum: 1DA3D664A65C31BC9E9E230982982475;1569.
  ) 
 Here is how much of TeX's memory you used:
- 13067 strings out of 473197
- 202901 string characters out of 5718605
- 621465 words of memory out of 5000000
- 36116 multiletter control sequences out of 15000+600000
- 670399 words of font info for 151 fonts, out of 8000000 for 9000
+ 13091 strings out of 473197
+ 203846 string characters out of 5718605
+ 621589 words of memory out of 5000000
+ 36135 multiletter control sequences out of 15000+600000
+ 671020 words of font info for 153 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,10n,79p,1038b,492s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr
@@ -692,10 +720,10 @@ e/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fo
 nts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/
 times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.p
 fb>
-Output written on RC_Car_Report.pdf (6 pages, 11599747 bytes).
+Output written on RC_Car_Report.pdf (8 pages, 11935591 bytes).
 PDF statistics:
- 164 PDF objects out of 1000 (max. 8388607)
- 122 compressed objects within 2 object streams
- 32 named destinations out of 1000 (max. 500000)
- 144 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 181 PDF objects out of 1000 (max. 8388607)
+ 133 compressed objects within 2 object streams
+ 36 named destinations out of 1000 (max. 500000)
+ 154 words of extra memory for PDF output out of 10000 (max. 10000000)
 

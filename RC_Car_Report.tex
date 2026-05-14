@@ -257,6 +257,7 @@ With the MCU and the sensors isolated from the power section, the FOD8001 optoco
 		\caption{The Schematic of Transmitter.}
 		\label{fig:Schematic_Transmitter}
 	\end{figure*}
+	
 	Along with the NRF24L01 RF module, a shift register is added to control four status LEDs where:
 	\begin{itemize}
 		\item \textbf{Blue LED} — Transmitter is in RX mode (listening for RC Car data)
@@ -271,17 +272,52 @@ With the MCU and the sensors isolated from the power section, the FOD8001 optoco
 	\label{sec:firmware}
 	\subsection{RC Car Firmware Design}
 	
-	Your RC Car firmware section goes here.
+	Based on the hardware integration of the RC Car, the firmware designed in Finite State Machine (mostly behave as Mealy State Machine where next state varies on both current states and inputs to determine the state). The heart of the firmware is Timer 3, where it will toggle between RX/TX mode and will determine the next action based on the current inputs it has receive during any current state it is in. Figure~\ref{fig:FSM_RC_Car} shows the RC Car Finute State Machine logic where in the center most of the action occurs the Timer 3 periodic interrupt to toggle communication. To simplify the logic further pseudocode is added to conditionally determine the RC Car next action.
+	
+	 The movement of the RC Car including the forward, backward, coast, brake,and steer states will vary on the next state variable which is determine what command it has received in the Receive state. If the RC Car is in disable mode, it will keep the RC Car in coast mode next state variable will be marked as coast state and it will not transmit data back to the transmitter. In the Transmit state there is a stopStateFlag where that will keep the RC Car disabled, if next state is marked as wait state, then it will signal the RC Car stay stationary and not transmit sensor data.
+	 
+	 When the RC Car receives either forward, backward, or steering commands it will start to transmit sensor data. In the receive state for the entire 10ms, it will be in a poll state until it has receive a command from the NRF24L01 RF module. If a command is receive, it will mark the current state to get sensor data and the next state after it has acquired sensor data to the RC Car Action which either can forward, backwards, or steering.
+	 
+
+	
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=1.00\textwidth]{docs/images/blockDiagrams/RC_CarStateDiagram.png}
+		\caption{The finite state machine of the RC Car.}
+		\label{fig:FSM_RC_Car}
+	\end{figure*}
+	\clearpage
+		 In the get sensor data state, it checks if stopStateFlag where if set to zero, it can start getting the data from the sensors. It was added due to the calibration feature that was added, for calibrating the accelerometer. The difference is that the get state will package the data in a 32-byte format in the following notation: 
+	\begin{center}
+		\texttt{timestamp\_ms,distance\_cm,ax\_mg,ay\_mg,az\_mg\textbackslash n}
+	\end{center} 
+		Whereas the calibration format is excluding the LIDAR measurements in the following notation:
+			\begin{center}
+			\texttt{timestamp\_ms,ax\_mg,ay\_mg,az\_mg\textbackslash n}
+		\end{center} 
+		
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.80\textwidth]{docs/images/blockDiagrams/transmitterStateDiagram.png}
+		\caption{The finite state machine of the RC Car.}
+		\label{fig:FSM_Transmitter}
+	\end{figure*}
+		
+	The calibration state was added since the accelerometer is measuring Earth gravity, and since change of motion is desire the accelerometer is transmitted to calculate the average offset.
 	
 		\subsection{Transmitter Firmware Design}
 	
-	Your Transmitter firmware section goes here.
+	The transmitter finite operates in similar fashion with the difference off only listening for data, and transmitts data when a USART interrupt occurs. The USART interrupt, signals the MCU that it has received a command from the Python User interface will prepare to transmit command when it switches to the transmit state. When data gets received during the receive state, it will transmit the data it has receive to the Python User interface. 
 	
-	% --- IV. Python GUI ----------------------------------------------------------
+		% --- IV. Python GUI ----------------------------------------------------------
 	\section{Python Graphical User Interface}
 	\label{sec:software}
 	
 	Your GUI section goes here.
+	
+
+	
+
 	
 	% --- V. Results --------------------------------------------------------------
 	\section{Experimental Results}
