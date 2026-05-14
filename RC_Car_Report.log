@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2026.2.15)  14 MAY 2026 03:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2026.2.15)  14 MAY 2026 03:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -683,6 +683,27 @@ Package pdftex.def Info: docs/images/blockDiagrams/transmitterStateDiagram.png
 
 
 
+
+[8
+
+ <./docs/images/blockDiagrams/transmitterStateDiagram.png>]
+<docs/images/picturesGeneral/PythonGUI.png, id=146, 1221.81468pt x 703.12688pt>
+
+File: docs/images/picturesGeneral/PythonGUI.png Graphic file (type png)
+<use docs/images/picturesGeneral/PythonGUI.png>
+Package pdftex.def Info: docs/images/picturesGeneral/PythonGUI.png  used on inp
+ut line 323.
+(pdftex.def)             Requested size: 438.60315pt x 252.40665pt.
+<docs/images/pythonGUI/DisplayDataTextBoxThreadStateDiagram.png, id=147, 915.42
+pt x 571.38469pt>
+File: docs/images/pythonGUI/DisplayDataTextBoxThreadStateDiagram.png Graphic fi
+le (type png)
+<use docs/images/pythonGUI/DisplayDataTextBoxThreadStateDiagram.png>
+Package pdftex.def Info: docs/images/pythonGUI/DisplayDataTextBoxThreadStateDia
+gram.png  used on input line 329.
+(pdftex.def)             Requested size: 350.87622pt x 219.01166pt.
+
+
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
 
@@ -695,10 +716,13 @@ Before submitting the final camera ready copy, remember to:
 
 
 
-[8
 
- <./docs/images/blockDiagrams/transmitterStateDiagram.png>]
-(./RC_Car_Report.aux)
+
+[9
+
+
+ <./docs/images/picturesGeneral/PythonGUI.png> <./docs/images/pythonGUI/Display
+DataTextBoxThreadStateDiagram.png>] (./RC_Car_Report.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -707,10 +731,10 @@ Package rerunfilecheck Info: File `RC_Car_Report.out' has not changed.
 (rerunfilecheck)             Checksum: 1DA3D664A65C31BC9E9E230982982475;1569.
  ) 
 Here is how much of TeX's memory you used:
- 13091 strings out of 473197
- 203846 string characters out of 5718605
- 621589 words of memory out of 5000000
- 36135 multiletter control sequences out of 15000+600000
+ 13110 strings out of 473197
+ 204740 string characters out of 5718605
+ 621759 words of memory out of 5000000
+ 36151 multiletter control sequences out of 15000+600000
  671020 words of font info for 153 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,10n,79p,1038b,492s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -720,10 +744,10 @@ e/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fo
 nts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/
 times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.p
 fb>
-Output written on RC_Car_Report.pdf (8 pages, 11935591 bytes).
+Output written on RC_Car_Report.pdf (9 pages, 12307668 bytes).
 PDF statistics:
- 181 PDF objects out of 1000 (max. 8388607)
- 133 compressed objects within 2 object streams
- 36 named destinations out of 1000 (max. 500000)
- 154 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 197 PDF objects out of 1000 (max. 8388607)
+ 144 compressed objects within 2 object streams
+ 39 named destinations out of 1000 (max. 500000)
+ 164 words of extra memory for PDF output out of 10000 (max. 10000000)
 

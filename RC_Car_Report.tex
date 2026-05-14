@@ -299,7 +299,7 @@ With the MCU and the sensors isolated from the power section, the FOD8001 optoco
 	\begin{figure*}[t]
 		\centering
 		\includegraphics[width=0.80\textwidth]{docs/images/blockDiagrams/transmitterStateDiagram.png}
-		\caption{The finite state machine of the RC Car.}
+		\caption{The finite state machine of the Transmitter.}
 		\label{fig:FSM_Transmitter}
 	\end{figure*}
 		
@@ -307,13 +307,29 @@ With the MCU and the sensors isolated from the power section, the FOD8001 optoco
 	
 		\subsection{Transmitter Firmware Design}
 	
-	The transmitter finite operates in similar fashion with the difference off only listening for data, and transmitts data when a USART interrupt occurs. The USART interrupt, signals the MCU that it has received a command from the Python User interface will prepare to transmit command when it switches to the transmit state. When data gets received during the receive state, it will transmit the data it has receive to the Python User interface. 
+	The transmitter finite operates in similar fashion (Figure~\ref{fig:FSM_Transmitter}) with the difference off only listening for data, and transmitts data when a USART interrupt occurs with a baud rate of 115200 bits/s. The USART interrupt, signals the MCU that it has received a command from the Python User interface will prepare to transmit command when it switches to the transmit state. When data gets received during the receive state, it will transmit the data it has receive to the Python User interface. 
 	
 		% --- IV. Python GUI ----------------------------------------------------------
 	\section{Python Graphical User Interface}
 	\label{sec:software}
 	
-	Your GUI section goes here.
+	The transmitter will transmit commands to the RC Car, and receive data from the RC Car under the Python User interface. Figure~\ref{fig:PythonUI_Intro}. The package used for the user interface is the PyQt5, PyQtgraphs for the real time plots, and PySerial to perform UART communication between the user interface and the transmitter. The action that were performed are displayed in two textboxes labeled Transmitted Box Data which shows which buttons are pushed and sent to the transmitter and the Receive Data Box to display the data that was receive from the transmitter. Similarly the calibration windows has a textbox to display both actions and data receive based on the buttons pushed. 
+	
+	In order to display the textbox and plot data in real time, the user interface would need to use the QThread which imported under PyQt5 package, otherwise the user interface would not respond. The current flowchart/state diagram does not include the logic of determining whether the data is measurement(all sensors measured) or accelerometer data (for calibration) but the functionality stays the sames as shown in Figure~\ref{fig:PythonThreadingStateDiagram}. As mention in the firmware section of the RC Car the disable button ensures the RC stays stationary and will collect data when the steering dial is moved, or both forward/backward radio are set with the adjusted slider that will send the PWM value to control speed.
+	
+	\clearpage
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.85\textwidth]{docs/images/picturesGeneral/PythonGUI.png}
+		\caption{The Python including Calibration window.}
+		\label{fig:PythonUI_Intro}
+	\end{figure*}
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.68\textwidth]{docs/images/pythonGUI/DisplayDataTextBoxThreadStateDiagram.png}
+		\caption{The state diagram for threading feature when data is received from transmitter.}
+		\label{fig:PythonThreadingStateDiagram}
+	\end{figure*}
 	
 
 	
