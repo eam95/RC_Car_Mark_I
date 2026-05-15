@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2026.2.15)  14 MAY 2026 03:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2026.2.15)  14 MAY 2026 22:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -704,6 +704,47 @@ gram.png  used on input line 329.
 (pdftex.def)             Requested size: 350.87622pt x 219.01166pt.
 
 
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[9
+
+ <./docs/images/picturesGeneral/PythonGUI.png> <./docs/images/pythonGUI/Display
+DataTextBoxThreadStateDiagram.png>]
+<docs/images/picturesGeneral/RC_Car_VidTestGUI.png, id=161, 718.18312pt x 587.1
+9376pt>
+File: docs/images/picturesGeneral/RC_Car_VidTestGUI.png Graphic file (type png)
+
+<use docs/images/picturesGeneral/RC_Car_VidTestGUI.png>
+Package pdftex.def Info: docs/images/picturesGeneral/RC_Car_VidTestGUI.png  use
+d on input line 360.
+(pdftex.def)             Requested size: 438.60315pt x 358.61774pt.
+<docs/images/picturesGeneral/RC_Car_VidTestGUI_VelocityZoomed.png, id=162, 712.
+91344pt x 590.205pt>
+File: docs/images/picturesGeneral/RC_Car_VidTestGUI_VelocityZoomed.png Graphic 
+file (type png)
+<use docs/images/picturesGeneral/RC_Car_VidTestGUI_VelocityZoomed.png>
+Package pdftex.def Info: docs/images/picturesGeneral/RC_Car_VidTestGUI_Velocity
+Zoomed.png  used on input line 367.
+(pdftex.def)             Requested size: 438.60315pt x 363.1045pt.
+<docs/images/picturesGeneral/NoCalibrationWF.png, id=163, 826.58812pt x 697.104
+37pt>
+File: docs/images/picturesGeneral/NoCalibrationWF.png Graphic file (type png)
+<use docs/images/picturesGeneral/NoCalibrationWF.png>
+Package pdftex.def Info: docs/images/picturesGeneral/NoCalibrationWF.png  used 
+on input line 374.
+(pdftex.def)             Requested size: 438.60315pt x 369.89967pt.
+<docs/images/picturesGeneral/CalibrationWF.png, id=164, 834.86906pt x 700.11563
+pt>
+File: docs/images/picturesGeneral/CalibrationWF.png Graphic file (type png)
+<use docs/images/picturesGeneral/CalibrationWF.png>
+Package pdftex.def Info: docs/images/picturesGeneral/CalibrationWF.png  used on
+ input line 381.
+(pdftex.def)             Requested size: 438.60315pt x 367.81192pt.
+
+
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
 
@@ -718,11 +759,12 @@ Before submitting the final camera ready copy, remember to:
 
 
 
-[9
+[10
 
-
- <./docs/images/picturesGeneral/PythonGUI.png> <./docs/images/pythonGUI/Display
-DataTextBoxThreadStateDiagram.png>] (./RC_Car_Report.aux)
+] [11 <./docs/images/picturesGeneral/RC_Car_VidTestGUI.png>] [12 <./docs/images
+/picturesGeneral/RC_Car_VidTestGUI_VelocityZoomed.png>] [13 <./docs/images/pict
+uresGeneral/NoCalibrationWF.png>] [14 <./docs/images/picturesGeneral/Calibratio
+nWF.png>] (./RC_Car_Report.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -731,23 +773,27 @@ Package rerunfilecheck Info: File `RC_Car_Report.out' has not changed.
 (rerunfilecheck)             Checksum: 1DA3D664A65C31BC9E9E230982982475;1569.
  ) 
 Here is how much of TeX's memory you used:
- 13110 strings out of 473197
- 204740 string characters out of 5718605
- 621759 words of memory out of 5000000
- 36151 multiletter control sequences out of 15000+600000
+ 13155 strings out of 473197
+ 206606 string characters out of 5718605
+ 622101 words of memory out of 5000000
+ 36186 multiletter control sequences out of 15000+600000
  671020 words of font info for 153 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,79p,1038b,492s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/
-times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.p
-fb>
-Output written on RC_Car_Report.pdf (9 pages, 12307668 bytes).
+ 75i,10n,79p,1102b,492s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
+/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on RC_Car_Report.pdf (14 pages, 13313476 bytes).
 PDF statistics:
- 197 PDF objects out of 1000 (max. 8388607)
- 144 compressed objects within 2 object streams
- 39 named destinations out of 1000 (max. 500000)
- 164 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 263 PDF objects out of 1000 (max. 8388607)
+ 187 compressed objects within 2 object streams
+ 49 named destinations out of 1000 (max. 500000)
+ 184 words of extra memory for PDF output out of 10000 (max. 10000000)
 

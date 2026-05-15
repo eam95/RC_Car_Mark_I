@@ -339,7 +339,51 @@ With the MCU and the sensors isolated from the power section, the FOD8001 optoco
 	\section{Experimental Results}
 	\label{sec:results}
 	
-	Your results go here.
+	With the RC Car, transmitter and Python User Interface developed, RC Car was tested to respond on commands it has received and if data is collected and displayed on the User Interface. Figure~\ref{fig:TestDrive} shows the RC Car on the first test drive based on the video recording for 30s. Based on the video recording there was no obstacle or walls detected by the LIDAR through out the test drive, so the measurement is unreliable and the max distance the LIDAR can read up to 40m. All the axis of the acceleration is acquired, and it can be noted that acceleration measurement received from the accelerometer is measured in mg (1000mg=1g). The orange signal is the acceleration on the z-axis measured which is typical close to 1000mg which indicate Earth gravitation influnce on the accelerometer. Since the csv file was not exported on the time it was tested, it would be difficult to zoom in on the acceleration in the x and y component but the video showed velocity for both x and y component zoomed in Figure~\ref{fig:TestDriveZoomedVelocity}. 
+	
+	The velocity signal can be calculated numerically using Euler Integration Method as shown below where g is the acceleration due to gravity constant.
+	
+\begin{equation}
+	v_n = v_{n-1} + 0.001g \cdot \cdot a_n \Delta t
+	\label{eq:euler}
+\end{equation}
+
+Since the sample rate of both sensors are 25ms it can be assumed that is good for numerically perform integration. However, the z-axis component since it is consistently about 1g on average, the velocity on the z-axis which is pink is increasing which will indicate that RC Car is falling for 30s, which is not the case in Figure~\ref{fig:TestDrive}. The zoomed plot display the behavior of the accelerometer in the x and y component, where the velocity in the y component is close to 0. This indicate that the RC Car was not tilted for 30s, but the velocity on the x component at the 30s indicate that the car is constantly accelerating and has reached 50 m/s when the test stop which it is not the case.
+The RC Car is tilted at an angled for the x component where the Earth gravity has influence the accelerometer at the x component. This will affect the velocity on the x component calculation, which is shown on the signal plotted. In this case since the accelerator was theoretically going to calculate the RC Car's velocity, another feature is added so that the gravitional influence can be filtered out. The calibration button is addded so that in a seperate window it can sample the accelerometer data it can calculate the DC bias which are the gravitional components. The average and standard deviation are calculated so DC bias can be filtered out on the accelerometer measurement it has received. 
+
+Figure~\ref{fig:NoCalibrationTest} and ~\ref{fig:CalibrationTest} shows the accelerometer waveforms for about 4s, where the RC Car is stationary. This shows how much the velocity calculation has become more precise when calibrated since the gravitional component was removed, although it shows the velocity on the x component slowly increasing but within the mm/s speed range.
+
+	
+	
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.85\textwidth]{docs/images/picturesGeneral/RC_Car_VidTestGUI.png}
+		\caption{The User Interface during the 30s test.}
+		\label{fig:TestDrive}
+	\end{figure*}
+	
+	\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.85\textwidth]{docs/images/picturesGeneral/RC_Car_VidTestGUI_VelocityZoomed.png}
+		\caption{The same User interface but with the x and y velocity component zoomed in.}
+		\label{fig:TestDriveZoomedVelocity}
+	\end{figure*}
+	
+		\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.85\textwidth]{docs/images/picturesGeneral/NoCalibrationWF.png}
+		\caption{The same User interface with no calibration.}
+		\label{fig:NoCalibrationTest}
+	\end{figure*}
+	
+			\begin{figure*}[t]
+		\centering
+		\includegraphics[width=0.85\textwidth]{docs/images/picturesGeneral/CalibrationWF.png}
+		\caption{The same User interface with calibration.}
+		\label{fig:CalibrationTest}
+	\end{figure*}
+	
+
 	
 	% --- VI. Conclusion ----------------------------------------------------------
 	\section{Conclusion}
