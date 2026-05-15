@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2026.2.15)  15 MAY 2026 02:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2026.2.15)  15 MAY 2026 02:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -581,7 +581,7 @@ File: docs/images/picturesGeneral/ACC_SimulinkModel.png Graphic file (type png)
 
 <use docs/images/picturesGeneral/ACC_SimulinkModel.png>
 Package pdftex.def Info: docs/images/picturesGeneral/ACC_SimulinkModel.png  use
-d on input line 163.
+d on input line 162.
 (pdftex.def)             Requested size: 464.39685pt x 264.74146pt.
 
 [2 <./docs/images/picturesGeneral/transmitterAndPythonUserInterface.jpg> <./doc
@@ -593,14 +593,14 @@ File: docs/images/blockDiagrams/blockDiagramHighlLevelACC_Model.png Graphic fil
 e (type png)
 <use docs/images/blockDiagrams/blockDiagramHighlLevelACC_Model.png>
 Package pdftex.def Info: docs/images/blockDiagrams/blockDiagramHighlLevelACC_Mo
-del.png  used on input line 174.
+del.png  used on input line 173.
 (pdftex.def)             Requested size: 516.0pt x 227.87035pt.
 <docs/images/blockDiagrams/EgoSensorModel.png, id=88, 1148.03906pt x 796.47563p
 t>
 File: docs/images/blockDiagrams/EgoSensorModel.png Graphic file (type png)
 <use docs/images/blockDiagrams/EgoSensorModel.png>
 Package pdftex.def Info: docs/images/blockDiagrams/EgoSensorModel.png  used on 
-input line 182.
+input line 181.
 (pdftex.def)             Requested size: 438.60315pt x 304.28026pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -614,32 +614,32 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  <./docs/images/blockDiagrams/blockDiagramHighlLevelACC_Model.png>]
 
-<docs/images/picturesGeneral/RC_CarLabeled.png, id=99, 495.35063pt x 658.71094p
-t>
+<docs/images/picturesGeneral/RC_CarLabeled.png, id=101, 495.35063pt x 658.71094
+pt>
 File: docs/images/picturesGeneral/RC_CarLabeled.png Graphic file (type png)
 <use docs/images/picturesGeneral/RC_CarLabeled.png>
 Package pdftex.def Info: docs/images/picturesGeneral/RC_CarLabeled.png  used on
- input line 216.
+ input line 259.
 (pdftex.def)             Requested size: 154.80157pt x 205.84665pt.
 
 
 [4 <./docs/images/blockDiagrams/EgoSensorModel.png> <./docs/images/picturesGene
 ral/RC_CarLabeled.png>]
-<docs/schematics/RC_Car_Schematic.png, id=107, 1389.69188pt x 730.22812pt>
+<docs/schematics/RC_Car_Schematic.png, id=109, 1389.69188pt x 730.22812pt>
 File: docs/schematics/RC_Car_Schematic.png Graphic file (type png)
 <use docs/schematics/RC_Car_Schematic.png>
 Package pdftex.def Info: docs/schematics/RC_Car_Schematic.png  used on input li
-ne 228.
+ne 268.
 (pdftex.def)             Requested size: 490.19843pt x 257.57816pt.
 
 
-<docs/images/picturesGeneral/transmitterZoomedIn.png, id=110, 736.25063pt x 516
+<docs/images/picturesGeneral/transmitterZoomedIn.png, id=112, 736.25063pt x 516
 .42938pt>
 File: docs/images/picturesGeneral/transmitterZoomedIn.png Graphic file (type pn
 g)
 <use docs/images/picturesGeneral/transmitterZoomedIn.png>
 Package pdftex.def Info: docs/images/picturesGeneral/transmitterZoomedIn.png  u
-sed on input line 248.
+sed on input line 317.
 (pdftex.def)             Requested size: 180.60315pt x 126.67996pt.
 
 
@@ -647,20 +647,20 @@ sed on input line 248.
 
  <./docs/schematics/RC_Car_Schematic.png> <./docs/images/picturesGeneral/transm
 itterZoomedIn.png>]
-<docs/schematics/TransmitterSchematic.png, id=119, 1234.6125pt x 791.95876pt>
+<docs/schematics/TransmitterSchematic.png, id=121, 1234.6125pt x 791.95876pt>
 File: docs/schematics/TransmitterSchematic.png Graphic file (type png)
 <use docs/schematics/TransmitterSchematic.png>
 Package pdftex.def Info: docs/schematics/TransmitterSchematic.png  used on inpu
-t line 256.
+t line 325.
 (pdftex.def)             Requested size: 490.19843pt x 314.44562pt.
 
 
-<docs/images/blockDiagrams/RC_CarStateDiagram.png, id=121, 785.18344pt x 933.48
+<docs/images/blockDiagrams/RC_CarStateDiagram.png, id=123, 785.18344pt x 933.48
 75pt>
 File: docs/images/blockDiagrams/RC_CarStateDiagram.png Graphic file (type png)
 <use docs/images/blockDiagrams/RC_CarStateDiagram.png>
 Package pdftex.def Info: docs/images/blockDiagrams/RC_CarStateDiagram.png  used
- on input line 285.
+ on input line 376.
 (pdftex.def)             Requested size: 516.0pt x 613.49704pt.
 
 
@@ -668,17 +668,17 @@ Package pdftex.def Info: docs/images/blockDiagrams/RC_CarStateDiagram.png  used
 
  <./docs/schematics/TransmitterSchematic.png>] [7 <./docs/images/blockDiagrams/
 RC_CarStateDiagram.png>]
-Overfull \hbox (12.0pt too wide) in paragraph at lines 292--293
+Overfull \hbox (12.0pt too wide) in paragraph at lines 384--385
  \T1/pcr/m/n/10 timestamp_ms,distance_cm,ax_mg,ay_mg,az_mg\n 
  []
 
-<docs/images/blockDiagrams/transmitterStateDiagram.png, id=134, 883.04906pt x 6
+<docs/images/blockDiagrams/transmitterStateDiagram.png, id=136, 883.04906pt x 6
 63.98062pt>
 File: docs/images/blockDiagrams/transmitterStateDiagram.png Graphic file (type 
 png)
 <use docs/images/blockDiagrams/transmitterStateDiagram.png>
 Package pdftex.def Info: docs/images/blockDiagrams/transmitterStateDiagram.png 
- used on input line 301.
+ used on input line 394.
 (pdftex.def)             Requested size: 412.80157pt x 310.3891pt.
 
 
@@ -687,30 +687,30 @@ Package pdftex.def Info: docs/images/blockDiagrams/transmitterStateDiagram.png
 [8
 
  <./docs/images/blockDiagrams/transmitterStateDiagram.png>]
-<docs/images/picturesGeneral/PythonGUI.png, id=146, 1221.81468pt x 703.12688pt>
+<docs/images/picturesGeneral/PythonGUI.png, id=148, 1221.81468pt x 703.12688pt>
 
 File: docs/images/picturesGeneral/PythonGUI.png Graphic file (type png)
 <use docs/images/picturesGeneral/PythonGUI.png>
 Package pdftex.def Info: docs/images/picturesGeneral/PythonGUI.png  used on inp
-ut line 323.
+ut line 442.
 (pdftex.def)             Requested size: 438.60315pt x 252.40665pt.
-<docs/images/pythonGUI/DisplayDataTextBoxThreadStateDiagram.png, id=147, 915.42
+<docs/images/pythonGUI/DisplayDataTextBoxThreadStateDiagram.png, id=149, 915.42
 pt x 571.38469pt>
 File: docs/images/pythonGUI/DisplayDataTextBoxThreadStateDiagram.png Graphic fi
 le (type png)
 <use docs/images/pythonGUI/DisplayDataTextBoxThreadStateDiagram.png>
 Package pdftex.def Info: docs/images/pythonGUI/DisplayDataTextBoxThreadStateDia
-gram.png  used on input line 329.
+gram.png  used on input line 448.
 (pdftex.def)             Requested size: 350.87622pt x 219.01166pt.
 
 
-<docs/images/picturesGeneral/RC_Car_VidTestCalibration.png, id=150, 1001.99344p
+<docs/images/picturesGeneral/RC_Car_VidTestCalibration.png, id=152, 1001.99344p
 t x 823.57687pt>
 File: docs/images/picturesGeneral/RC_Car_VidTestCalibration.png Graphic file (t
 ype png)
 <use docs/images/picturesGeneral/RC_Car_VidTestCalibration.png>
 Package pdftex.def Info: docs/images/picturesGeneral/RC_Car_VidTestCalibration.
-png  used on input line 347.
+png  used on input line 473.
 (pdftex.def)             Requested size: 361.19843pt x 296.87701pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -722,21 +722,21 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
  <./docs/images/picturesGeneral/PythonGUI.png> <./docs/images/pythonGUI/Display
 DataTextBoxThreadStateDiagram.png>]
 
-<docs/images/picturesGeneral/RC_Car_VidTestGUI.png, id=163, 718.18312pt x 587.1
+<docs/images/picturesGeneral/RC_Car_VidTestGUI.png, id=165, 718.18312pt x 587.1
 9376pt>
 File: docs/images/picturesGeneral/RC_Car_VidTestGUI.png Graphic file (type png)
 
 <use docs/images/picturesGeneral/RC_Car_VidTestGUI.png>
 Package pdftex.def Info: docs/images/picturesGeneral/RC_Car_VidTestGUI.png  use
-d on input line 367.
+d on input line 523.
 (pdftex.def)             Requested size: 361.19843pt x 295.32541pt.
-<docs/images/picturesGeneral/RC_Car_VidTestGUI_VelocityZoomed.png, id=164, 712.
+<docs/images/picturesGeneral/RC_Car_VidTestGUI_VelocityZoomed.png, id=166, 712.
 91344pt x 590.205pt>
 File: docs/images/picturesGeneral/RC_Car_VidTestGUI_VelocityZoomed.png Graphic 
 file (type png)
 <use docs/images/picturesGeneral/RC_Car_VidTestGUI_VelocityZoomed.png>
 Package pdftex.def Info: docs/images/picturesGeneral/RC_Car_VidTestGUI_Velocity
-Zoomed.png  used on input line 374.
+Zoomed.png  used on input line 530.
 (pdftex.def)             Requested size: 361.19843pt x 299.02829pt.
 
 
@@ -748,14 +748,14 @@ _Car_VidTestGUI_VelocityZoomed.png>]
 File: docs/images/picturesGeneral/NoCalibrationWF.png Graphic file (type png)
 <use docs/images/picturesGeneral/NoCalibrationWF.png>
 Package pdftex.def Info: docs/images/picturesGeneral/NoCalibrationWF.png  used 
-on input line 383.
+on input line 539.
 (pdftex.def)             Requested size: 361.19843pt x 304.62076pt.
 <docs/images/picturesGeneral/CalibrationWF.png, id=187, 834.86906pt x 700.11563
 pt>
 File: docs/images/picturesGeneral/CalibrationWF.png Graphic file (type png)
 <use docs/images/picturesGeneral/CalibrationWF.png>
 Package pdftex.def Info: docs/images/picturesGeneral/CalibrationWF.png  used on
- input line 390.
+ input line 546.
 (pdftex.def)             Requested size: 361.19843pt x 302.90268pt.
  [12 <./docs/images/picturesGeneral/NoCalibrationWF.png> <./docs/images/picture
 sGeneral/CalibrationWF.png>]
@@ -764,7 +764,7 @@ sGeneral/CalibrationWF.png>]
 File: docs/images/picturesGeneral/timeGapIssue.png Graphic file (type png)
 <use docs/images/picturesGeneral/timeGapIssue.png>
 Package pdftex.def Info: docs/images/picturesGeneral/timeGapIssue.png  used on 
-input line 402.
+input line 556.
 (pdftex.def)             Requested size: 361.19843pt x 305.2516pt.
 
 
@@ -774,54 +774,54 @@ input line 402.
 
 
  <./docs/images/picturesGeneral/timeGapIssue.png>]
-Underfull \hbox (badness 1406) in paragraph at lines 428--431
+Underfull \hbox (badness 1406) in paragraph at lines 636--639
 []\T1/ptm/m/n/8 STMicroelectronics, \T1/ptm/m/it/8 STM32L432KC Datasheet\T1/ptm
 /m/n/8 , Rev. 7, 2021. [On-
  []
 
 
-Underfull \hbox (badness 5245) in paragraph at lines 433--436
+Underfull \hbox (badness 5245) in paragraph at lines 641--644
 []\T1/ptm/m/n/8 STMicroelectronics, \T1/ptm/m/it/8 LIS3DH Datasheet\T1/ptm/m/n/
 8 , Rev. 3, 2016. [On-line].
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 433--436
+Underfull \hbox (badness 10000) in paragraph at lines 641--644
 \T1/ptm/m/n/8 Avail-able: []$https : / / www . st . com / resource / en / datas
 heet / lis3dh . pdf$[]
  []
 
 
-Underfull \hbox (badness 3209) in paragraph at lines 444--447
+Underfull \hbox (badness 3209) in paragraph at lines 652--655
 []\T1/ptm/m/n/8 Garmin Ltd., \T1/ptm/m/it/8 LIDAR-Lite v3 Op-er-a-tion Man-ual\
 T1/ptm/m/n/8 , 2017. [On-line].
  []
 
 
-Underfull \hbox (badness 3815) in paragraph at lines 444--447
+Underfull \hbox (badness 3815) in paragraph at lines 652--655
 \T1/ptm/m/n/8 Avail-able: []$https : / / static . garmin . com / pumac / LIDAR 
 _ Lite _ v3 _ Operation _
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 449--453
+Underfull \hbox (badness 10000) in paragraph at lines 657--661
 []\T1/ptm/m/n/8 MathWorks, ``Adap-tive Cruise Con-trol Us-ing Model Pre-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 449--453
+Underfull \hbox (badness 10000) in paragraph at lines 657--661
 \T1/ptm/m/n/8 dic-tive Con-troller,'' \T1/ptm/m/it/8 MAT-LAB Doc-u-men-ta-tion\
 T1/ptm/m/n/8 , 2024. [On-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 449--453
+Underfull \hbox (badness 10000) in paragraph at lines 657--661
 \T1/ptm/m/n/8 line]. Avail-able: []$https : / / www . mathworks . com / help / 
 mpc / ug /
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 449--453
+Underfull \hbox (badness 10000) in paragraph at lines 657--661
 \T1/ptm/m/n/8 adaptive-[]cruise-[]control-[]using-[]model-[]predictive-[]contro
 ller . html$[]
  []
@@ -854,11 +854,11 @@ Package rerunfilecheck Info: File `RC_Car_Report.out' has not changed.
 Here is how much of TeX's memory you used:
  13182 strings out of 473197
  207575 string characters out of 5718605
- 622392 words of memory out of 5000000
+ 621440 words of memory out of 5000000
  36206 multiletter control sequences out of 15000+600000
  671020 words of font info for 153 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,79p,1822b,492s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,10n,79p,271b,492s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share
 /texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texliv
@@ -869,7 +869,7 @@ pe1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
 /utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></
 usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texli
 ve/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on RC_Car_Report.pdf (14 pages, 14000988 bytes).
+Output written on RC_Car_Report.pdf (14 pages, 14001869 bytes).
 PDF statistics:
  290 PDF objects out of 1000 (max. 8388607)
  209 compressed objects within 3 object streams
